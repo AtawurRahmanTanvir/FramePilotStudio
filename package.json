@@ -1,0 +1,92 @@
+{
+  "name": "framepilot-studio",
+  "version": "0.1.3",
+  "description": "Local-first automated video production workflow desktop application",
+  "main": "src/main/main.js",
+  "author": "FramePilot Studio",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "test:python": "python -m unittest discover -s tests -p 'test_*.py'",
+    "test:node": "node --test tests/*.test.js",
+    "test": "npm run test:python && npm run test:node",
+    "build:dir": "electron-builder --dir",
+    "dist": "python tools/check_release_runtime.py && electron-builder --win nsis",
+    "build:backend": "pyinstaller --noconfirm --clean tools/FramePilotBackend.spec",
+    "preflight": "python tools/check_release_runtime.py",
+    "build:offline-runtime": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/BUILD_WINDOWS_OFFLINE_RUNTIME.ps1"
+  },
+  "devDependencies": {
+    "electron": "^45.2.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "studio.framepilot.desktop",
+    "productName": "FramePilot Studio",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "runtime/backend",
+        "to": "runtime/backend",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "runtime/ffmpeg",
+        "to": "runtime/ffmpeg",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "runtime/models",
+        "to": "runtime/models",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "runtime/manifests/runtime-manifest.json",
+        "to": "runtime/manifests/runtime-manifest.json"
+      },
+      {
+        "from": "branding/framepilot-window.png",
+        "to": "branding/framepilot-window.png"
+      },
+      {
+        "from": "branding/framepilot-studio.ico",
+        "to": "branding/framepilot-studio.ico"
+      },
+      {
+        "from": "vendor/whisperx-source/LICENSE",
+        "to": "licenses/whisperx-LICENSE"
+      },
+      "THIRD_PARTY_NOTICES.md"
+    ],
+    "win": {
+      "icon": "branding/framepilot-studio.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "FramePilot-Studio-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "branding/framepilot-studio.ico",
+      "uninstallerIcon": "branding/framepilot-studio.ico",
+      "installerHeaderIcon": "branding/framepilot-studio.ico",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

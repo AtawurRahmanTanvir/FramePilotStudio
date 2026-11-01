@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "product": "FramePilot Studio",
+  "status": "not-published",
+  "channel": "stable",
+  "latest_version": null,
+  "download_page": "https://framepilotstudio.github.io/download/",
+  "updated_at": null,
+  "notes": "The official update channel will be activated before the first public release."
+}

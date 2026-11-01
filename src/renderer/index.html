@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" class="large-text">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>FramePilot Studio</title>
+  <link rel="stylesheet" href="./styles/tokens.css" />
+  <link rel="stylesheet" href="./styles/app.css" />
+  <link rel="stylesheet" href="./styles/compact-ui.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand-lockup">
+      <img class="brand-logo" src="./assets/framepilot-full-logo.png" alt="FramePilot Studio" />
+    </div>
+    <div class="workspace-label">WORKSPACE</div>
+    <nav class="nav-list" aria-label="Main navigation">
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg></span><span>Overview</span></button>
+      <button class="nav-item" data-page="audio"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 9v6M8 5v14M12 2v20M16 7v10M20 10v4"/></svg></span><span>Audio to CSV</span></button>
+      <button class="nav-item" data-page="timeline"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4v16M4 7h16M4 12h12M4 17h8"/><circle cx="17" cy="12" r="2"/><circle cx="13" cy="17" r="2"/></svg></span><span>Timeline Engine</span></button>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="workspace-label">SUPPORT</div>
+    <nav class="nav-list" aria-label="Support and settings">
+      <button class="nav-item" data-page="activity"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 15l3-4 3 2 5-7"/></svg></span><span>Activity & QA</span></button>
+      <button class="nav-item" data-page="settings"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1-1.8 3.1-.2-.1a1.7 1.7 0 00-1.8.1l-.1.1h-3.6l-.1-.2a1.7 1.7 0 00-1.6-1l-.2.1-3.1-1.8.1-.2a1.7 1.7 0 00-.1-1.8l-.1-.1v-3.6l.2-.1a1.7 1.7 0 001-1.6l-.1-.2L10.4 6l.2.1a1.7 1.7 0 001.8-.1l.1-.1h3.6l.1.2a1.7 1.7 0 001.6 1l.2-.1 3.1 1.8-.1.2a1.7 1.7 0 00.1 1.8l.1.1v3.6z"/></svg></span><span>Settings</span></button>
+      <button class="nav-item" data-page="help"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 014.8.9c0 1.7-2.4 2.1-2.4 3.9M12 17.2v.1"/></svg></span><span>Help & Guide</span></button>
+    </nav>
+    <div class="sidebar-spacer"></div>
+  </aside>
+
+  <main class="main-area">
+    <section class="page active" id="page-dashboard">
+      <div class="welcome-row">
+        <div><h1>Video production</h1><p class="page-intro">Choose a workflow to get started.</p></div>
+      </div>
+      <div class="hero-panel">
+        <div class="hero-ambient"></div>
+        <div class="hero-content"><h2>From voiceover<br/>to <em>Filmora timeline.</em></h2><p>Create a verified Final Master CSV, then apply it to your Filmora project.</p><button class="primary-button" data-navigate="audio"><span>Start with Audio to CSV</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button></div>
+        <div class="hero-art" aria-hidden="true"><img class="orbit-art" src="./assets/production-orbit.svg" alt="" /></div>
+      </div>
+      <div class="section-heading"><div><h2>Workflows</h2></div></div>
+      <div class="engine-grid">
+        <article class="engine-card" data-open="audio"><div class="engine-card-top"><div class="engine-icon gold-icon"><svg viewBox="0 0 24 24"><path d="M3 9v6m4-11v16m4-20v24m4-16v8m4-11v14"/></svg></div></div><h3>Audio to CSV</h3><p>Turn a voiceover and Visual Mapping CSV into a timed Final Master CSV.</p><div class="engine-card-bottom"><span class="engine-state"><i></i><span id="runtime-audio-card">CHECKING</span></span><span class="card-arrow">↗</span></div></article>
+        <article class="engine-card" data-open="timeline"><div class="engine-card-top"><div class="engine-icon red-icon"><svg viewBox="0 0 24 24"><path d="M4 5v14M4 8h16M4 13h13M4 18h9"/><circle cx="17" cy="13" r="2"/></svg></div></div><h3>Filmora Timeline</h3><p>Validate image timing and create a new motion-enhanced Filmora project.</p><div class="engine-card-bottom"><span class="engine-state"><i></i><span id="runtime-timeline-card">AVAILABLE</span></span><span class="card-arrow">↗</span></div></article>
+      </div>
+      <div class="bottom-grid dashboard-bottom-grid"><section class="surface-panel"><div class="panel-heading"><div><h3>Recent activity</h3></div><button class="text-button" data-navigate="activity">View log <span>→</span></button></div><div class="empty-activity"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></div><div><strong>No activity yet</strong><p>Processing results and errors will appear here.</p></div></div></section></div>
+    </section>
+
+    <section class="page" id="page-audio">
+      <div class="page-heading"><div><h1>Audio to CSV</h1><p class="page-intro">Select the voiceover and its Visual Mapping CSV.</p></div></div>
+      <div class="workflow-layout audio-workflow-layout"><div class="workflow-main">
+        <div class="surface-panel input-panel"><div class="panel-heading"><div><h3>Input files</h3></div><span class="required-label" id="audio-files-count">0 / 2 FILES ADDED</span></div>
+          <div class="file-field"><div class="file-field-icon audio-file"><svg viewBox="0 0 24 24"><path d="M4 9v6m4-11v16m4-20v24m4-15v6m4-10v14"/></svg></div><div class="file-field-copy"><strong>Voiceover audio</strong><span id="audio-name">No audio file selected</span><small id="audio-file-meta">MP3 · WAV · M4A · FLAC · AAC · OGG · OPUS</small><span class="file-selected-badge" id="audio-selected-badge" hidden><svg viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg> ADDED</span></div><button class="outline-button" id="pick-audio">Add audio</button><input type="file" id="audio-hidden" accept="audio/*" hidden /></div>
+          <div class="file-field"><div class="file-field-icon csv-file"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg></div><div class="file-field-copy"><strong>Visual Mapping CSV</strong><span id="mapping-name">No mapping CSV selected</span><small id="mapping-file-meta">CSV · UTF-8 / UTF-8 BOM</small><span class="file-selected-badge" id="mapping-selected-badge" hidden><svg viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg> ADDED</span></div><button class="outline-button" id="pick-mapping">Add mapping CSV</button><input type="file" id="mapping-hidden" accept=".csv,text/csv" hidden /></div>
+        </div>
+        <div class="surface-panel settings-panel"><div class="panel-heading"><div><h3>Recognition quality</h3></div></div>
+          <div class="setting-row"><div><strong>Accuracy</strong><span>Higher quality may take longer.</span></div><select id="model-size"><option value="small">Fast</option><option value="medium" selected>Balanced</option><option value="large-v3">High accuracy</option></select></div>
+          <div class="setting-row output-path-row"><div><strong>CSV save location</strong><span id="audio-output-directory">Documents / FramePilot Studio / CSV</span></div><button class="text-button" data-navigate="settings">Change in Settings</button></div>
+        </div>
+        <div class="surface-panel action-panel"><div><h3>Generate Final Master CSV</h3><p id="audio-engine-readiness">Checking audio engine…</p></div><button class="primary-button" id="start-audio" disabled><span>Generate CSV</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button></div>
+        <div class="surface-panel job-progress-panel" id="audio-progress-panel" hidden>
+          <div class="progress-visual"><svg class="progress-orbit" viewBox="0 0 120 120" aria-hidden="true"><circle class="orbit-track" cx="60" cy="60" r="49"/><circle class="orbit-progress" id="audio-progress-ring" cx="60" cy="60" r="49"/><circle class="orbit-core" cx="60" cy="60" r="34"/><path class="orbit-wave" d="M34 61h8l5-14 8 27 8-37 8 46 7-22 5 0h7"/></svg><div class="progress-visual-label"><strong id="audio-progress-number">0%</strong><span>COMPLETE</span></div></div>
+          <div class="progress-details"><div class="progress-topline"><div><h3 id="audio-progress-stage">Preparing audio engine</h3></div><span class="progress-status" id="audio-progress-status">STARTING</span></div><div class="progress-track"><div class="progress-fill" id="audio-progress-fill"></div><div class="progress-shimmer"></div></div><div class="progress-footline"><span id="audio-progress-message">Waiting for processing…</span><span id="audio-progress-elapsed">00:00</span></div><button class="text-button cancel-job-button" id="cancel-audio-job">Cancel</button></div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="page" id="page-timeline">
+      <div class="page-heading"><div><h1>Filmora Timeline</h1><p class="page-intro">Choose a source project and the Final Master CSV.</p></div></div>
+      <div class="workflow-layout timeline-workflow-layout"><div class="workflow-main">
+        <div class="surface-panel input-panel"><div class="panel-heading"><div><h3>Project files</h3></div><span class="required-label">2 REQUIRED</span></div>
+          <div class="file-field"><div class="file-field-icon wfp-file"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h5M8 16h8"/></svg></div><div class="file-field-copy"><strong>Source Filmora Project</strong><span id="wfp-name">No Filmora project selected</span><small id="wfp-file-meta">Filmora 15 project (.wfp)</small><span class="file-selected-badge" id="wfp-selected-badge" hidden><svg viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg> ADDED</span></div><button class="outline-button" id="pick-wfp">Add WFP</button></div>
+          <div class="file-field"><div class="file-field-icon csv-file"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg></div><div class="file-field-copy"><strong>Final Master CSV</strong><span id="timeline-csv-name">No Final Master CSV selected</span><small id="timeline-csv-meta">Image markers and timing</small><span class="file-selected-badge" id="timeline-csv-selected-badge" hidden><svg viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg> ADDED</span></div><button class="outline-button" id="pick-timeline-csv">Add CSV</button></div>
+          <div class="file-field optional"><div class="file-field-icon folder-file"><svg viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/></svg></div><div class="file-field-copy"><strong>Image Folder <em>Optional</em></strong><span id="image-folder-name">No image folder selected</span><small id="image-folder-meta">Use to relink image files</small><span class="file-selected-badge" id="image-folder-selected-badge" hidden><svg viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg> ADDED</span></div><button class="outline-button" id="pick-image-folder">Choose folder</button></div>
+        </div>
+        <div class="surface-panel action-panel"><div><h3>Analyze project</h3><p>Check image clips, markers, frame rate and CSV timing.</p></div><button class="primary-button red-button" id="analyze-wfp" disabled><span>Analyze project</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button></div>
+        <div class="surface-panel job-progress-panel wfp-progress-panel" id="wfp-progress-panel" hidden>
+          <div class="progress-visual"><svg class="progress-orbit" viewBox="0 0 120 120" aria-hidden="true"><circle class="orbit-track" cx="60" cy="60" r="49"/><circle class="orbit-progress" id="wfp-progress-ring" cx="60" cy="60" r="49"/><circle class="orbit-core" cx="60" cy="60" r="34"/><path class="orbit-wave" d="M34 61h8l5-14 8 27 8-37 8 46 7-22 5 0h7"/></svg><div class="progress-visual-label"><strong id="wfp-progress-number">0%</strong><span>COMPLETE</span></div></div>
+          <div class="progress-details"><div class="progress-topline"><div><h3 id="wfp-progress-stage">Preparing Filmora project</h3></div><span class="progress-status" id="wfp-progress-status">RUNNING</span></div><div class="progress-track"><div class="progress-fill" id="wfp-progress-fill"></div><div class="progress-shimmer"></div></div><div class="progress-footline"><span id="wfp-progress-message">Waiting for processing…</span><span id="wfp-progress-elapsed">00:00</span></div><button class="text-button cancel-job-button" id="cancel-wfp-job">Cancel</button></div>
+        </div>
+        <div class="surface-panel settings-panel"><div class="panel-heading"><div><h3>Motion effects</h3></div></div>
+          <div class="setting-row"><div><strong>Presets</strong><span>Select one or more effects.</span></div><div class="preset-choices"><label><input type="checkbox" class="motion-preset" value="zoom_in" checked> Zoom In</label><label><input type="checkbox" class="motion-preset" value="zoom_out" checked> Zoom Out</label><label><input type="checkbox" class="motion-preset" value="pan" checked> Pan</label><label><input type="checkbox" class="motion-preset" value="pan_zoom" checked> Pan + Zoom</label></div></div>
+          <div class="setting-row"><div><strong>Motion strength</strong></div><select id="motion-strength"><option>Subtle</option><option selected>Standard</option><option>Strong</option></select></div>
+          <details class="advanced-options"><summary>Advanced options</summary>
+            <div class="setting-row"><div><strong>Assignment strategy</strong></div><select id="motion-mode"><option>Balanced Random</option><option>Pure Random</option></select></div>
+            <div class="setting-row"><div><strong>Random seed</strong></div><input id="motion-seed" type="number" value="20261101" class="seed-input"></div>
+            <div class="setting-row"><div><strong>Avoid repeated adjacent effects</strong></div><label class="switch"><input id="avoid-repeat" type="checkbox" checked><span></span></label></div>
+          </details>
+          <div class="setting-row output-path-row"><div><strong>Output project</strong><span id="output-wfp-name">Saved beside the source WFP project.</span></div><span class="fixed-value red-fixed"><i></i> SAME FOLDER</span></div>
+          <div class="action-panel export-action-panel"><div><h3>Generate Filmora project</h3><p>The original project remains unchanged.</p></div><button class="primary-button red-button" id="export-wfp" disabled><span>Generate WFP</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button></div>
+        </div>
+        <div class="surface-panel" id="analysis-result"><div class="panel-heading"><div><h3>Project check</h3></div><span class="runtime-check pending" id="analysis-status">NOT ANALYZED</span></div><div class="metric-grid"><div class="metric"><span>IMAGE CLIPS</span><strong id="metric-images">—</strong></div><div class="metric"><span>NATIVE MARKERS</span><strong id="metric-markers">—</strong></div><div class="metric"><span>FRAME RATE</span><strong id="metric-fps">—</strong></div><div class="metric"><span>AUDIO END</span><strong id="metric-duration">—</strong></div></div><div class="diagnostic-note" id="analysis-message">Select a project and CSV, then analyze.</div></div>
+      </div></div>
+    </section>
+
+    <section class="page" id="page-activity"><div class="page-heading"><div><h1>Activity & QA</h1><p class="page-intro">Processing messages, errors and validation results.</p></div><button class="outline-button" id="clear-log">Clear log</button></div><div class="surface-panel log-panel" id="activity-log"><div class="empty-activity"><div class="empty-icon">⌁</div><div><strong>No activity yet</strong><p>Processing messages and validation results appear here.</p></div></div></div></section>
+
+    <section class="page" id="page-settings">
+      <div class="page-heading"><div><h1>Settings</h1><p class="page-intro">Set default save locations, updates and display preferences.</p></div></div>
+      <div class="surface-panel settings-panel"><div class="panel-heading"><div><h3>Save locations</h3></div></div><div class="setting-row"><div><strong>Default CSV folder</strong><span id="settings-csv-folder">Documents / FramePilot Studio / CSV</span></div><button class="outline-button" id="change-csv-folder">Change folder</button></div><div class="setting-row"><div><strong>Filmora project output</strong><span>Saved beside the selected source project. The original is not overwritten.</span></div><span class="fixed-value red-fixed"><i></i> SAME FOLDER</span></div></div>
+      <div class="surface-panel settings-panel update-center-panel"><div class="panel-heading"><div><h3>Updates</h3></div></div><div class="update-summary-row"><div><strong id="update-center-status">Checking official update catalogue…</strong><span id="update-center-detail">Check for a new version or open the version history.</span></div><div class="update-actions" id="update-actions-slot"><button class="outline-button" id="check-updates">Check for Updates</button><button class="primary-button small-primary" id="check-all-versions"><span>Check All Versions</span></button></div></div><div class="update-progress" id="update-progress" hidden><div class="update-progress-fill" id="update-progress-fill"></div><span id="update-progress-label" class="update-progress-label">Preparing update…</span></div><div class="versions-list" id="versions-list" hidden></div><div class="setting-row"><div><strong>Check for updates at startup</strong></div><label class="switch"><input id="auto-check-updates" type="checkbox" checked><span></span></label></div><div class="setting-row"><div><strong>Download stable updates automatically</strong></div><label class="switch"><input id="auto-download-updates" type="checkbox" checked><span></span></label></div><div class="setting-row"><div><strong>Official website</strong></div><div class="update-actions"><button class="outline-button" id="official-home-link" type="button">Open website</button><button class="primary-button small-primary" id="open-download-page" type="button">Downloads</button></div></div></div>
+      <div class="surface-panel settings-panel"><div class="panel-heading"><div><h3>Accessibility</h3></div></div><div class="setting-row"><div><strong>Larger text</strong><span>Increase text size across the application.</span></div><label class="switch"><input id="large-text" type="checkbox" checked><span></span></label></div><div class="setting-row"><div><strong>Reduce animation</strong><span>Turn off decorative movement.</span></div><label class="switch"><input id="reduced-motion" type="checkbox"><span></span></label></div></div>
+    </section>
+
+    <section class="page" id="page-help">
+      <div class="page-heading"><div><h1>Help & Guide</h1><p class="page-intro">Instructions and troubleshooting for FramePilot Studio.</p></div></div>
+      <div class="help-list">
+        <details class="surface-panel help-item" open><summary>Audio to CSV</summary><div class="help-content"><ol><li>Select the voiceover audio.</li><li>Select the matching Visual Mapping CSV.</li><li>Choose recognition quality.</li><li>Select <strong>Generate CSV</strong>. The Final Master CSV is saved to the default folder shown in this screen.</li></ol><p>The Visual Mapping CSV must include <code>Company</code>, <code>Image_No</code>, <code>Image_File</code>, <code>Exact_Voiceover_Span</code>, <code>Start_Estimate</code>, and <code>End_Estimate</code>. A previous Final Master CSV is an output file, not a Visual Mapping input.</p></div></details>
+        <details class="surface-panel help-item"><summary>Filmora Timeline</summary><div class="help-content"><ol><li>Select a Filmora 15 WFP project.</li><li>Select its Final Master CSV.</li><li>Choose an Image Folder only when the project needs media relinking.</li><li>Select <strong>Analyze project</strong>. Review the project check before generating output.</li><li>Choose motion effects and select <strong>Generate WFP</strong>.</li></ol></div></details>
+        <details class="surface-panel help-item"><summary>Current Filmora project requirement</summary><div class="help-content"><p>The source WFP must already contain the image clips on a timeline track. Creating a complete timeline from an empty WFP is not supported by the current engine.</p><p>FramePilot creates a new project beside the source WFP. The original project is not overwritten.</p></div></details>
+        <details class="surface-panel help-item"><summary>Output files</summary><div class="help-content"><p><strong>Final Master CSV:</strong> saved in the default CSV folder. Change it once in Settings.</p><p><strong>Filmora project:</strong> saved in the same folder as the source WFP, with a FramePilot suffix and a unique name.</p></div></details>
+        <details class="surface-panel help-item"><summary>Motion effects available</summary><div class="help-content"><ul><li>Zoom In</li><li>Zoom Out</li><li>Pan</li><li>Pan + Zoom</li></ul><p><strong>Advanced options:</strong> use Assignment strategy to control effect distribution, Random seed to reproduce the same sequence, and Avoid repeated adjacent effects to reduce back-to-back duplicates. Most users can leave these at their defaults.</p></div></details>
+        <details class="surface-panel help-item"><summary>Troubleshooting</summary><div class="help-content"><p><strong>Audio engine is not ready:</strong> this development package does not include the complete offline WhisperX, model and FFmpeg runtime. Audio processing stays disabled until the runtime pack is installed in a release build.</p><p><strong>Processing failed:</strong> open Activity & QA and read the full diagnostic. Check that the input files are valid and that the required media is accessible.</p><p><strong>CSV or WFP validation failed:</strong> correct the reported issue before generating a project. FramePilot does not invent missing timestamps.</p></div></details>
+        <div class="help-about surface-panel"><div><strong>FramePilot Studio</strong><span>Application version <b id="app-version">v0.1.3</b></span></div><button class="outline-button" data-navigate="activity">Open Activity & QA</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast-region" id="toast-region" aria-live="polite"></div>
+<script src="./app.js"></script>
+</body>
+</html>

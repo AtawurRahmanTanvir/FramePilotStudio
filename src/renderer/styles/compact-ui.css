@@ -1,0 +1,144 @@
+/* FramePilot Studio 0.1.3 — functional, quieter workspace surface */
+.topbar,
+.main-footer,
+.runtime-card,
+.sidebar-footer,
+.hero-bottom-line,
+.footer-note,
+.date-chip,
+.step-pill,
+.hero-kicker,
+.eyebrow,
+.section-meta,
+.workflow-side,
+.brand-identity {
+  display: none !important;
+}
+
+.main-area { padding-top: 0; padding-bottom: 30px; }
+.page { padding-top: 34px; }
+.page-heading, .welcome-row { margin-bottom: 22px; }
+.page-heading h1, .welcome-row h1 { margin: 0 0 8px; font-size: 34px; }
+.page-intro { font-size: 15px; line-height: 1.65; color: #aaa296; }
+
+/* Keep the same graphite / gold / ruby identity, without decorative copy. */
+.hero-panel { min-height: 265px; }
+.hero-content { padding: 34px 40px; max-width: 580px; }
+.hero-content h2 { margin-top: 0; font-size: 34px; }
+.hero-content p { font-size: 14px; line-height: 1.65; max-width: 420px; }
+.hero-art { height: 265px; }
+.section-heading { margin: 28px 0 14px; }
+.section-heading h2 { margin: 0; font-size: 22px; }
+.engine-card { min-height: 150px; padding: 22px; }
+.engine-card h3 { font-size: 17px; }
+.engine-card p { max-width: 540px; font-size: 14px; line-height: 1.65; }
+.engine-card-top { min-height: 30px; }
+.engine-card-bottom { margin-top: 18px; }
+.engine-state { font-size: 11px; letter-spacing: .4px; }
+.engine-state span { color: #c7bda9; }
+.bottom-grid.dashboard-bottom-grid { grid-template-columns: minmax(0, 1fr); margin-top: 18px; }
+.surface-panel { border-radius: 12px; }
+.panel-heading h3 { font-size: 18px; }
+.empty-activity strong { font-size: 14px; }
+.empty-activity p { font-size: 13px; line-height: 1.6; }
+
+/* File selection must read as a selected state, not a subtle hint. */
+.file-field { min-height: 88px; padding: 14px 12px; border-radius: 8px; }
+.file-field + .file-field { margin-top: 4px; }
+.file-field.selected { padding: 13px 12px; border: 1px solid #806334; background: linear-gradient(90deg, #b58b3d18, #171512 82%); }
+.file-field-copy strong { font-size: 15px; }
+.file-field-copy span { font-size: 13px; }
+.file-field-copy small { font-size: 11px; }
+.file-selected-badge { font-size: 10px; padding: 5px 8px; }
+.outline-button { min-height: 42px; height: auto; padding: 9px 15px; font-size: 13px; }
+.required-label { font-size: 11px; padding: 7px 10px; }
+
+.workflow-layout, .workflow-layout.audio-workflow-layout, .workflow-layout.timeline-workflow-layout { display: block; }
+.workflow-main { width: 100%; max-width: 1040px; gap: 14px; }
+.input-panel, .settings-panel, .action-panel { padding: 22px 24px; }
+.panel-heading { margin-bottom: 12px; }
+.panel-heading h3 { margin: 0; font-size: 18px; }
+.panel-subcopy { font-size: 13px; }
+.setting-row { min-height: 66px; gap: 18px; }
+.setting-row strong { font-size: 14px; }
+.setting-row span { font-size: 13px; line-height: 1.5; }
+.setting-row select, .seed-input { min-height: 43px; font-size: 13px; padding: 9px 12px; }
+.fixed-value { font-size: 11px !important; }
+.helper-caption { font-size: 11px !important; }
+.text-button { font-size: 13px; }
+.action-panel h3 { font-size: 18px; margin: 0; }
+.action-panel p { font-size: 13px; line-height: 1.55; }
+.primary-button { min-height: 46px; height: auto; padding: 11px 18px; font-size: 14px; }
+.preset-choices { gap: 12px 18px; }
+.preset-choices label { font-size: 13px; }
+.preset-choices input { width: 17px; height: 17px; }
+
+/* A single Help area carries instructions; work screens stay task-focused. */
+.help-list { display: grid; gap: 12px; max-width: 1040px; }
+.help-item { padding: 0 22px; overflow: hidden; }
+.help-item > summary { list-style: none; cursor: pointer; position: relative; padding: 20px 34px 20px 0; font-size: 16px; font-weight: 650; color: #e7dfd0; }
+.help-item > summary::-webkit-details-marker { display: none; }
+.help-item > summary::after { content: "+"; position: absolute; right: 2px; top: 16px; color: #d8b56f; font-size: 23px; font-weight: 400; }
+.help-item[open] > summary::after { content: "−"; }
+.help-content { padding: 0 0 20px; border-top: 1px solid #2e2a24; color: #bdb4a6; font-size: 14px; line-height: 1.75; }
+.help-content p { margin: 14px 0 0; }
+.help-content ol, .help-content ul { margin: 13px 0 0; padding-left: 22px; }
+.help-content li { padding: 3px 0; }
+.help-content strong { color: #e3d0a8; }
+.help-about { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; }
+.help-about > div { display: grid; gap: 5px; }
+.help-about strong { font-size: 16px; }
+.help-about span { color: #a69e90; font-size: 13px; }
+.help-about b { color: #dfbf7a; font-weight: 650; }
+
+/* Remove visual remnants of old decorative footer/status components. */
+.runtime-summary, .runtime-sidebar-note, .main-footer, .footer-note { display: none !important; }
+
+@media (max-width: 1050px) {
+  .workflow-main { max-width: none; }
+  .hero-art { opacity: .42; right: -2%; }
+}
+@media (max-width: 760px) {
+  .main-area { max-width: calc(100% - 66px); padding: 0 16px 20px; }
+  .page { padding-top: 24px; }
+  .page-heading h1, .welcome-row h1 { font-size: 29px; }
+  .hero-panel { min-height: 280px; }
+  .hero-content { padding: 25px 22px; }
+  .hero-content h2 { font-size: 29px; }
+  .hero-art { width: 75%; right: -22%; top: 48px; opacity: .2; }
+  .engine-grid { grid-template-columns: 1fr; }
+  .file-field { align-items: flex-start; flex-wrap: wrap; }
+  .file-field-copy { flex-basis: calc(100% - 60px); }
+  .file-field .outline-button { margin-left: 52px; }
+  .action-panel { align-items: stretch; flex-direction: column; }
+  .action-panel .primary-button { width: 100%; justify-content: space-between; }
+  .setting-row { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+  .setting-row select, .seed-input { max-width: 100%; width: 100%; }
+  .help-about { align-items: flex-start; flex-direction: column; }
+}
+
+/* Disabled actions remain legible and explain that input/runtime is still required. */
+.primary-button:disabled,
+.red-button:disabled {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  box-shadow: none;
+  background: #302b25;
+  color: #a99c84;
+  border-color: #564936;
+  cursor: not-allowed;
+}
+.primary-button:disabled svg,
+.red-button:disabled svg { opacity: .72; }
+.runtime-check { font-size: 10px; padding: 6px 8px; }
+.metric span { font-size: 10px; }
+.metric strong { font-size: 19px; }
+.diagnostic-note { font-size: 12px; }
+
+.advanced-options { border-top: 1px solid #292622; }
+.advanced-options > summary { list-style: none; position: relative; padding: 15px 28px 15px 0; cursor: pointer; color: #c5b89f; font-size: 13px; font-weight: 600; }
+.advanced-options > summary::-webkit-details-marker { display: none; }
+.advanced-options > summary::after { content: "+"; position: absolute; right: 4px; top: 9px; font-size: 21px; color: #d8b56f; font-weight: 400; }
+.advanced-options[open] > summary::after { content: "−"; }
+.advanced-options .setting-row { padding-left: 14px; padding-right: 5px; }

@@ -1,0 +1,227 @@
+{
+  "format_version": 1,
+  "source_sample": "test______1.wfp (Filmora 15.1.2.17051)",
+  "effect_id": "video/effect/crop-pan-zoom",
+  "templates": {
+    "zoom_in": {
+      "description": "Observed Filmora 15 native Zoom In crop keyframes",
+      "crop_effect_template": {
+        "display": "crop-pan-zoom",
+        "id": "video/effect/crop-pan-zoom",
+        "paramList": [
+          {
+            "fxParam": {
+              "paramType": 6,
+              "unValue": "[\n    {\n        \"OriTime\": 36000000000,\n        \"Time\": 0.0,\n        \"X\": 0.0,\n        \"Y\": 0.0,\n        \"Width\": 1.0,\n        \"Height\": 1.0\n    },\n    {\n        \"OriTime\": 36040000000,\n        \"Time\": 1.0,\n        \"X\": 0.11189634864546526,\n        \"Y\": 0.1213389121338912,\n        \"Width\": 0.7773851590106007,\n        \"Height\": 0.7761506276150628\n    }\n]"
+            },
+            "name": "SettingScript"
+          }
+        ],
+        "thisUId": "47e0afb8-a5d4-f111-bd6e-84ef75fd56fc",
+        "type": 3,
+        "userData": [
+          {
+            "data": "ezA1RkMwRkVFLTA3MEItNGYwYS1BQURFLTQwRjFEOEQ0MTlCNn0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "key": 3,
+            "size": 64
+          },
+          {
+            "data": "AAAAAA==",
+            "key": 15001,
+            "size": 4
+          },
+          {
+            "data": "AQ==",
+            "key": 7,
+            "size": 1
+          },
+          {
+            "data": "MCwgMCwgMTY3MiwgOTQx",
+            "key": 15002,
+            "size": 15
+          },
+          {
+            "data": "AQAAAA==",
+            "key": 56,
+            "size": 4
+          },
+          {
+            "data": "MAA=",
+            "key": 36878,
+            "size": 2
+          },
+          {
+            "data": "NjM3LCAyODksIDEzMDAsIDczMQ==",
+            "key": 15003,
+            "size": 19
+          }
+        ]
+      }
+    },
+    "zoom_out": {
+      "description": "Observed Filmora 15 native Zoom Out crop keyframes",
+      "crop_effect_template": {
+        "display": "crop-pan-zoom",
+        "id": "video/effect/crop-pan-zoom",
+        "paramList": [
+          {
+            "fxParam": {
+              "paramType": 6,
+              "unValue": "[\n    {\n        \"OriTime\": 36000000000,\n        \"Time\": 0.0,\n        \"X\": 0.1696113074204947,\n        \"Y\": 0.14853556485355649,\n        \"Width\": 0.6890459363957597,\n        \"Height\": 0.6882845188284519\n    },\n    {\n        \"OriTime\": 36040000000,\n        \"Time\": 1.0,\n        \"X\": 0.0,\n        \"Y\": 0.0,\n        \"Width\": 1.0,\n        \"Height\": 1.0\n    }\n]"
+            },
+            "name": "SettingScript"
+          }
+        ],
+        "thisUId": "59e0afb8-a5d4-f111-bd6e-84ef75fd56fc",
+        "type": 3,
+        "userData": [
+          {
+            "data": "ezY4RDQ2Qzk2LUFFNjYtNGVlOS05NTk0LUZDMzNDM0UyQkQxQ30AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "key": 3,
+            "size": 64
+          },
+          {
+            "data": "AAAAAA==",
+            "key": 15001,
+            "size": 4
+          },
+          {
+            "data": "AQ==",
+            "key": 7,
+            "size": 1
+          },
+          {
+            "data": "NzM3LCAzMjQsIDExNTIsIDY0OA==",
+            "key": 15002,
+            "size": 19
+          },
+          {
+            "data": "AQAAAA==",
+            "key": 56,
+            "size": 4
+          },
+          {
+            "data": "MAA=",
+            "key": 36878,
+            "size": 2
+          },
+          {
+            "data": "NTI1LCAyMDUsIDE2NzIsIDk0MA==",
+            "key": 15003,
+            "size": 19
+          }
+        ]
+      }
+    },
+    "pan": {
+      "description": "Observed Filmora 15 native Pan crop keyframes",
+      "crop_effect_template": {
+        "display": "crop-pan-zoom",
+        "id": "video/effect/crop-pan-zoom",
+        "paramList": [
+          {
+            "fxParam": {
+              "paramType": 6,
+              "unValue": "[\n    {\n        \"OriTime\": 36000000000,\n        \"Time\": 0.0,\n        \"X\": 0.0,\n        \"Y\": 0.1401673640167364,\n        \"Width\": 0.7338044758539458,\n        \"Height\": 0.7343096234309623\n    },\n    {\n        \"OriTime\": 36040000000,\n        \"Time\": 1.0,\n        \"X\": 0.26383981154299177,\n        \"Y\": 0.1380753138075314,\n        \"Width\": 0.734982332155477,\n        \"Height\": 0.7343096234309623\n    }\n]"
+            },
+            "name": "SettingScript"
+          }
+        ],
+        "thisUId": "6be0afb8-a5d4-f111-bd6e-84ef75fd56fc",
+        "type": 3,
+        "userData": [
+          {
+            "data": "e0Q4NEY0ODExLUQ2OTYtNDk5OC05NkY3LTA5NzYwMzAzNEM2OX0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "key": 3,
+            "size": 64
+          },
+          {
+            "data": "AAAAAA==",
+            "key": 15001,
+            "size": 4
+          },
+          {
+            "data": "AQ==",
+            "key": 7,
+            "size": 1
+          },
+          {
+            "data": "NTI1LCAzMjQsIDEyMjcsIDY5MQ==",
+            "key": 15002,
+            "size": 19
+          },
+          {
+            "data": "AQAAAA==",
+            "key": 56,
+            "size": 4
+          },
+          {
+            "data": "MAA=",
+            "key": 36878,
+            "size": 2
+          },
+          {
+            "data": "NzQ5LCAyNzEsIDEyMjksIDY5MQ==",
+            "key": 15003,
+            "size": 19
+          }
+        ]
+      }
+    },
+    "pan_zoom": {
+      "description": "Observed Filmora 15 native Pan+Zoom crop keyframes",
+      "crop_effect_template": {
+        "display": "crop-pan-zoom",
+        "id": "video/effect/crop-pan-zoom",
+        "paramList": [
+          {
+            "fxParam": {
+              "paramType": 6,
+              "unValue": "[\n    {\n        \"OriTime\": 36000000000,\n        \"Time\": 0.0,\n        \"X\": 0.28150765606596,\n        \"Y\": 0.16108786610878662,\n        \"Width\": 0.71849234393404,\n        \"Height\": 0.7196652719665272\n    },\n    {\n        \"OriTime\": 36040000000,\n        \"Time\": 1.0,\n        \"X\": 0.0,\n        \"Y\": 0.14644351464435149,\n        \"Width\": 0.734982332155477,\n        \"Height\": 0.7343096234309623\n    }\n]"
+            },
+            "name": "SettingScript"
+          }
+        ],
+        "thisUId": "7de0afb8-a5d4-f111-bd6e-84ef75fd56fc",
+        "type": 3,
+        "userData": [
+          {
+            "data": "ezJEMDkxNzYyLUMwQTUtNGY0Ni1CMjA1LUNCNzA3NTk3MTdENH0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "key": 3,
+            "size": 64
+          },
+          {
+            "data": "AAAAAA==",
+            "key": 15001,
+            "size": 4
+          },
+          {
+            "data": "AQ==",
+            "key": 7,
+            "size": 1
+          },
+          {
+            "data": "NzYzLCAyMTksIDEyMDEsIDY3Ng==",
+            "key": 15002,
+            "size": 19
+          },
+          {
+            "data": "AQAAAA==",
+            "key": 56,
+            "size": 4
+          },
+          {
+            "data": "MAA=",
+            "key": 36878,
+            "size": 2
+          },
+          {
+            "data": "NTI1LCAyNzUsIDEyMjksIDY5MQ==",
+            "key": 15003,
+            "size": 19
+          }
+        ]
+      }
+    }
+  }
+}
