@@ -1,3 +1,5 @@
+# FPSTUDIO-ORIGINAL-SOURCE
+# Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 """Frozen backend entry point for the app-private PyInstaller runtime."""
 import sys
 from bridge import main

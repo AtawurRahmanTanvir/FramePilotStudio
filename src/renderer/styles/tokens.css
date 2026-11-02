@@ -1,3 +1,4 @@
+/* FPSTUDIO-ORIGINAL-SOURCE | FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026 */
 :root{
  --bg:#090909;--bg-soft:#0d0d0e;--panel:#111112;--panel-2:#151516;--panel-3:#1a1918;
  --line:#282522;--line-soft:#211f1c;--text:#f2eee6;--muted:#a39b8d;--subtle:#746e65;
@@ -5,4 +6,4 @@
  --green:#8ba887;--danger:#e06a70;--radius:16px;--ease:cubic-bezier(.2,.75,.25,1);
  font-family:Inter,"Segoe UI Variable","Segoe UI",system-ui,sans-serif;color-scheme:dark;
 }
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-size:13px;letter-spacing:.005em}button,input,select{font:inherit}button{color:inherit}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}::selection{background:#9c702e;color:#fff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}html{scrollbar-width:none}html::-webkit-scrollbar{width:0;height:0;display:none}body{font-size:13px;letter-spacing:.005em;user-select:none}button,input,select{font:inherit}button{color:inherit}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}input,textarea,select,[contenteditable="true"],#activity-log,.diagnostic-note,.output-result-path,code,pre{user-select:text}::selection{background:#9c702e;color:#fff}

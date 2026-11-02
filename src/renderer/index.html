@@ -1,3 +1,4 @@
+<!-- FPSTUDIO-ORIGINAL-SOURCE | FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026 -->
 <!doctype html>
 <html lang="en" class="large-text">
 <head>
@@ -19,8 +20,8 @@
     <div class="workspace-label">WORKSPACE</div>
     <nav class="nav-list" aria-label="Main navigation">
       <button class="nav-item active" data-page="dashboard"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg></span><span>Overview</span></button>
-      <button class="nav-item" data-page="audio"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 9v6M8 5v14M12 2v20M16 7v10M20 10v4"/></svg></span><span>Audio to CSV</span></button>
       <button class="nav-item" data-page="script-mapping"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5M9 12h6M9 16h6"/><path d="M4 7v14h12"/></svg></span><span>Script-to-Image</span></button>
+      <button class="nav-item" data-page="audio"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 9v6M8 5v14M12 2v20M16 7v10M20 10v4"/></svg></span><span>Audio to CSV</span></button>
       <button class="nav-item" data-page="timeline"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4v16M4 7h16M4 12h12M4 17h8"/><circle cx="17" cy="12" r="2"/><circle cx="13" cy="17" r="2"/></svg></span><span>Timeline Engine</span></button>
     </nav>
     <div class="sidebar-divider"></div>
@@ -65,8 +66,11 @@
         </div>
         <div class="surface-panel action-panel"><div><h3>Generate Final Master CSV</h3><p id="audio-engine-readiness">Checking audio engine…</p></div><button class="primary-button" id="start-audio" disabled><span>Generate CSV</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button></div>
         <div class="surface-panel job-progress-panel" id="audio-progress-panel" hidden>
-          <div class="progress-visual"><svg class="progress-orbit" viewBox="0 0 120 120" aria-hidden="true"><circle class="orbit-track" cx="60" cy="60" r="49"/><circle class="orbit-progress" id="audio-progress-ring" cx="60" cy="60" r="49"/><circle class="orbit-core" cx="60" cy="60" r="34"/><path class="orbit-wave" d="M34 61h8l5-14 8 27 8-37 8 46 7-22 5 0h7"/></svg><div class="progress-visual-label"><strong id="audio-progress-number">0%</strong><span>COMPLETE</span></div></div>
-          <div class="progress-details"><div class="progress-topline"><div><h3 id="audio-progress-stage">Preparing audio engine</h3></div><span class="progress-status" id="audio-progress-status">STARTING</span></div><div class="progress-track"><div class="progress-fill" id="audio-progress-fill"></div><div class="progress-shimmer"></div></div><div class="progress-footline"><span id="audio-progress-message">Waiting for processing…</span><span id="audio-progress-elapsed">00:00</span></div><button class="text-button cancel-job-button" id="cancel-audio-job">Cancel</button></div>
+          <div class="timeline-progress-heading"><div><span class="timeline-progress-kicker">AUDIO PROCESSING</span><h3 id="audio-progress-stage">Preparing audio engine</h3></div><div class="timeline-progress-percent"><strong id="audio-progress-number">0%</strong><span id="audio-progress-status" class="progress-status">RUNNING</span></div></div>
+          <ol class="timeline-stage-list audio-stage-list" id="audio-progress-stage-list" aria-label="Audio processing stages"></ol>
+          <div class="timeline-progress-track"><div class="timeline-progress-fill" id="audio-progress-fill"></div></div>
+          <div class="timeline-progress-foot"><span id="audio-progress-message">Waiting for processing…</span><span id="audio-progress-elapsed">00:00</span></div>
+          <button class="text-button cancel-job-button" id="cancel-audio-job">Cancel</button>
         </div>
         <section class="surface-panel output-result-panel" id="audio-output-result" aria-live="polite" hidden>
           <div class="output-result-top"><span class="output-result-kicker">FINAL MASTER CSV</span><span class="output-result-ready"><i></i> FILE READY</span></div>
@@ -100,7 +104,7 @@
         </aside>
 
         <section class="surface-panel script-run-panel">
-          <div class="script-run-heading"><div><h3>Open the mapping workflow</h3><p>Copy the original Master Prompt and open ChatGPT.</p></div><div class="chatgpt-app-mark" aria-label="ChatGPT"><svg viewBox="0 0 40 40" role="img" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"><path d="M19.9 5.1a7.2 7.2 0 0 1 12.4 5.1v2.1a7.2 7.2 0 0 1 3.1 12.3l-1.8 1a7.2 7.2 0 0 1-8 10.4l-1.8-1a7.2 7.2 0 0 1-13-3.1v-2.1a7.2 7.2 0 0 1-3.1-12.3l1.8-1a7.2 7.2 0 0 1 8-10.4Z"/><path d="m14 9 12 6.8v9.6M9.5 17.5 22 10.3M9 25l12.5 7.2M27.5 30.5V16M14.5 31V16.8l8.2-4.7"/></g></svg></div></div>
+          <div class="script-run-heading"><div><h3>Open the mapping workflow</h3><p>Copy the original Master Prompt and open ChatGPT.</p></div><div class="chatgpt-app-mark" aria-label="ChatGPT"><img src="./assets/chatgpt-mark.svg" alt="" /></div></div>
           <button class="primary-button chatgpt-prompt-button" id="copy-mapping-prompt" type="button" disabled><span>Copy Master Prompt &amp; Open ChatGPT</span><svg viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6"/></svg></button>
           <p class="script-manual-attach"><strong>Next:</strong> ChatGPT opens in your browser. Attach the selected script file there, paste the copied prompt, then send it. <strong>FramePilot does not upload the script automatically.</strong></p>
           <p class="script-prompt-status" id="script-prompt-status" aria-live="polite">Choose a script file to enable this action.</p>

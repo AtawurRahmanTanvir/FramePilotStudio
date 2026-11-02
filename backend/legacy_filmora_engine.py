@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# FPSTUDIO-ORIGINAL-SOURCE
+# Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 """FramePilot Studio legacy Filmora processing engine (UI removed).
 
 Offline Windows desktop utility for Filmora 15 WFP projects.

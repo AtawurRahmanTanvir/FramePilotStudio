@@ -1,3 +1,5 @@
+# FPSTUDIO-ORIGINAL-SOURCE
+# Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 from __future__ import annotations
 import hashlib, importlib.metadata, importlib.util, json, os, subprocess, sys, traceback
 from pathlib import Path

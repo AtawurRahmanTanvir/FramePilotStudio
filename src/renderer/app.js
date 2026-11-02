@@ -1,3 +1,5 @@
+// FPSTUDIO-ORIGINAL-SOURCE
+// Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 'use strict';
 const $ = id => document.getElementById(id);
 const state = {
@@ -7,6 +9,13 @@ const state = {
   latestRelease: null, stagedUpdate: null, releases: []
 };
 const labels = { dashboard: 'Overview', audio: 'Audio to CSV', 'script-mapping': 'Script-to-Image Mapping', timeline: 'Timeline Engine', activity: 'Activity & QA', settings: 'Settings', help: 'Help & Guide' };
+const AUDIO_STAGES = Object.freeze([
+  { label: 'Prepare analysis', detail: 'Load the selected audio and mapping inputs', end: 12 },
+  { label: 'Load WhisperX model', detail: 'Initialize the selected offline recognition model', end: 25 },
+  { label: 'Detect and transcribe speech', detail: 'Recognize speech from the voiceover', end: 62 },
+  { label: 'Align recognized words', detail: 'Match word timings to the visual mapping', end: 84 },
+  { label: 'Generate Final Master CSV', detail: 'Validate and write the final output', end: 100 }
+]);
 const $all = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 function toast(message, error = false, duration = 5200) {
@@ -165,12 +174,36 @@ function updateProgress(percent, stage, message) {
   const clamped = Math.max(0, Math.min(100, Number(percent) || 0));
   $('audio-progress-number').textContent = `${Math.round(clamped)}%`;
   $('audio-progress-fill').style.width = `${clamped}%`;
-  const circle = $('audio-progress-ring');
-  const circumference = 2 * Math.PI * 49;
-  circle.style.strokeDasharray = String(circumference);
-  circle.style.strokeDashoffset = String(circumference * (1 - clamped / 100));
+  renderAudioStageList(clamped);
   if (stage) $('audio-progress-stage').textContent = stage;
   if (message) $('audio-progress-message').textContent = message;
+}
+function renderAudioStageList(percent, terminalState = 'running') {
+  const host = $('audio-progress-stage-list');
+  if (!host) return;
+  const currentIndex = percent >= 100 ? AUDIO_STAGES.length - 1 : Math.max(0, AUDIO_STAGES.findIndex(stage => percent < stage.end));
+  host.replaceChildren();
+  AUDIO_STAGES.forEach((stage, index) => {
+    const item = document.createElement('li');
+    const stateName = terminalState === 'failed' && index === currentIndex
+      ? 'failed'
+      : terminalState === 'cancelled' && index === currentIndex
+        ? 'cancelled'
+        : percent >= 100 || index < currentIndex
+          ? 'complete'
+          : index === currentIndex
+            ? 'active'
+            : 'pending';
+    item.className = `timeline-stage-card is-${stateName}`;
+    const marker = document.createElement('span');
+    marker.className = 'timeline-stage-marker';
+    marker.textContent = stateName === 'complete' ? '✓' : stateName === 'failed' ? '!' : stateName === 'cancelled' ? '–' : String(index + 1);
+    const copy = document.createElement('span');
+    copy.className = 'timeline-stage-copy';
+    const title = document.createElement('strong'); title.textContent = stage.label;
+    const detail = document.createElement('small'); detail.textContent = stage.detail;
+    copy.append(title, detail); item.append(marker, copy); host.append(item);
+  });
 }
 function renderWfpStageList(percent, operation, terminalState = 'running') {
   const host = $('wfp-stage-list');
@@ -252,7 +285,7 @@ function closeProgress(success, message) {
     else { $('wfp-progress-status').textContent = 'FAILED'; $('wfp-progress-status').className = 'progress-status failed'; renderWfpStageList(Number.parseFloat($('wfp-progress-number').textContent) || 0, state.wfpOperation || 'export', 'failed'); $('wfp-progress-message').textContent = message || 'The engine returned an error.'; }
   } else {
     if (success) { updateProgress(100, 'Processing completed', message || 'All output validation steps completed.'); $('audio-progress-status').textContent = 'COMPLETE'; $('audio-progress-status').className = 'progress-status success'; }
-    else { $('audio-progress-status').textContent = 'FAILED'; $('audio-progress-status').className = 'progress-status failed'; $('audio-progress-stage').textContent = 'Processing stopped'; $('audio-progress-message').textContent = message || 'The engine returned an error.'; }
+    else { $('audio-progress-status').textContent = 'FAILED'; $('audio-progress-status').className = 'progress-status failed'; renderAudioStageList(Number.parseFloat($('audio-progress-number').textContent) || 0, 'failed'); $('audio-progress-stage').textContent = 'Processing stopped'; $('audio-progress-message').textContent = message || 'The engine returned an error.'; }
   }
   updateAudioButtonState();
   updateTimelineButtonState();
@@ -619,6 +652,8 @@ window.framepilot.onJobEvent(event => {
       $(`${prefix}-progress-status`).className = 'progress-status';
       $(`${prefix}-progress-stage`).textContent = 'Processing cancelled';
       $(`${prefix}-progress-message`).textContent = 'The engine was stopped safely. No estimated output was written.';
+      if (kind === 'audio') renderAudioStageList(Number.parseFloat($('audio-progress-number').textContent) || 0, 'cancelled');
+      if (kind === 'wfp') renderWfpStageList(Number.parseFloat($('wfp-progress-number').textContent) || 0, state.wfpOperation || 'export', 'cancelled');
       updateAudioButtonState(); updateTimelineButtonState();
       log('Processing cancelled by user.', 'warning');
     }

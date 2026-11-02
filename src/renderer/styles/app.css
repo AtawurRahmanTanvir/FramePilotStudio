@@ -1,3 +1,6 @@
+/* FPSTUDIO-ORIGINAL-SOURCE | FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026 */
+.app-shell::before{content:"";position:fixed;z-index:10;top:0;left:0;right:140px;height:38px;-webkit-app-region:drag}
+button,input,select,textarea,a,[role="button"]{-webkit-app-region:no-drag}
 .app-shell{display:flex;min-height:100vh;background:radial-gradient(ellipse at 82% 2%,rgba(127,89,37,.08),transparent 32%),var(--bg)}
 .sidebar{width:248px;min-width:248px;height:100vh;position:sticky;top:0;border-right:1px solid #26231f;background:linear-gradient(180deg,#101011 0%,#0c0c0d 100%);padding:27px 16px 15px;display:flex;flex-direction:column;z-index:4}
 .brand-lockup{height:59px;display:flex;align-items:center;gap:11px;padding:0 12px 18px;border-bottom:1px solid var(--line-soft)}.brand-mark{width:39px;height:39px;filter:drop-shadow(0 0 9px #a77b3033)}.brand-mark svg{width:100%;height:100%}.brand-name{font-size:18px;font-weight:730;letter-spacing:-.8px;background:linear-gradient(100deg,#f6e6bd,#d3a656 75%,#a06b2e);background-clip:text;color:transparent}.brand-sub{font-size:8px;letter-spacing:5.5px;color:#c3a267;margin:2px 0 0 2px;font-weight:700}
@@ -195,6 +198,7 @@ html.large-text .switch{transform:scale(1.08);transform-origin:right center}
 .script-run-heading p{font-size:13px;color:#9b9386;margin:0}
 .chatgpt-app-mark{width:48px;height:48px;display:grid;place-items:center;border:1px solid #554b3a;border-radius:12px;background:#111;color:#e9e1d2;flex:none}
 .chatgpt-app-mark svg{width:34px;height:34px}
+.chatgpt-app-mark img{width:34px;height:34px;display:block}
 .chatgpt-prompt-button{min-height:52px;height:auto;padding:13px 20px;font-size:15px;gap:18px}
 .chatgpt-prompt-button:disabled{opacity:.42;filter:grayscale(.5);cursor:not-allowed;transform:none;box-shadow:none}
 .script-manual-attach{margin:15px 0 0;color:#b7ad9d;font-size:13px;line-height:1.7}
@@ -252,3 +256,22 @@ html.large-text .switch{transform:scale(1.08);transform-origin:right center}
 .reduce-motion .timeline-stage-card.is-active .timeline-stage-marker{animation:none!important}
 
 @media(min-width:761px){.engine-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Processing views use one consistent, horizontal hierarchy for long-running jobs. */
+.job-progress-panel{display:block;padding:24px 26px;border-color:#59452b;background:radial-gradient(ellipse at 8% 0%,#d4a34a15,transparent 42%),linear-gradient(135deg,#181613,#101011)}
+.job-progress-panel[hidden]{display:none}
+.job-progress-panel .timeline-progress-heading{margin-bottom:22px}
+.job-progress-panel .timeline-stage-list{grid-template-columns:repeat(5,minmax(0,1fr))}
+.job-progress-panel .timeline-progress-track{margin-top:18px}
+.timeline-stage-card.is-cancelled{border-color:#75613e;background:#1d1912}
+.timeline-stage-card.is-cancelled .timeline-stage-marker{border-color:#b08b4c;color:#f1d49a;background:#3a2a18}
+.timeline-stage-card.is-cancelled .timeline-stage-copy strong{color:#e5c98d}
+.timeline-progress-panel .cancel-job-button,
+.job-progress-panel .cancel-job-button{margin-top:14px}
+@media(max-width:1050px){
+  .job-progress-panel .timeline-stage-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .job-progress-panel{padding:17px}
+  .job-progress-panel .timeline-stage-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

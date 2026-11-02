@@ -1,3 +1,5 @@
+// FPSTUDIO-ORIGINAL-SOURCE
+// Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 'use strict';
 const { app, BrowserWindow, ipcMain, dialog, shell, protocol, net, clipboard } = require('electron');
 const path = require('node:path');

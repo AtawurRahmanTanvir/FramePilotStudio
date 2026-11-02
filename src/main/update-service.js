@@ -1,3 +1,5 @@
+// FPSTUDIO-ORIGINAL-SOURCE
+// Project: FramePilot Studio | Original Creator: Atawur Rahman | Copyright (c) 2026
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
