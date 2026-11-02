@@ -21,7 +21,7 @@ if not getattr(sys, 'frozen', False):
         sys.path.insert(0, str(whisperx_source))
 
 def emit(event: str, **payload):
-    print(json.dumps({'event': event, **payload}, ensure_ascii=False), file=_EVENT_STREAM, flush=True)
+    print(json.dumps({'event': event, **payload}, ensure_ascii=True), file=_EVENT_STREAM, flush=True)
 
 
 def _sha256(path: Path) -> str:

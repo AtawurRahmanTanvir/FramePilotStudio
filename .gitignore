@@ -43,3 +43,15 @@ desktop.ini
 runtime/backend/
 runtime/models/
 runtime/ffmpeg/*.exe
+
+# Python build environment and caches
+.build-runtime-venv/
+.venv/
+.pip-cache/
+__pycache__/
+*.py[cod]
+
+# Generated build outputs
+dist/
+release/
+
