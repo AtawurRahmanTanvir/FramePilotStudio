@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, ipcMain, dialog, shell, protocol, net } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, protocol, net, clipboard } = require('electron');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
@@ -218,6 +218,29 @@ app.whenReady().then(() => {
     if (!fs.existsSync(target)) throw new Error('The selected file or folder no longer exists. Please select it again.');
     const stat = fs.statSync(target);
     return { path: target, name: path.basename(target), isDirectory: stat.isDirectory(), size: stat.isFile() ? stat.size : null, modifiedAt: stat.mtime.toISOString() };
+  });
+  handle('app:copy-path', (_event, rawPath) => {
+    const target = path.resolve(requireString(rawPath, 'Output path'));
+    if (!fs.existsSync(target) || !fs.statSync(target).isFile()) throw new Error('The output file no longer exists. Check the output location and run the job again if needed.');
+    clipboard.writeText(target);
+    return { copied: true, path: target };
+  });
+  handle('app:show-in-folder', (_event, rawPath) => {
+    const target = path.resolve(requireString(rawPath, 'Output path'));
+    if (!fs.existsSync(target) || !fs.statSync(target).isFile()) throw new Error('The output file no longer exists. Check the output location and run the job again if needed.');
+    shell.showItemInFolder(target);
+    return true;
+  });
+  handle('app:copy-master-prompt-and-open-chatgpt', async () => {
+    const promptPath = path.join(appRoot, 'Master_promt.txt');
+    if (!fs.existsSync(promptPath) || !fs.statSync(promptPath).isFile()) {
+      throw new Error(`The bundled Master Prompt is missing: ${promptPath}`);
+    }
+    const prompt = fs.readFileSync(promptPath, 'utf8');
+    if (!prompt.trim()) throw new Error('Master_promt.txt is empty. Restore the original prompt file before continuing.');
+    clipboard.writeText(prompt);
+    await shell.openExternal('https://chatgpt.com/');
+    return { copied: true, opened: true, characters: prompt.length };
   });
   handle('engine:runtime-info', async () => runBackend(['runtime-info']));
   handle('engine:csv-validate', async (_event, csvPath) => runBackend(['validate-csv', requireString(csvPath, 'CSV path')]));

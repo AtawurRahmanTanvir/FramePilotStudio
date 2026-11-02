@@ -1,12 +1,12 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state = {
-  page: 'dashboard', audio: null, mapping: null, wfp: null, timelineCsv: null, imageFolder: null,
-  audioOutput: null, outputWfp: null, analysis: null, analyzed: false, runtime: null,
+  page: 'dashboard', audio: null, mapping: null, scriptFile: null, wfp: null, timelineCsv: null, imageFolder: null,
+  audioOutput: null, outputWfp: null, analysis: null, analyzed: false, runtime: null, wfpOperation: 'export',
   settings: null, log: [], job: null, jobKind: null, jobStartedAt: 0, jobClock: null, lastEngineError: null,
   latestRelease: null, stagedUpdate: null, releases: []
 };
-const labels = { dashboard: 'Overview', audio: 'Audio to CSV', timeline: 'Timeline Engine', activity: 'Activity & QA', settings: 'Settings', help: 'Help & Guide' };
+const labels = { dashboard: 'Overview', audio: 'Audio to CSV', 'script-mapping': 'Script-to-Image Mapping', timeline: 'Timeline Engine', activity: 'Activity & QA', settings: 'Settings', help: 'Help & Guide' };
 const $all = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 function toast(message, error = false, duration = 5200) {
@@ -108,6 +108,10 @@ async function chooseFile({ dialogFilters, key, nameId, metaId, badgeId, buttonI
     const selected = result.filePaths[0];
     state[key] = selected;
     setFileField({ key, path: selected, nameId, metaId, badgeId, buttonId, folder });
+    if (key === 'audio' || key === 'mapping') {
+      state.audioOutput = null;
+      $('audio-output-result').hidden = true;
+    }
     if (key === 'wfp') {
       state.analyzed = false; state.analysis = null; $('export-wfp').disabled = true;
       $('analysis-status').textContent = 'NOT ANALYZED'; $('analysis-status').className = 'runtime-check pending';
@@ -116,25 +120,33 @@ async function chooseFile({ dialogFilters, key, nameId, metaId, badgeId, buttonI
       $('output-wfp-name').title = state.outputWfp;
     }
     if (key === 'timelineCsv' || key === 'wfp' || key === 'imageFolder') {
-      state.analyzed = false; $('export-wfp').disabled = true;
+      if (key !== 'wfp') state.outputWfp = null;
+      state.analyzed = false; $('export-wfp').disabled = true; $('wfp-output-result').hidden = true;
       $('analysis-status').textContent = 'NOT ANALYZED'; $('analysis-status').className = 'runtime-check pending';
       $('analysis-message').textContent = 'Inputs changed. Analyze the project again.';
     }
     updateAudioFileCount();
     updateTimelineButtonState();
+    if (key === 'scriptFile') {
+      $('script-file-state').textContent = 'SCRIPT ADDED';
+      $('copy-mapping-prompt').disabled = false;
+      $('script-prompt-status').textContent = `Selected: ${basename(selected)}. The file will be attached manually in ChatGPT after it opens.`;
+    }
+    if (key === 'wfp') $('wfp-output-result').hidden = true;
     log(`Added ${folder ? 'folder' : 'file'}: ${basename(selected)}`, 'success');
   } catch (error) { showEngineError(error, 'Could not add the selected item.'); }
 }
 function bindInputButtons() {
   $('pick-audio').addEventListener('click', () => chooseFile({ key: 'audio', nameId: 'audio-name', metaId: 'audio-file-meta', badgeId: 'audio-selected-badge', buttonId: 'pick-audio', dialogFilters: [{ name: 'Voiceover audio', extensions: ['mp3', 'wav', 'm4a', 'flac', 'aac', 'ogg', 'opus'] }] }));
   $('pick-mapping').addEventListener('click', () => chooseFile({ key: 'mapping', nameId: 'mapping-name', metaId: 'mapping-file-meta', badgeId: 'mapping-selected-badge', buttonId: 'pick-mapping', dialogFilters: [{ name: 'Visual Mapping CSV', extensions: ['csv'] }] }));
+  $('pick-script-file').addEventListener('click', () => chooseFile({ key: 'scriptFile', nameId: 'script-file-name', metaId: 'script-file-meta', badgeId: 'script-file-selected-badge', buttonId: 'pick-script-file', dialogFilters: [{ name: 'Script files', extensions: ['txt', 'md', 'docx', 'pdf'] }] }));
   $('pick-wfp').addEventListener('click', () => chooseFile({ key: 'wfp', nameId: 'wfp-name', metaId: 'wfp-file-meta', badgeId: 'wfp-selected-badge', buttonId: 'pick-wfp', dialogFilters: [{ name: 'Filmora Project', extensions: ['wfp'] }] }));
   $('pick-timeline-csv').addEventListener('click', () => chooseFile({ key: 'timelineCsv', nameId: 'timeline-csv-name', metaId: 'timeline-csv-meta', badgeId: 'timeline-csv-selected-badge', buttonId: 'pick-timeline-csv', dialogFilters: [{ name: 'Final Master CSV', extensions: ['csv'] }] }));
   $('pick-image-folder').addEventListener('click', () => chooseFile({ key: 'imageFolder', nameId: 'image-folder-name', metaId: 'image-folder-meta', badgeId: 'image-folder-selected-badge', buttonId: 'pick-image-folder', folder: true }));
 }
 
-function openProgress(kind, title) {
-  state.job = title; state.jobKind = kind; state.jobStartedAt = Date.now(); state.lastEngineError = null;
+function openProgress(kind, title, operation = 'export') {
+  state.job = title; state.jobKind = kind; state.wfpOperation = operation; state.jobStartedAt = Date.now(); state.lastEngineError = null;
   updateTimelineButtonState(); updateAudioButtonState();
   const panel = kind === 'wfp' ? $('wfp-progress-panel') : $('audio-progress-panel');
   panel.hidden = false;
@@ -160,14 +172,75 @@ function updateProgress(percent, stage, message) {
   if (stage) $('audio-progress-stage').textContent = stage;
   if (message) $('audio-progress-message').textContent = message;
 }
+function renderWfpStageList(percent, operation, terminalState = 'running') {
+  const host = $('wfp-stage-list');
+  if (!host || !window.FramePilotTimelineProgress) return;
+  const model = window.FramePilotTimelineProgress.getTimelineProgress(percent, operation);
+  host.replaceChildren();
+  model.steps.forEach((step, index) => {
+    const item = document.createElement('li');
+    item.className = `timeline-stage-card is-${step.state}${terminalState === 'failed' && step.state === 'active' ? ' is-failed' : ''}`;
+    const marker = document.createElement('span');
+    marker.className = 'timeline-stage-marker';
+    marker.textContent = step.state === 'complete' ? '✓' : String(index + 1);
+    const copy = document.createElement('span');
+    copy.className = 'timeline-stage-copy';
+    const title = document.createElement('strong'); title.textContent = step.label;
+    const detail = document.createElement('small'); detail.textContent = step.detail;
+    copy.append(title, detail); item.append(marker, copy); host.append(item);
+  });
+  const active = model.steps[model.currentIndex];
+  $('wfp-progress-stage').textContent = terminalState === 'failed' ? 'Processing stopped' : (active?.label || 'Processing Filmora project');
+}
 function updateWfpProgress(percent, stage, message) {
   const clamped = Math.max(0, Math.min(100, Number(percent) || 0));
   $('wfp-progress-number').textContent = `${Math.round(clamped)}%`;
   $('wfp-progress-fill').style.width = `${clamped}%`;
-  const circle = $('wfp-progress-ring'); const circumference = 2 * Math.PI * 49;
-  circle.style.strokeDasharray = String(circumference); circle.style.strokeDashoffset = String(circumference * (1 - clamped / 100));
-  if (stage) $('wfp-progress-stage').textContent = stage;
+  renderWfpStageList(clamped, state.wfpOperation || 'export');
   if (message) $('wfp-progress-message').textContent = message;
+}
+function setOutputResult(kind, filePath) {
+  if (!filePath) return;
+  const prefix = kind === 'audio' ? 'audio' : 'wfp';
+  const panel = $(`${prefix}-output-result`);
+  const name = $(`${prefix}-output-file-name`);
+  const pathNode = $(`${prefix}-output-file-path`);
+  if (!panel || !name || !pathNode) return;
+  name.textContent = basename(filePath);
+  pathNode.textContent = filePath;
+  pathNode.title = filePath;
+  panel.hidden = false;
+}
+async function copyOutputPath(kind) {
+  const filePath = kind === 'audio' ? state.audioOutput : state.outputWfp;
+  if (!filePath) { toast('No output file is available yet.', true); return; }
+  try { await window.framepilot.copyPath(filePath); toast('Output path copied to clipboard.'); }
+  catch (error) { showEngineError(error, 'Could not copy the output path.'); }
+}
+async function revealOutput(kind) {
+  const filePath = kind === 'audio' ? state.audioOutput : state.outputWfp;
+  if (!filePath) { toast('No output file is available yet.', true); return; }
+  try { await window.framepilot.showInFolder(filePath); }
+  catch (error) { showEngineError(error, 'Could not open the output folder.'); }
+}
+async function copyScriptPromptAndOpenChatGPT() {
+  if (!state.scriptFile) { toast('Choose a script file first.', true); return; }
+  const button = $('copy-mapping-prompt');
+  button.disabled = true;
+  const label = button.querySelector('span');
+  if (label) label.textContent = 'Copying prompt…';
+  try {
+    const result = await window.framepilot.copyMasterPromptAndOpenChatGPT();
+    $('script-prompt-status').textContent = `Master Prompt copied (${Number(result.characters || 0).toLocaleString()} characters). ChatGPT is open. Attach “${basename(state.scriptFile)}” manually, paste the prompt, then send it.`;
+    toast('Master Prompt copied. ChatGPT opened — attach your script and paste the prompt.', false, 9000);
+    log(`Master Prompt copied and ChatGPT opened for script: ${basename(state.scriptFile)}.`, 'success');
+  } catch (error) {
+    showEngineError(error, 'Could not copy the Master Prompt or open ChatGPT.');
+    $('script-prompt-status').textContent = userFacingErrorMessage(error);
+  } finally {
+    if (label) label.textContent = 'Copy Master Prompt & Open ChatGPT';
+    button.disabled = !state.scriptFile;
+  }
 }
 function closeProgress(success, message) {
   const kind = state.jobKind;
@@ -176,7 +249,7 @@ function closeProgress(success, message) {
   state.jobClock = null; state.job = null; state.jobKind = null;
   if (kind === 'wfp') {
     if (success) { updateWfpProgress(100, 'Processing completed', message || 'Filmora project output completed.'); $('wfp-progress-status').textContent = 'COMPLETE'; $('wfp-progress-status').className = 'progress-status success'; }
-    else { $('wfp-progress-status').textContent = 'FAILED'; $('wfp-progress-status').className = 'progress-status failed'; $('wfp-progress-stage').textContent = 'Processing stopped'; $('wfp-progress-message').textContent = message || 'The engine returned an error.'; }
+    else { $('wfp-progress-status').textContent = 'FAILED'; $('wfp-progress-status').className = 'progress-status failed'; renderWfpStageList(Number.parseFloat($('wfp-progress-number').textContent) || 0, state.wfpOperation || 'export', 'failed'); $('wfp-progress-message').textContent = message || 'The engine returned an error.'; }
   } else {
     if (success) { updateProgress(100, 'Processing completed', message || 'All output validation steps completed.'); $('audio-progress-status').textContent = 'COMPLETE'; $('audio-progress-status').className = 'progress-status success'; }
     else { $('audio-progress-status').textContent = 'FAILED'; $('audio-progress-status').className = 'progress-status failed'; $('audio-progress-stage').textContent = 'Processing stopped'; $('audio-progress-message').textContent = message || 'The engine returned an error.'; }
@@ -203,6 +276,7 @@ async function startAudioEngine() {
   const model = $('model-size').value;
   const device = 'cpu';
   const compute = 'int8';
+  $('audio-output-result').hidden = true;
   $('start-audio').disabled = true;
   $('start-audio').querySelector('span').textContent = 'Processing…';
   openProgress('audio', 'Preparing voiceover analysis');
@@ -224,7 +298,7 @@ async function analyzeWfp() {
   $('analysis-message').textContent = 'Checking the project and CSV. The source project will not be changed.';
   ['metric-images', 'metric-markers', 'metric-fps', 'metric-duration'].forEach(id => $(id).textContent = '—');
   log('Starting non-destructive WFP structural analysis.');
-  openProgress('wfp', 'Analyzing source Filmora project');
+  openProgress('wfp', 'Analyzing source Filmora project', 'analyze');
   try { await window.framepilot.analyzeWfp({ project: state.wfp, csv: state.timelineCsv, imageFolder: state.imageFolder }); }
   catch (error) { const message = userFacingErrorMessage(error, 'Filmora project analysis failed.'); if (!/cancelled by the user/i.test(message)) { closeProgress(false, message); showEngineError(error, 'Filmora project analysis failed.'); } $('analysis-status').textContent = /cancelled by the user/i.test(message) ? 'CANCELLED' : 'FAILED'; $('analysis-status').className = 'runtime-check'; $('analysis-message').textContent = message; }
 }
@@ -232,10 +306,11 @@ async function exportWfp() {
   if (!state.analyzed || !state.wfp) { toast('Analyze the WFP project successfully before generating the output.', true); return; }
   const presets = $all('.motion-preset:checked').map(item => item.value);
   if (!presets.length) { toast('Select at least one motion preset.', true); return; }
+  $('wfp-output-result').hidden = true;
   $('export-wfp').disabled = true;
   $('export-wfp').querySelector('span').textContent = 'Generating…';
   log('Generating a non-destructive Filmora output beside the source WFP.');
-  openProgress('wfp', 'Generating editable Filmora output');
+  openProgress('wfp', 'Generating editable Filmora output', 'export');
   try {
     state.outputWfp = await window.framepilot.prepareWfpOutput(state.wfp);
     $('output-wfp-name').textContent = state.outputWfp;
@@ -480,6 +555,9 @@ function bindGeneralControls() {
   $('cancel-wfp-job').addEventListener('click', async () => { try { await window.framepilot.cancelJob(); $('wfp-progress-status').textContent = 'CANCELLING'; $('wfp-progress-message').textContent = 'Stopping the Filmora engine…'; } catch (error) { showEngineError(error); } });
   $('analyze-wfp').addEventListener('click', analyzeWfp);
   $('export-wfp').addEventListener('click', exportWfp);
+  $('copy-mapping-prompt').addEventListener('click', copyScriptPromptAndOpenChatGPT);
+  $all('[data-output-copy]').forEach(button => button.addEventListener('click', () => copyOutputPath(button.dataset.outputCopy)));
+  $all('[data-output-reveal]').forEach(button => button.addEventListener('click', () => revealOutput(button.dataset.outputReveal)));
   $('change-csv-folder').addEventListener('click', changeCsvFolder);
   $('auto-check-updates').addEventListener('change', event => updatePreference('autoCheckUpdates', event.target.checked));
   $('auto-download-updates').addEventListener('change', event => updatePreference('autoDownloadUpdates', event.target.checked));
@@ -503,6 +581,7 @@ window.framepilot.onJobEvent(event => {
     if (event.csv_output) {
       const result = event.csv_output;
       state.audioOutput = result.output;
+      setOutputResult('audio', result.output);
       $('audio-output-directory').textContent = result.output;
       $('audio-output-directory').title = result.output;
       closeProgress(true, `Final Master CSV created: ${basename(result.output)} · ${result.rows} images · ${result.language}`);
@@ -522,7 +601,9 @@ window.framepilot.onJobEvent(event => {
     }
     if (event.export) {
       closeProgress(true, 'Motion effects applied and editable WFP output verified.');
+      state.outputWfp = event.export.output;
       $('output-wfp-name').textContent = event.export.output; $('output-wfp-name').title = event.export.output;
+      setOutputResult('wfp', event.export.output);
       $('export-wfp').disabled = false;
       toast('New Filmora project generated. The source project remains untouched.', false, 8000);
       log(`Generated Filmora project: ${event.export.output}`, 'success');
@@ -556,7 +637,7 @@ window.framepilot.onUpdateEvent(handleUpdateEvent);
 async function init() {
   bindGeneralControls(); bindInputButtons(); renderLog();
   updateTimelineButtonState();
-  state.currentVersion = await window.framepilot.getVersion().catch(() => '0.1.3');
+  state.currentVersion = await window.framepilot.getVersion().catch(() => '0.1.4');
   $('app-version').textContent = `v${state.currentVersion}`;
   await Promise.all([loadSettings(), refreshRuntime()]);
 }

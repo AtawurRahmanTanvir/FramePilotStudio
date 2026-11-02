@@ -3,7 +3,7 @@ from PyInstaller.utils.hooks import collect_all
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(SPECPATH).resolve().parent
 BACKEND = ROOT / 'backend'
 WHISPERX_COPY = ROOT / 'vendor' / 'whisperx-source'
 # Freeze the inspected project-owned WhisperX package copy, even though the

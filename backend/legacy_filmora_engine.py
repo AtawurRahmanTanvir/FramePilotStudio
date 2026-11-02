@@ -40,7 +40,7 @@ from typing import Any, Callable
 
 
 APP_NAME = "FramePilot Studio"
-APP_VERSION = "0.1.3"
+APP_VERSION = "0.1.4"
 TICKS_PER_SECOND = 10_000_000
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 SERIAL_RE = re.compile(r"(?:image|img)[_-]?(\d{1,5})(?:[_\-. ]|$)", re.IGNORECASE)

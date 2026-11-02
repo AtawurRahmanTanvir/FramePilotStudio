@@ -1,4 +1,4 @@
-# FramePilot Studio — Architecture Notes (0.1.3)
+# FramePilot Studio — Architecture Notes (0.1.4)
 
 ## Target runtime
 
@@ -42,7 +42,7 @@ FramePilot Studio Desktop
 1. Inputs: source Filmora WFP, Final Master CSV, optional Image Folder.
 2. Inspect source archive, CSV, image clips, native markers and timeline metadata.
 3. Apply verified timing and existing motion templates.
-4. Save the new WFP beside the source project. Example: `BrandFilm_FramePilotStudio_Enhanced_v0.1.3.wfp`; unique numeric suffix is used when needed.
+4. Save the new WFP beside the source project. Example: `BrandFilm_FramePilotStudio_Enhanced_v0.1.4.wfp`; unique numeric suffix is used when needed.
 5. Never overwrite the selected source WFP.
 6. WFP progress includes the analysis phase and export phase. Final structural QA does not replace opening and playing the output in Filmora 15.
 
@@ -70,12 +70,13 @@ The website's release catalogue is the only source for latest and historic versi
 - Complete dependency and model licenses, code-sign installer and verify the signature before first public release.
 
 
-## UI boundary (0.1.3)
+## UI boundary (0.1.4)
 The Electron renderer is the only user interface. The old Tkinter presentation layer has been removed from the WFP processing module. WhisperX and FFmpeg are implementation dependencies, not separate user-facing applications or menu destinations.
 
 
-## UI information architecture (0.1.3)
-- Primary workspace navigation is limited to Overview, Audio to CSV and Timeline Engine.
+## UI information architecture (0.1.4)
+- Primary workspace navigation includes Overview, Audio to CSV, Script-to-Image Mapping and Timeline Engine.
 - Activity & QA, Settings, and Help & Guide form the support/system group.
+- Script Mapping copies the original master prompt and opens ChatGPT; users must attach the selected script themselves and choose a suitable Thinking reasoning level.
 - Reference-only Motion Library page, repeated footer labels, slogans, breadcrumbs and duplicate runtime panels are intentionally omitted from primary screens.
 - Static instructions and limitations are consolidated in Help & Guide; only actionable inputs, controls, outputs and readiness states remain in the workspaces.

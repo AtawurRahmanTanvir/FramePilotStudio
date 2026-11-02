@@ -1,14 +1,14 @@
 {
   "name": "framepilot-studio",
-  "version": "0.1.3",
-  "description": "Local-first automated video production workflow desktop application",
+  "version": "0.1.4",
+  "description": "Local-first video production workflow with Script-to-Image planning and Filmora automation",
   "main": "src/main/main.js",
   "author": "FramePilot Studio",
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "test:python": "python -m unittest discover -s tests -p 'test_*.py'",
+    "test:python": "python -m unittest discover -s tests -p \"test_*.py\"",
     "test:node": "node --test tests/*.test.js",
     "test": "npm run test:python && npm run test:node",
     "build:dir": "electron-builder --dir",
@@ -35,21 +35,39 @@
       {
         "from": "runtime/backend",
         "to": "runtime/backend",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "runtime/ffmpeg",
         "to": "runtime/ffmpeg",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "runtime/models",
         "to": "runtime/models",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "runtime/manifests/runtime-manifest.json",
         "to": "runtime/manifests/runtime-manifest.json"
+      },
+      {
+        "from": "runtime/manifests/python-requirements-lock.txt",
+        "to": "runtime/manifests/python-requirements-lock.txt"
+      },
+      {
+        "from": "runtime/README_BN.md",
+        "to": "runtime/README_BN.md"
+      },
+      {
+        "from": "runtime/BUILD_WINDOWS_CPU_RUNTIME_BN.md",
+        "to": "runtime/BUILD_WINDOWS_CPU_RUNTIME_BN.md"
       },
       {
         "from": "branding/framepilot-window.png",
@@ -63,7 +81,11 @@
         "from": "vendor/whisperx-source/LICENSE",
         "to": "licenses/whisperx-LICENSE"
       },
-      "THIRD_PARTY_NOTICES.md"
+      "THIRD_PARTY_NOTICES.md",
+      {
+        "from": "Master_promt.txt",
+        "to": "Master_promt.txt"
+      }
     ],
     "win": {
       "icon": "branding/framepilot-studio.ico",

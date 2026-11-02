@@ -1,6 +1,15 @@
-# FramePilot Studio — Development Build 0.1.3
+# FramePilot Studio — Development Build 0.1.4
 
 **Purpose:** Local-first Windows desktop workflow for WhisperX-powered Audio-to-CSV generation and Filmora WFP timeline automation.
+
+
+## 0.1.4 — Script Mapping, Timeline Progress and Output Access
+- Added a Script-to-Image Mapping workspace accepting TXT, MD, DOCX and PDF script files.
+- Added a prominent ChatGPT Thinking-mode instruction: choose High (or Extra High if available) before sending; avoid Instant. The prompt cannot change ChatGPT's reasoning setting.
+- The app copies the unmodified `Master_promt.txt` to the clipboard and opens ChatGPT. The user must attach the selected script manually; the app does not upload it.
+- Replaced the Filmora Timeline circular progress indicator with a stage-based view driven by the existing backend progress events. No timer-based or fabricated percentage is used.
+- Added prominent output cards for generated CSV and WFP files, with Copy Path and Show in Folder actions.
+- Added the unchanged master prompt to Electron `extraResources` so the Copy Prompt action also works in the packaged app.
 
 ## 0.1.3 — Task-focused interface
 - Unnecessary slogans, repeated brand labels, breadcrumbs, decorative status cards and footer copy removed from the working screens.
@@ -14,7 +23,7 @@
 - The Audio engine button is disabled until WhisperX, an offline model pack and FFmpeg/FFprobe are available.
 - Live progress is driven by FFmpeg, WhisperX transcription, WhisperX word-alignment, and Filmora processing callbacks. A spinning animation is not treated as measured progress.
 - CSV output is automatically saved under `Documents/FramePilot Studio/CSV`; change this default once in Settings.
-- WFP output is automatically saved beside its source WFP, using a unique suffix such as `ProjectName_FramePilotStudio_Enhanced_v0.1.3.wfp`. The source WFP is never overwritten.
+- WFP output is automatically saved beside its source WFP, using a unique suffix such as `ProjectName_FramePilotStudio_Enhanced_v0.1.4.wfp`. The source WFP is never overwritten.
 - Settings now includes a website-based update center, latest-version check, full release history and verified version switching/rollback.
 - তোমার দেওয়া FramePilot Studio PNG-টাই একমাত্র application brand logo; hero-এর SVG আলাদা production-workflow illustration, অন্য কোনো logo নয়।
 

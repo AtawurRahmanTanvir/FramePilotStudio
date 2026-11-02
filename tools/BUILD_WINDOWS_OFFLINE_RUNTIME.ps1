@@ -78,22 +78,38 @@ foreach ($name in @("ffmpeg.exe", "ffprobe.exe", "LICENSE", "README.txt")) {
   if (-not (Test-Path $source)) { throw "Required project-owned FFmpeg file is missing: $source" }
   Copy-Item -LiteralPath $source -Destination (Join-Path $FfmpegRuntime $name) -Force
 }
-$FfmpegVersion = (& (Join-Path $FfmpegRuntime "ffmpeg.exe") -version | Select-Object -First 1).ToString()
-$FfprobeVersion = (& (Join-Path $FfmpegRuntime "ffprobe.exe") -version | Select-Object -First 1).ToString()
-$FfmpegBuildConf = (& (Join-Path $FfmpegRuntime "ffmpeg.exe") -buildconf 2>&1 | Out-String).Trim()
-if ($LASTEXITCODE -ne 0 -or -not $FfmpegVersion -or -not $FfprobeVersion) { throw "Could not inspect both staged FFmpeg programs." }
+$FfmpegVersionOutput = @(& (Join-Path $FfmpegRuntime "ffmpeg.exe") -version)
+$FfmpegVersionExitCode = $LASTEXITCODE
+$FfmpegVersion = if ($FfmpegVersionOutput.Count -gt 0) { $FfmpegVersionOutput[0].ToString() } else { "" }
+$FfprobeVersionOutput = @(& (Join-Path $FfmpegRuntime "ffprobe.exe") -version)
+$FfprobeVersionExitCode = $LASTEXITCODE
+$FfprobeVersion = if ($FfprobeVersionOutput.Count -gt 0) { $FfprobeVersionOutput[0].ToString() } else { "" }
+$BuildConfStderr = Join-Path $env:TEMP "framepilot-ffmpeg-buildconf-$PID.txt"
+$previousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$FfmpegBuildConfStdout = & (Join-Path $FfmpegRuntime "ffmpeg.exe") -buildconf 2> $BuildConfStderr | Out-String
+$ErrorActionPreference = $previousErrorActionPreference
+$FfmpegBuildConfExitCode = $LASTEXITCODE
+$FfmpegBuildConfStderrText = if (Test-Path $BuildConfStderr) { Get-Content -LiteralPath $BuildConfStderr -Raw } else { "" }
+$FfmpegBuildConf = ($FfmpegBuildConfStdout + "`r`n" + $FfmpegBuildConfStderrText).Trim()
+Remove-Item -LiteralPath $BuildConfStderr -Force -ErrorAction SilentlyContinue
+if ($FfmpegVersionExitCode -ne 0 -or $FfprobeVersionExitCode -ne 0 -or -not $FfmpegVersion -or -not $FfprobeVersion) { throw "Could not inspect both staged FFmpeg programs." }
+if ($FfmpegBuildConfExitCode -ne 0 -or -not $FfmpegBuildConf) { throw "Could not inspect the staged FFmpeg build configuration." }
 
 Write-Host "[6/8] Keeping the strict local-only runtime manifest and refreshing the exact lock..." -ForegroundColor Cyan
 $manifest = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
 $manifest.status = "incomplete"
-$manifest.runtime_version = "0.1.3-dev"
+$manifest.runtime_version = "0.1.4-dev"
 $manifest.python_backend.kind = "pyinstaller-one-folder"
 $manifest.python_backend.status = "build-in-progress"
 $manifest.python_backend.package_lock = "manifests/python-requirements-lock.txt"
+$manifest.python.provenance = "Project-owned CPython 3.12.10 environment used to freeze the validated one-folder backend."
 $manifest.whisperx.version = "3.8.6"
 $manifest.ffmpeg.version = $FfmpegVersion
-$manifest.ffmpeg.configuration = "Static Gyan full build; --enable-gpl --enable-version3; buildconf recorded in docs/ENGINE_INTEGRATION.md"
-$manifest.ffmpeg.license = "GPL-3.0-or-later build; redistribution remains blocked pending source/notices compliance review"
+$manifest.ffmpeg.configuration = "Static x86_64 BtbN LGPL build; exact -buildconf output: $FfmpegBuildConf"
+$manifest.ffmpeg.license = "LGPL-3.0-or-later build; corresponding-source and redistribution review remains required"
+$manifest.ffmpeg.ffmpeg_sha256 = (Get-FileHash -Algorithm SHA256 (Join-Path $FfmpegRuntime "ffmpeg.exe")).Hash.ToLowerInvariant()
+$manifest.ffmpeg.ffprobe_sha256 = (Get-FileHash -Algorithm SHA256 (Join-Path $FfmpegRuntime "ffprobe.exe")).Hash.ToLowerInvariant()
 $manifest.python_backend.python_version = (& $Py --version 2>&1).ToString()
 Set-Content -LiteralPath $LockFile -Encoding utf8 -Value @(
   "# Frozen from the project-owned CPython 3.12.10 build environment after installing the pinned reference lock.",
@@ -114,7 +130,7 @@ New-Item -ItemType Directory -Force -Path $StageBackend | Out-Null
 Copy-Item -Path (Join-Path $BuiltBackend "*") -Destination $StageBackend -Recurse -Force
 
 # Record hashes of all shipped runtime files except the manifest itself.
-$manifest.files = @(Get-ChildItem -Force -Path $Runtime -File -Recurse | Where-Object { $_.FullName -ne $ManifestPath } | ForEach-Object {
+$manifest.files = @(Get-ChildItem -Force -Path $Runtime -File -Recurse | Where-Object { $_.FullName -ne $ManifestPath -and $_.Name -ne ".gitkeep" } | ForEach-Object {
   $relative = $_.FullName.Substring($Runtime.TrimEnd('\').Length + 1).Replace('\','/')
   @{ path = $relative; size_bytes = $_.Length; sha256 = (Get-FileHash -Algorithm SHA256 $_.FullName).Hash.ToLowerInvariant() }
 })

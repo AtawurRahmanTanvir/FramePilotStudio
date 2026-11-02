@@ -1,0 +1,43 @@
+FRAMEPILOT STUDIO 0.1.4 — REPLACEMENT GUIDE
+==========================================
+
+এই ZIP-টি তোমার GitHub main source archive-এর উপর তৈরি সম্পূর্ণ source replacement archive। ZIP-এর root-এ সরাসরি project-এর ফাইল ও folder আছে; অতিরিক্ত parent folder নেই।
+
+কীভাবে বসাবে
+-------------
+1. FramePilot Studio বন্ধ করো।
+2. নিরাপত্তার জন্য E:\FramePilot_Studio folder-এর একটি backup রাখো।
+3. ZIP Extract করো। Extract destination হিসেবে সরাসরি E:\FramePilot_Studio নির্বাচন করো।
+4. Windows যদি “Replace the files in the destination” জিজ্ঞেস করে, “Replace the files” নির্বাচন করো।
+5. “Skip files” নির্বাচন কোরো না। Extract শেষে ZIP-এর নতুন files-গুলো E:\FramePilot_Studio-এর একই path-এ থাকবে।
+6. ZIP-এ থাকা নেই এমন তোমার অতিরিক্ত local files (যেমন .git, node_modules, .venv, local FFmpeg executable বা model files) মুছে ফেলা হবে না। কোনো folder manually delete কোরো না।
+
+পরীক্ষা
+------
+VS Code Terminal:
+
+    cd E:\FramePilot_Studio
+    npm test
+    npm start
+
+npm test সফল হলে নতুন Script-to-Image tab, Filmora stage progress এবং generated-output card পরীক্ষা করো।
+
+GitHub-এ পরিবর্তন Push
+----------------------
+নিজে পরীক্ষা করে সন্তুষ্ট হলে:
+
+    git status
+    git add .
+    git commit -m "Add Script-to-Image workflow and improve Filmora progress and output access"
+    git push
+
+গুরুত্বপূর্ণ
+-----------
+- Master_promt.txt ফাইলটি অপরিবর্তিত রাখা হয়েছে। SHA-256:
+  05a3422a5e47f1243e3a04f734044adc9c853c93e054c09a4d5d856de58212e3
+- Script-to-Image tab TXT, MD, DOCX এবং PDF script নির্বাচন করতে পারে। অ্যাপ Master Prompt clipboard-এ copy করে ChatGPT খুলবে। ChatGPT-তে script file ব্যবহারকারীকে নিজে attach করতে হবে; app সেটি স্বয়ংক্রিয়ভাবে upload করে না।
+- Prompt পাঠানোর আগে ChatGPT Thinking / Think harder mode থেকে High নির্বাচন করো; Extra High থাকলে সেটি ব্যবহার করো। Instant ব্যবহার কোরো না। Prompt নিজে ChatGPT-এর mode বদলাতে পারে না।
+- Timeline progress backend-এর real progress events থেকে ধাপ ও percentage দেখায়; timer দিয়ে progress বানায় না।
+- CSV/WFP সফলভাবে তৈরি হলে Copy Path এবং Show in Folder action দেখা যাবে।
+- এটি source-code replacement ZIP; Windows installer নয়। এই GitHub archive-এ সম্পূর্ণ offline WhisperX/PyTorch/model runtime অন্তর্ভুক্ত নেই।
+- Original Master Prompt ছাড়া অন্য project files এই build-এ update করা হয়েছে। তোমার .git folder ও local runtime files এই ZIP-এ নেই, তাই সেগুলো replace/delete হবে না।

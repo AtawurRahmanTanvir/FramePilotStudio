@@ -1,4 +1,3 @@
-@'
 node_modules/
 .venv/
 venv/
@@ -39,9 +38,8 @@ coverage/
 .DS_Store
 Thumbs.db
 desktop.ini
-'@ | Set-Content -Encoding UTF8 .gitignore
-runtime/ffmpeg/ffmpeg.exe
-runtime/ffmpeg/ffprobe.exe
 
-runtime/ffmpeg/ffmpeg.exe
-runtime/ffmpeg/ffprobe.exe
+# Generated offline runtime payloads are rebuilt by the release script.
+runtime/backend/
+runtime/models/
+runtime/ffmpeg/*.exe
