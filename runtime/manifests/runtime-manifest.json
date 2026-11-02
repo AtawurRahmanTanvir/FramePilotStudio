@@ -2,7 +2,7 @@
     "schema_version":  1,
     "product":  "FramePilot Studio",
     "runtime_version":  "0.1.4-dev",
-    "status":  "incomplete",
+    "status":  "release-ready",
     "platform":  "windows-x64",
     "python":  {
                    "version":  "3.12.10",
@@ -101,7 +101,7 @@
                   },
                   {
                       "path":  "backend/FramePilotBackend/FramePilotBackend.exe",
-                      "sha256":  "e84d8444072473be0493059ab0e950804a0aee343e85449ff99e1ca970677053",
+                      "sha256":  "f7411b3d804493cf27d16443e1cbe98ba6e8357cda415000fa457efce0027878",
                       "size_bytes":  98381648
                   },
                   {
@@ -321,7 +321,7 @@
                   },
                   {
                       "path":  "backend/FramePilotBackend/_internal/base_library.zip",
-                      "sha256":  "2c9420a8e6970e6e685a494b8dca4afe9f660418e3f2b031f398a0b43dd3620a",
+                      "sha256":  "7e1b2cb6ad03a81f1354e8811d320e86c58386a3a83276a7400ec06080709eff",
                       "size_bytes":  1331373
                   },
                   {
