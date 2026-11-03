@@ -36,7 +36,7 @@
         "from": "runtime/backend",
         "to": "runtime/backend",
         "filter": [
-          "**/*"
+          "FramePilotBackend/**/*"
         ]
       },
       {
@@ -91,7 +91,7 @@
       "icon": "branding/framepilot-studio.ico",
       "target": [
         {
-          "target": "nsis",
+          "target": "appx",
           "arch": [
             "x64"
           ]
@@ -109,6 +109,16 @@
       "uninstallerIcon": "branding/framepilot-studio.ico",
       "installerHeaderIcon": "branding/framepilot-studio.ico",
       "deleteAppDataOnUninstall": false
+    },
+    "appx": {
+      "applicationId": "FramePilotStudio",
+      "identityName": "AtawurRahman.FramePilotStudio",
+      "publisher": "CN=75384DDE-01B9-4CD1-9B84-566EEBE74F94",
+      "publisherDisplayName": "Atawur Rahman",
+      "displayName": "FramePilot Studio",
+      "languages": [
+        "en-US"
+      ]
     }
   }
 }
