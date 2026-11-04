@@ -57,6 +57,9 @@ runtime/motion/node/
 runtime/motion/browser/
 !runtime/motion/runtime-manifest.json
 
+# Local recovery artifacts created while removing oversized runtime blobs.
+backups/git-runtime-split-*/
+
 # Operating system files
 .DS_Store
 Thumbs.db
