@@ -17,6 +17,7 @@ REQUIRED_BINARIES = [FFMPEG_DIR / 'ffmpeg.exe', FFMPEG_DIR / 'ffprobe.exe']
 MODEL_DIR = RUNTIME / 'models'
 MANIFEST = RUNTIME / 'manifests' / 'runtime-manifest.json'
 MOTION_RUNTIME = RUNTIME / 'motion'
+MOTION_MANIFEST = MOTION_RUNTIME / 'runtime-manifest.json'
 MOTION_REQUIRED_ARTIFACTS = [
     MOTION_RUNTIME / 'node' / 'node.exe',
     MOTION_RUNTIME / 'browser' / 'chrome-headless-shell.exe',
@@ -66,6 +67,9 @@ def sha256_file(path: Path) -> str:
 missing: list[str] = []
 progress('checking required runtime artifacts')
 
+if not MOTION_MANIFEST.is_file():
+    missing.append('Motion runtime distribution manifest is missing: runtime/motion/runtime-manifest.json')
+
 if not BACKEND_EXE.is_file():
     missing.append('Frozen backend missing: runtime/backend/FramePilotBackend/FramePilotBackend.exe')
 for binary in REQUIRED_BINARIES:
@@ -74,6 +78,26 @@ for binary in REQUIRED_BINARIES:
 for artifact in MOTION_REQUIRED_ARTIFACTS:
     if not artifact.is_file() or artifact.stat().st_size == 0:
         missing.append(f'Motion runtime artifact is missing or empty: {artifact.relative_to(ROOT)}')
+
+if MOTION_MANIFEST.is_file():
+    try:
+        motion_manifest = json.loads(MOTION_MANIFEST.read_text(encoding='utf-8'))
+        for key in ('node', 'chrome_headless_shell', 'remotion'):
+            if not isinstance(motion_manifest.get(key), dict):
+                missing.append(f'Motion runtime manifest is missing the {key} declaration.')
+        for key in ('node', 'chrome_headless_shell'):
+            entry = motion_manifest.get(key) or {}
+            executable = str(entry.get('executable') or '')
+            expected_hash = str(entry.get('executable_sha256') or '').lower()
+            candidate = (MOTION_RUNTIME / executable).resolve() if executable else None
+            if not candidate or MOTION_RUNTIME.resolve() not in candidate.parents or not candidate.is_file():
+                missing.append(f'Motion runtime executable is missing: {executable or "(unspecified)"}')
+            elif not SHA256_RE.fullmatch(expected_hash):
+                missing.append(f'Motion runtime executable hash is invalid: {key}')
+            elif sha256_file(candidate) != expected_hash:
+                missing.append(f'Motion runtime executable SHA-256 mismatch: {executable}')
+    except (OSError, ValueError, TypeError) as exc:
+        missing.append(f'Motion runtime distribution manifest is invalid: {exc}')
 
 if not MODEL_DIR.is_dir():
     missing.append('Private model directory missing: runtime/models/')

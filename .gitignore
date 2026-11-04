@@ -51,6 +51,12 @@ runtime/backend/
 runtime/models/
 runtime/ffmpeg/*.exe
 
+# Downloaded Motion runtime payloads.
+# Keep the small distribution manifest and source worker contract tracked.
+runtime/motion/node/
+runtime/motion/browser/
+!runtime/motion/runtime-manifest.json
+
 # Operating system files
 .DS_Store
 Thumbs.db

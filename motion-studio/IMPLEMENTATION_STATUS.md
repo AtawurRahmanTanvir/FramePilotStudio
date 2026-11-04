@@ -12,6 +12,9 @@
 - A pinned Remotion 4.0.540 worker package definition and render-worker source.
 - A staged Node.js v22.23.4 Windows x64 runtime, Chrome Headless Shell 157.0.8103.38,
   and the Remotion 4.0.540 Windows compositor with FFmpeg/FFprobe.
+- A reproducible `npm run install:motion-runtime` installer that downloads the official
+  Node.js and Chrome Headless Shell archives, verifies SHA-256, preserves license files,
+  and stages the payload locally without storing the binaries in normal Git commits.
 - Claude Project Instructions, per-video Motion Master Prompt, word CSV specification, import contract, upstream Skill setup instructions and a Copilot integration brief.
 - Prompt cards that copy or save each Markdown resource, plus an action that copies the Motion Master Prompt and opens Claude. Source files are not uploaded automatically.
 - An additive overlay installer that modifies only four existing files: `src/renderer/index.html`, `src/main/main.js`, `src/preload/preload.js` and `package.json`. It creates timestamped backups and is idempotent.

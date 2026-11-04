@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "product": "FramePilot Studio Motion Runtime",
+  "platform": "windows-x64",
+  "distribution": {
+    "strategy": "official-vendor-downloads",
+    "installer": "tools/INSTALL_MOTION_RUNTIME.ps1",
+    "offline_after_install": true
+  },
+  "node": {
+    "version": "22.23.4",
+    "archive_url": "https://nodejs.org/dist/v22.23.4/node-v22.23.4-win-x64.zip",
+    "checksums_url": "https://nodejs.org/dist/v22.23.4/SHASUMS256.txt",
+    "archive_name": "node-v22.23.4-win-x64.zip",
+    "executable": "node/node.exe",
+    "executable_sha256": "dccc52de28d8df2ee22d2062424f8c563070d95d8ad70c54c4bf01d590dec14f"
+  },
+  "chrome_headless_shell": {
+    "version": "157.0.8103.38",
+    "archive_url": "https://storage.googleapis.com/chrome-for-testing-public/157.0.8103.38/win64/chrome-headless-shell-win64.zip",
+    "archive_name": "chrome-headless-shell-win64.zip",
+    "archive_sha256": "1ff4540855478ba0848e03f1ef8d455f77d058b38285df91bc34273788a73446",
+    "executable": "browser/chrome-headless-shell.exe",
+    "executable_sha256": "18a6ae26964d5e987f1f3e339dc13f792ff664a6dddc48340f9a58d0a9f0b359",
+    "license_file": "LICENSE.headless_shell"
+  },
+  "remotion": {
+    "version": "4.0.540",
+    "worker_package": "renderer/package.json",
+    "compositor_package": "renderer/node_modules/@remotion/compositor-win32-x64-msvc/package.json"
+  }
+}

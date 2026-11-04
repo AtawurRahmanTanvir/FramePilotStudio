@@ -15,6 +15,7 @@
     "dist": "python tools/check_release_runtime.py && electron-builder --win appx",
     "build:backend": "pyinstaller --noconfirm --clean tools/FramePilotBackend.spec",
     "preflight": "python tools/check_release_runtime.py",
+    "install:motion-runtime": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/INSTALL_MOTION_RUNTIME.ps1",
     "build:offline-runtime": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/BUILD_WINDOWS_OFFLINE_RUNTIME.ps1"
   },
   "devDependencies": {
