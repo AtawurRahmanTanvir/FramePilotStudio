@@ -3,13 +3,14 @@
 <html lang="en" class="large-text">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self' data:; media-src 'self' framepilot:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark" />
   <title>FramePilot Studio</title>
   <link rel="stylesheet" href="./styles/tokens.css" />
   <link rel="stylesheet" href="./styles/app.css" />
   <link rel="stylesheet" href="./styles/compact-ui.css" />
+  <link rel="stylesheet" href="./motion-studio/motion-studio.css" />
 </head>
 <body>
 <div class="app-shell">
@@ -176,5 +177,6 @@
 <div class="toast-region" id="toast-region" aria-live="polite"></div>
 <script src="./timeline-progress.js"></script>
 <script src="./app.js"></script>
+<script src="./motion-studio/motion-studio.js"></script>
 </body>
 </html>

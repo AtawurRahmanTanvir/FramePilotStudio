@@ -1,0 +1,29 @@
+FRAMEPILOT STUDIO — MOTION STUDIO OVERLAY
+=========================================
+
+TARGET SOURCE: FramePilot Studio v0.1.4 (or the compatible 0.1.x source with the expected anchors)
+
+INSTALL
+1. Close FramePilot Studio and make a full copy/commit of your current source project.
+2. Extract this ZIP into the ROOT of your existing FramePilotStudio source folder.
+3. Merge the new folders. Do not replace/delete the whole src, backend, runtime or tools folders.
+4. Double-click: tools\APPLY_MOTION_STUDIO_OVERLAY.bat
+5. The installer checks known source anchors and creates timestamped backups under:
+   backups\motion-studio-overlay\<timestamp>\
+6. Open the project in Copilot and use:
+   motion-studio\prompts\COPILOT_START_PROMPT.md
+   plus the complete brief:
+   motion-studio\COPILOT_FINAL_INTEGRATION_TASK.md
+
+UPSTREAM SKILL SOURCE
+After downloading the ZIP from https://github.com/haidrrrry/claude-remotion-skill,
+create third_party\claude-remotion-skill\upstream\ first. Open the ZIP's top-level claude-remotion-skill-main folder and extract its CONTENTS directly into upstream\ (so upstream\remotion-motion-graphics\SKILL.md exists; avoid an extra nested folder).
+Preserve its original LICENSE and attribution. Do not place it inside src, backend or runtime.
+
+IMPORTANT
+- Filmora Studio's four existing workflows, Filmora/EMS CSV and WFP engine must remain unchanged.
+- Motion Studio uses a new five-column word timing CSV and separate Remotion project workflow.
+- This overlay adds screens, IPC connections, backend source, prompts and integration scaffolding.
+- It does NOT bundle the private WhisperX model pack, Bengali aligner, Node runtime, Chrome Headless Shell, Remotion compositor binaries or a validated Windows worker sandbox.
+- Render is intentionally locked until Copilot completes and verifies the actual runtime and OS-level isolation.
+- No existing source files are patched by extraction alone. Run the BAT installer after merging.

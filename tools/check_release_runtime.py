@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +16,45 @@ FFMPEG_DIR = RUNTIME / 'ffmpeg'
 REQUIRED_BINARIES = [FFMPEG_DIR / 'ffmpeg.exe', FFMPEG_DIR / 'ffprobe.exe']
 MODEL_DIR = RUNTIME / 'models'
 MANIFEST = RUNTIME / 'manifests' / 'runtime-manifest.json'
+MOTION_RUNTIME = RUNTIME / 'motion'
+MOTION_REQUIRED_ARTIFACTS = [
+    MOTION_RUNTIME / 'node' / 'node.exe',
+    MOTION_RUNTIME / 'browser' / 'chrome-headless-shell.exe',
+    MOTION_RUNTIME / 'renderer' / 'node_modules' / '@remotion' / 'renderer' / 'package.json',
+    MOTION_RUNTIME / 'renderer' / 'node_modules' / '@remotion' / 'compositor-win32-x64-msvc' / 'package.json',
+    MOTION_RUNTIME / 'security' / 'worker-policy.json',
+]
 SHA256_RE = re.compile(r'^[a-f0-9]{64}$')
+DEFAULT_TIMEOUT_SECONDS = 120
+
+
+def progress(message: str) -> None:
+    print(f'[preflight] {message}', flush=True)
+
+
+def timeout_seconds() -> float:
+    raw = os.environ.get('FRAMEPILOT_PREFLIGHT_TIMEOUT_SECONDS', str(DEFAULT_TIMEOUT_SECONDS))
+    try:
+        value = float(raw)
+    except ValueError:
+        raise SystemExit(f'Invalid FRAMEPILOT_PREFLIGHT_TIMEOUT_SECONDS value: {raw!r}')
+    if value <= 0:
+        raise SystemExit('FRAMEPILOT_PREFLIGHT_TIMEOUT_SECONDS must be greater than zero.')
+    return value
+
+
+started_at = time.monotonic()
+deadline = started_at + timeout_seconds()
+
+
+def check_deadline(stage: str) -> None:
+    if time.monotonic() > deadline:
+        missing.append(
+            f'Preflight timed out during {stage} after '
+            f'{int(time.monotonic() - started_at)} seconds. '
+            'Increase FRAMEPILOT_PREFLIGHT_TIMEOUT_SECONDS only after confirming the runtime is complete.'
+        )
+        raise TimeoutError(missing[-1])
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -24,16 +64,28 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 missing: list[str] = []
+progress('checking required runtime artifacts')
 
 if not BACKEND_EXE.is_file():
     missing.append('Frozen backend missing: runtime/backend/FramePilotBackend/FramePilotBackend.exe')
 for binary in REQUIRED_BINARIES:
     if not binary.is_file() or binary.stat().st_size == 0:
         missing.append(f'Missing or empty bundled media binary: {binary.relative_to(ROOT)}')
+for artifact in MOTION_REQUIRED_ARTIFACTS:
+    if not artifact.is_file() or artifact.stat().st_size == 0:
+        missing.append(f'Motion runtime artifact is missing or empty: {artifact.relative_to(ROOT)}')
 
 if not MODEL_DIR.is_dir():
     missing.append('Private model directory missing: runtime/models/')
 
+if missing:
+    progress('required runtime artifacts are missing; stopping before manifest hashing')
+    for item in missing:
+        print(f' - {item}', flush=True)
+    print('\nDo not create or distribute a partial installer. Complete the full offline runtime first.', flush=True)
+    sys.exit(2)
+
+progress('checking runtime manifest and model declarations')
 if not MANIFEST.is_file():
     missing.append('runtime/manifests/runtime-manifest.json is missing.')
 else:
@@ -103,7 +155,11 @@ else:
             missing.append('Runtime manifest SHA-256 inventory is empty.')
         else:
             seen: set[str] = set()
-            for record in records:
+            progress(f'verifying SHA-256 inventory ({len(records):,} files)')
+            for index, record in enumerate(records, start=1):
+                check_deadline('SHA-256 inventory verification')
+                if index == 1 or index % 500 == 0:
+                    progress(f'hashed {index:,}/{len(records):,} inventory files')
                 if not isinstance(record, dict):
                     missing.append('Runtime inventory contains a non-object entry.')
                     continue
@@ -132,10 +188,13 @@ else:
                 rel = target.relative_to(RUNTIME).as_posix()
                 if rel not in seen:
                     missing.append(f'Required executable is not covered by SHA-256 inventory: {rel}')
+    except TimeoutError:
+        pass
     except Exception as exc:
         missing.append(f'Runtime manifest invalid: {exc}')
 
 notices_path = ROOT / 'THIRD_PARTY_NOTICES.md'
+progress('checking third-party notices')
 notices = notices_path.read_text(encoding='utf-8') if notices_path.is_file() else ''
 if (not notices or 'release audit status: blocked' in notices.lower()
         or 'pending complete audit' in notices.lower() or '[pending audit]' in notices.lower()

@@ -1,0 +1,7 @@
+FramePilot Studio Motion Studio overlay applied.
+Time: 04/11/2026, 20:12:52
+Target version: 0.1.4
+Backups: backups\motion-studio-overlay\2026-11-04T14-12-52-118Z
+Patched files: src/renderer/index.html, src/main/main.js, src/preload/preload.js, package.json
+Filmora workflow source files were not directly edited by the overlay patch.
+Next: follow motion-studio/COPILOT_FINAL_INTEGRATION_TASK.md. Motion Render remains blocked until the actual runtime and worker isolation are validated.

@@ -27,6 +27,41 @@ contextBridge.exposeInMainWorld('framepilot', {
   listVersions: () => ipcRenderer.invoke('updates:list-versions'),
   downloadVersion: version => ipcRenderer.invoke('updates:download-version', version),
   installUpdate: () => ipcRenderer.invoke('updates:install'),
+  motionSelectScript: () => ipcRenderer.invoke('motion:select-script'),
+  motionSelectAudio: () => ipcRenderer.invoke('motion:select-audio'),
+  motionSelectProjectZip: () => ipcRenderer.invoke('motion:select-project-zip'),
+  motionSelectOutputFolder: () => ipcRenderer.invoke('motion:select-output-folder'),
+  motionReadPrompt: key => ipcRenderer.invoke('motion:read-prompt', key),
+  motionCopyText: text => ipcRenderer.invoke('motion:copy-text', text),
+  motionCopyPath: file => ipcRenderer.invoke('motion:copy-path', file),
+  motionReadOutputPreview: file => ipcRenderer.invoke('motion:read-output-preview', file),
+  motionSavePrompt: key => ipcRenderer.invoke('motion:save-prompt', key),
+  motionOpenClaude: () => ipcRenderer.invoke('motion:open-claude'),
+  motionReadScriptPreview: file => ipcRenderer.invoke('motion:read-script-preview', file),
+  motionGetRuntimeInfo: () => ipcRenderer.invoke('motion:runtime-info'),
+  motionGenerateWordTiming: input => ipcRenderer.invoke('motion:generate-word-timing', input),
+  motionInspectProject: zip => ipcRenderer.invoke('motion:inspect-project', zip),
+  motionImportProject: zip => ipcRenderer.invoke('motion:import-project', zip),
+  motionListProjects: () => ipcRenderer.invoke('motion:list-projects'),
+  motionListRenderHistory: () => ipcRenderer.invoke('motion:list-render-history'),
+  motionRenameProject: input => ipcRenderer.invoke('motion:rename-project', input),
+  motionDuplicateProject: folder => ipcRenderer.invoke('motion:duplicate-project', folder),
+  motionDeleteProject: folder => ipcRenderer.invoke('motion:delete-project', folder),
+  motionOpenProjectFolder: folder => ipcRenderer.invoke('motion:open-project-folder', folder),
+  motionShowInFolder: file => ipcRenderer.invoke('motion:show-in-folder', file),
+  motionResolveOutputUrl: file => ipcRenderer.invoke('motion:resolve-output-url', file),
+  motionStartRender: input => ipcRenderer.invoke('motion:start-render', input),
+  motionCancelJob: () => ipcRenderer.invoke('motion:cancel-job'),
+  onMotionJobEvent: callback => {
+    const listener = (_e, data) => callback(data);
+    ipcRenderer.on('motion:job-event', listener);
+    return () => ipcRenderer.removeListener('motion:job-event', listener);
+  },
+  onMotionJobLog: callback => {
+    const listener = (_e, data) => callback(data);
+    ipcRenderer.on('motion:job-log', listener);
+    return () => ipcRenderer.removeListener('motion:job-log', listener);
+  },
   onJobEvent: callback => { const listener = (_e, data) => callback(data); ipcRenderer.on('job:event', listener); return () => ipcRenderer.removeListener('job:event', listener); },
   onJobLog: callback => { const listener = (_e, data) => callback(data); ipcRenderer.on('job:log', listener); return () => ipcRenderer.removeListener('job:log', listener); },
   onUpdateEvent: callback => {

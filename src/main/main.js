@@ -9,6 +9,7 @@ const { randomUUID } = require('node:crypto');
 const { pathToFileURL } = require('node:url');
 const preferences = require('./preferences');
 const updateService = require('./update-service');
+const { registerMotionService } = require('./motion-service');
 
 let mainWindow;
 let activeChild = null;
@@ -203,10 +204,15 @@ app.whenReady().then(() => {
   protocol.handle('framepilot', async request => {
     try {
       const requested = new URL(request.url);
-      if (requested.hostname !== 'app') return new Response('Not found', { status: 404 });
+      const isApplicationAsset = requested.hostname === 'app';
+      const isMotionOutput = requested.hostname === 'motion-output';
+      if (!isApplicationAsset && !isMotionOutput) return new Response('Not found', { status: 404 });
       const relative = decodeURIComponent(requested.pathname).replace(/^\/+/, '');
-      const filePath = path.resolve(rendererRoot, relative);
-      if (filePath !== rendererRoot && !filePath.startsWith(rendererRoot + path.sep)) return new Response('Forbidden', { status: 403 });
+      const contentRoot = isApplicationAsset
+        ? rendererRoot
+        : path.join(app.getPath('documents'), 'FramePilot Studio', 'Motion Projects');
+      const filePath = path.resolve(contentRoot, relative);
+      if (filePath !== contentRoot && !filePath.startsWith(contentRoot + path.sep)) return new Response('Forbidden', { status: 403 });
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return new Response('Not found', { status: 404 });
       return net.fetch(pathToFileURL(filePath).toString());
     } catch { return new Response('Bad request', { status: 400 }); }
@@ -313,6 +319,7 @@ app.whenReady().then(() => {
     return true;
   });
 
+  registerMotionService({ handle, app, dialog, shell, clipboard, appRoot, isDev, getMainWindow: () => mainWindow });
   createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
   setTimeout(checkUpdatesInBackground, 1800);

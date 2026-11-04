@@ -1,0 +1,53 @@
+FRAMEPILOT MOTION STUDIO OVERLAY — FILE MAP
+===========================================
+
+INSTALL_MOTION_STUDIO_FIRST.txt
+  First-run instructions for extracting and applying this overlay.
+
+src/renderer/motion-studio/
+  New Motion Studio screens, navigation logic, CSS and controls.
+
+src/main/motion-service.js
+  Independent Motion IPC service, Word Timing invocation, project import,
+  local output management, runtime detection and guarded render worker.
+
+backend/motion/
+  Separate Python CLI bridge, five-column word timing engine and safe
+  Remotion project ZIP inspection/import implementation.
+
+tools/APPLY_MOTION_STUDIO_OVERLAY.bat
+  One-click source overlay installer. Creates timestamped backups before
+  patching four known integration files; safe to run again (idempotent).
+
+tools/apply-motion-studio-overlay.cjs
+  Exact-anchor patcher for renderer HTML/CSP, main IPC registration,
+  preload allow-list and electron-builder extraResources.
+
+runtime/motion/renderer/
+  Pinned Remotion worker dependency manifest and programmatic bundling,
+  preview/final rendering source. No node_modules or browser binaries included.
+
+runtime/motion/security/
+  Unvalidated worker-policy template. Render is deliberately locked until
+  the real OS-level project-only/no-network sandbox is implemented and tested.
+
+motion-studio/prompts/
+  Claude Project Instructions, per-video Master Prompt, five-column CSV
+  spec, import contract, upstream Skill setup guide and Copilot start prompt.
+
+motion-studio/COPILOT_FINAL_INTEGRATION_TASK.md
+  Full engineering checklist for completing runtime, security, testing and packaging.
+
+motion-studio/VALIDATION_PLAN.md
+  Regression and acceptance test plan.
+
+third_party/claude-remotion-skill/
+  Placeholder explaining where to extract the downloaded upstream repository:
+  upstream/ (preserve original LICENSE and attribution).
+
+tests/motion/
+  Unit tests for word timing data handling and ZIP importer safety.
+
+EXISTING FILMORA FILES ARE NOT INCLUDED IN THIS ZIP.
+The installer patches only src/renderer/index.html, src/main/main.js,
+src/preload/preload.js and package.json. Do not replace whole existing folders.

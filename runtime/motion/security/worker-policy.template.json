@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "isolationStatus": "not-validated",
+  "networkAccess": null,
+  "filesystemScope": "unrestricted",
+  "notes": "Template only. Rendering imported JavaScript/TypeScript remains disabled until Copilot implements and validates a Windows worker sandbox with project-only filesystem access and outbound network denied. Do not change this file to validated without real enforcement and tests."
+}

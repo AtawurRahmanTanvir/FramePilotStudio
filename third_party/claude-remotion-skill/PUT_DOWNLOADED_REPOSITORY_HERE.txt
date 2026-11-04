@@ -1,0 +1,6 @@
+Place the complete downloaded upstream repository in this folder as:
+
+third_party/claude-remotion-skill/upstream/
+
+Preserve the original upstream files and MIT LICENSE. Do not merge them into Filmora Studio source folders. See:
+motion-studio/prompts/UPSTREAM_SKILL_SETUP.md

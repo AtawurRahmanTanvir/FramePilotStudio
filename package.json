@@ -85,6 +85,27 @@
       {
         "from": "Master_promt.txt",
         "to": "Master_promt.txt"
+      },
+      {
+        "from": "backend/motion",
+        "to": "backend/motion",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "motion-studio/prompts",
+        "to": "motion-studio/prompts",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "runtime/motion",
+        "to": "runtime/motion",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "win": {
