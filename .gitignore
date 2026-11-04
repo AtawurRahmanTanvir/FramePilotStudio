@@ -1,17 +1,26 @@
+﻿# Node.js dependencies
 node_modules/
+
+# Python environments
 .venv/
 venv/
 env/
+.build-runtime-venv/
+.pip-cache/
+
+# Python caches
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
 
+# Logs and temporary files
 *.log
 *.tmp
 temp/
@@ -19,6 +28,7 @@ tmp/
 cache/
 logs/
 
+# Generated model/vendor payloads
 vendor/whisperx/models/
 vendor/whisperx/cache/
 vendor/ffmpeg/
@@ -29,29 +39,19 @@ models/
 *.onnx
 *.safetensors
 
+# Generated build outputs
 dist/
 build/
 release/
 out/
 coverage/
 
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Generated offline runtime payloads are rebuilt by the release script.
+# Generated offline runtime payloads
 runtime/backend/
 runtime/models/
 runtime/ffmpeg/*.exe
 
-# Python build environment and caches
-.build-runtime-venv/
-.venv/
-.pip-cache/
-__pycache__/
-*.py[cod]
-
-# Generated build outputs
-dist/
-release/
-
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -12,7 +12,7 @@
     "test:node": "node --test tests/*.test.js",
     "test": "npm run test:python && npm run test:node",
     "build:dir": "electron-builder --dir",
-    "dist": "python tools/check_release_runtime.py && electron-builder --win nsis",
+    "dist": "python tools/check_release_runtime.py && electron-builder --win appx",
     "build:backend": "pyinstaller --noconfirm --clean tools/FramePilotBackend.spec",
     "preflight": "python tools/check_release_runtime.py",
     "build:offline-runtime": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/BUILD_WINDOWS_OFFLINE_RUNTIME.ps1"
