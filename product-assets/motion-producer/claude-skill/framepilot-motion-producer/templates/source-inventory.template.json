@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "projectTitle": "Project Name",
+  "scriptFile": "script.txt",
+  "voiceoverFile": "voiceover.mp3",
+  "wordTimingCsv": "word_timing.csv",
+  "files": [
+    {
+      "sourceFilename": "Image_001.png",
+      "sourcePathLabel": "user-upload/Image_001.png",
+      "assetType": "image",
+      "bytes": null,
+      "sha256": null,
+      "included": true,
+      "reason": "mandatory visual source"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FramePilot Timing Review",
+  "type": "object",
+  "required": ["schemaVersion", "sourceCsv", "status", "totalRows", "validTimedRows", "warnings", "errors"],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "sourceCsv": {"type": "string"},
+    "sha256": {"type": ["string", "null"]},
+    "status": {"enum": ["PASS", "PASS_WITH_WARNINGS", "FAIL", "BLOCKED", "NOT RUN"]},
+    "totalRows": {"type": "integer", "minimum": 0},
+    "validTimedRows": {"type": "integer", "minimum": 0},
+    "untimedRows": {"type": "integer", "minimum": 0},
+    "mismatchRows": {"type": "integer", "minimum": 0},
+    "overlapRows": {"type": "integer", "minimum": 0},
+    "audioDurationMs": {"type": ["number", "null"]},
+    "maxCsvEndMs": {"type": ["number", "null"]},
+    "warnings": {"type": "array"},
+    "errors": {"type": "array"}
+  }
+}

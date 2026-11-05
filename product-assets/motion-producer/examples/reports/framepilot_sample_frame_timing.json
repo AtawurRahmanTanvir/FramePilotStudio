@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "sourceCsv": "framepilot_test_word_timing.csv",
+  "fps": 30.0,
+  "timeUnit": "milliseconds",
+  "frameInterval": "start-inclusive/end-exclusive",
+  "rounding": {
+    "start": "floor",
+    "end": "ceil"
+  },
+  "timedWordCount": 3,
+  "skippedRowCount": 1,
+  "timedWords": [
+    {
+      "wordIndex": 1,
+      "scriptWord": "Hello",
+      "recognizedWord": "Hello",
+      "startMs": 0.0,
+      "endMs": 310.0,
+      "startFrame": 0,
+      "endFrameExclusive": 10,
+      "durationInFrames": 10
+    },
+    {
+      "wordIndex": 2,
+      "scriptWord": "world",
+      "recognizedWord": "world",
+      "startMs": 320.0,
+      "endMs": 700.0,
+      "startFrame": 9,
+      "endFrameExclusive": 21,
+      "durationInFrames": 12
+    },
+    {
+      "wordIndex": 3,
+      "scriptWord": "friend",
+      "recognizedWord": "frend",
+      "startMs": 720.0,
+      "endMs": 1080.0,
+      "startFrame": 21,
+      "endFrameExclusive": 33,
+      "durationInFrames": 12
+    }
+  ],
+  "skippedRows": [
+    {
+      "line": 5,
+      "wordIndex": "4",
+      "reason": "empty_recognized_word"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FramePilot Asset Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "assets"],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["assetId", "sourceFilename", "packagedPath", "assetType", "sceneIds", "included"],
+        "properties": {
+          "assetId": {"type": "string", "minLength": 1},
+          "sourceFilename": {"type": "string", "minLength": 1},
+          "packagedPath": {"type": ["string", "null"]},
+          "assetType": {"enum": ["image", "video", "audio", "font", "logo", "document", "data", "other"]},
+          "role": {"type": ["string", "null"]},
+          "sceneIds": {"type": "array", "items": {"type": "string"}},
+          "sequenceNumber": {"type": ["integer", "null"]},
+          "preservationConstraints": {"type": "array", "items": {"type": "string"}},
+          "sha256": {"type": ["string", "null"]},
+          "included": {"type": "boolean"},
+          "exclusionReason": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "resolution": "1280x720",
+    "page": "motion-overview",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-overview.png",
+    "sizeBytes": 385396
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-word-timing",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-word-timing.png",
+    "sizeBytes": 298149
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-claude-kit",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-claude-kit.png",
+    "sizeBytes": 225878
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-import",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-import.png",
+    "sizeBytes": 246543
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-render",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-render.png",
+    "sizeBytes": 203337
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-project-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-project-manager.png",
+    "sizeBytes": 207640
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-render-history",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-render-history.png",
+    "sizeBytes": 137779
+  },
+  {
+    "resolution": "1280x720",
+    "page": "motion-runtime-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1280x720_motion-runtime-manager.png",
+    "sizeBytes": 136136
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-overview",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-overview.png",
+    "sizeBytes": 406388
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-word-timing",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-word-timing.png",
+    "sizeBytes": 313598
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-claude-kit",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-claude-kit.png",
+    "sizeBytes": 237909
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-import",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-import.png",
+    "sizeBytes": 261952
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-render",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-render.png",
+    "sizeBytes": 223200
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-project-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-project-manager.png",
+    "sizeBytes": 218775
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-render-history",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-render-history.png",
+    "sizeBytes": 144770
+  },
+  {
+    "resolution": "1366x768",
+    "page": "motion-runtime-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1366x768_motion-runtime-manager.png",
+    "sizeBytes": 122927
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-overview",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-overview.png",
+    "sizeBytes": 528601
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-word-timing",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-word-timing.png",
+    "sizeBytes": 418225
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-claude-kit",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-claude-kit.png",
+    "sizeBytes": 304663
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-import",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-import.png",
+    "sizeBytes": 346440
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-render",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-render.png",
+    "sizeBytes": 280087
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-project-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-project-manager.png",
+    "sizeBytes": 277708
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-render-history",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-render-history.png",
+    "sizeBytes": 200086
+  },
+  {
+    "resolution": "1920x1080",
+    "page": "motion-runtime-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1920x1080_motion-runtime-manager.png",
+    "sizeBytes": 201436
+  }
+]

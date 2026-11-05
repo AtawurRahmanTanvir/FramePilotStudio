@@ -1,0 +1,5 @@
+Word_Index,Script_Word,Recognized_Word,Start_ms,End_ms
+1,Hello,Hello,0,310
+2,world,world,320,700
+3,friend,frend,720,1080
+4,missing,,,

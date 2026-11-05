@@ -6,44 +6,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const { spawn } = require('node:child_process');
+const preferences = require('./preferences');
 
 const PROMPT_FILES = Object.freeze({
-  instructions: 'CLAUDE_PROJECT_INSTRUCTIONS.md',
-  master: 'MOTION_MASTER_PROMPT.md',
-  contract: 'PROJECT_IMPORT_CONTRACT.md',
-  timing: 'WORD_TIMING_CSV_SPEC.md',
-  setup: 'UPSTREAM_SKILL_SETUP.md',
-  copilot: 'COPILOT_START_PROMPT.md'
-});
-
-handle('motion:list-render-history', async () => {
-  const history = readRenderHistory();
-  return history.filter(item => item && typeof item.outputPath === 'string').map(item => ({
-    ...item,
-    outputExists: fs.existsSync(item.outputPath) && fs.statSync(item.outputPath).isFile()
-  }));
+  instructions: 'project-instructions/PROJECT_INSTRUCTIONS.md',
+  handoff: 'project-instructions/PER_VIDEO_INTAKE.md'
 });
 
 function inside(root, candidate) {
   const relative = path.relative(path.resolve(root), path.resolve(candidate));
   return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
-}
-
-function readRenderHistory() {
-  try {
-    const value = JSON.parse(fs.readFileSync(renderHistoryPath, 'utf8'));
-    return Array.isArray(value) ? value : [];
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw new Error(`Motion render history is invalid: ${error.message}`);
-    return [];
-  }
-}
-
-function writeRenderHistory(history) {
-  fs.mkdirSync(projectsRoot, { recursive: true });
-  const temporary = `${renderHistoryPath}.tmp`;
-  fs.writeFileSync(temporary, JSON.stringify(history.slice(0, 100), null, 2), 'utf8');
-  fs.renameSync(temporary, renderHistoryPath);
 }
 
 function cleanName(value) {
@@ -57,7 +29,6 @@ function parseJsonLines(buffer, onEvent, onText) {
     if (!line.trim()) continue;
     try {
       const event = JSON.parse(line);
-      if (event.event === 'result') lastResult = event;
       onEvent(event);
     }
     catch { onText(line); }
@@ -96,16 +67,39 @@ function createRunner({ child, send, onFinish }) {
 function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot, isDev, getMainWindow }) {
   let activeMotionChild = null;
   let activeMotionKind = null;
-  const promptsRoot = path.join(appRoot, 'motion-studio', 'prompts');
+  let activeRuntimeChild = null;
+  const producerRoot = path.join(appRoot, 'product-assets', 'motion-producer');
   const backendRoot = path.join(appRoot, 'backend', 'motion');
   const projectsRoot = path.join(app.getPath('documents'), 'FramePilot Studio', 'Motion Projects');
-  const runtimeRoot = path.join(appRoot, 'runtime', 'motion');
+  const packagedRuntimeRoot = path.join(appRoot, 'runtime', 'motion');
+  const userRuntimeRoot = path.join(app.getPath('userData'), 'runtime', 'motion');
+  const runtimeRoot = isDev || fs.existsSync(path.join(packagedRuntimeRoot, 'node', 'node.exe'))
+    ? packagedRuntimeRoot
+    : userRuntimeRoot;
   const projectRegistryPath = path.join(projectsRoot, '.motion-projects.json');
   const renderHistoryPath = path.join(projectsRoot, '.motion-render-history.json');
 
   function requireString(value, label) {
     if (typeof value !== 'string' || !value.trim()) throw new Error(`${label} is required.`);
     return value.trim();
+  }
+
+  function resolveProducerResource(relativePath, label) {
+    const resource = path.resolve(producerRoot, relativePath);
+    if (!inside(producerRoot, resource) || !fs.existsSync(resource) || !fs.statSync(resource).isFile()) {
+      throw new Error(`${label} is missing from the packaged Motion Producer resources.`);
+    }
+    return resource;
+  }
+
+  function validateClaudeProjectUrl(value) {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    let parsed;
+    try { parsed = new URL(value.trim()); } catch { throw new Error('Claude Project URL must be a valid HTTPS URL.'); }
+    if (parsed.protocol !== 'https:' || !['claude.ai', 'www.claude.ai'].includes(parsed.hostname) || parsed.username || parsed.password) {
+      throw new Error('Claude Project URL must use HTTPS and the claude.ai domain without credentials.');
+    }
+    return parsed.toString();
   }
 
   function selectedFile(result) {
@@ -128,6 +122,43 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     const temporary = `${projectRegistryPath}.tmp`;
     fs.writeFileSync(temporary, JSON.stringify(registry, null, 2), 'utf8');
     fs.renameSync(temporary, projectRegistryPath);
+  }
+
+  function readRenderHistory() {
+    try {
+      const value = JSON.parse(fs.readFileSync(renderHistoryPath, 'utf8'));
+      return Array.isArray(value) ? value : [];
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw new Error(`Motion render history is invalid: ${error.message}`);
+      return [];
+    }
+  }
+
+  function writeRenderHistory(history) {
+    fs.mkdirSync(projectsRoot, { recursive: true });
+    const temporary = `${renderHistoryPath}.tmp`;
+    fs.writeFileSync(temporary, JSON.stringify(history.slice(0, 100), null, 2), 'utf8');
+    fs.renameSync(temporary, renderHistoryPath);
+  }
+
+  function seedUserRuntime() {
+    if (runtimeRoot === packagedRuntimeRoot) return;
+    const sourceRenderer = path.join(packagedRuntimeRoot, 'renderer');
+    const targetRenderer = path.join(runtimeRoot, 'renderer');
+    fs.mkdirSync(targetRenderer, { recursive: true });
+    for (const filename of ['package.json', 'package-lock.json', 'runner.mjs']) {
+      const source = path.join(sourceRenderer, filename);
+      const target = path.join(targetRenderer, filename);
+      if (!fs.existsSync(source)) throw new Error(`Bundled Motion runtime seed is missing: ${source}`);
+      if (!fs.existsSync(target)) fs.copyFileSync(source, target);
+    }
+    const manifest = path.join(packagedRuntimeRoot, 'runtime-manifest.json');
+    const targetManifest = path.join(runtimeRoot, 'runtime-manifest.json');
+    if (!fs.existsSync(manifest)) throw new Error(`Bundled Motion runtime manifest is missing: ${manifest}`);
+    if (!fs.existsSync(targetManifest)) {
+      fs.mkdirSync(runtimeRoot, { recursive: true });
+      fs.copyFileSync(manifest, targetManifest);
+    }
   }
 
   function requireProjectDirectory(rawPath, label = 'Motion project') {
@@ -233,8 +264,7 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
   handle('motion:read-prompt', async (_event, key) => {
     const filename = PROMPT_FILES[String(key || '')];
     if (!filename) throw new Error('Unknown Motion prompt resource.');
-    const file = path.resolve(promptsRoot, filename);
-    if (!inside(promptsRoot, file) || !fs.existsSync(file)) throw new Error(`Motion prompt file is missing: ${filename}`);
+    const file = resolveProducerResource(filename, 'Motion Producer resource');
     return { name: filename, content: fs.readFileSync(file, 'utf8') };
   });
 
@@ -261,9 +291,8 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
   handle('motion:save-prompt', async (_event, key) => {
     const filename = PROMPT_FILES[String(key || '')];
     if (!filename) throw new Error('Unknown Motion prompt resource.');
-    const source = path.join(promptsRoot, filename);
-    if (!fs.existsSync(source)) throw new Error(`Prompt resource is missing: ${filename}`);
-    const result = await dialog.showSaveDialog(getMainWindow(), { title: 'Save Motion Studio instruction file', defaultPath: filename, filters: [{ name: 'Markdown', extensions: ['md'] }] });
+    const source = resolveProducerResource(filename, 'Motion Producer resource');
+    const result = await dialog.showSaveDialog(getMainWindow(), { title: 'Save Motion Producer instructions', defaultPath: path.basename(filename), filters: [{ name: 'Markdown', extensions: ['md'] }] });
     if (result.canceled || !result.filePath) return { saved: false };
     const target = path.resolve(result.filePath);
     fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -272,9 +301,39 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     return { saved: true, path: target };
   });
 
+  handle('motion:save-producer-skill', async () => {
+    const source = resolveProducerResource('skill-package/Claude_Skill_Upload.zip', 'Producer Skill package');
+    const result = await dialog.showSaveDialog(getMainWindow(), { title: 'Save FramePilot Motion Producer Skill', defaultPath: 'Claude_Skill_Upload.zip', filters: [{ name: 'ZIP archive', extensions: ['zip'] }] });
+    if (result.canceled || !result.filePath) return { saved: false };
+    const target = path.resolve(result.filePath);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(source, target);
+    return { saved: true, path: target };
+  });
+
+  handle('motion:claude-kit-info', async () => {
+    const settings = preferences.readSettings();
+    return {
+      instructionsAvailable: Boolean(resolveProducerResource(PROMPT_FILES.instructions, 'Master Instructions')),
+      handoffAvailable: Boolean(resolveProducerResource(PROMPT_FILES.handoff, 'Per-video handoff')),
+      skillAvailable: Boolean(resolveProducerResource('skill-package/Claude_Skill_Upload.zip', 'Producer Skill package')),
+      version: JSON.parse(fs.readFileSync(resolveProducerResource('metadata/VERSION.json', 'Motion Producer metadata'), 'utf8')).version,
+      claudeProjectUrl: settings.claudeProjectUrl || ''
+    };
+  });
+
+  handle('motion:save-claude-project-url', async (_event, value) => {
+    const claudeProjectUrl = validateClaudeProjectUrl(value);
+    if (!claudeProjectUrl) throw new Error('Enter your private Claude Project URL first.');
+    preferences.writeSettings({ claudeProjectUrl });
+    return { saved: true, claudeProjectUrl };
+  });
+
   handle('motion:open-claude', async () => {
-    await shell.openExternal('https://claude.ai/');
-    return { opened: true };
+    const settings = preferences.readSettings();
+    const url = validateClaudeProjectUrl(settings.claudeProjectUrl) || 'https://claude.ai/';
+    await shell.openExternal(url);
+    return { opened: true, configured: url !== 'https://claude.ai/' };
   });
 
   handle('motion:read-script-preview', async (_event, rawPath) => {
@@ -335,9 +394,85 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
       motionRenderReady: remotionReady && projectExecutionAllowed,
       projectExecutionAllowed,
       executionPolicy,
-      promptPackAvailable: Object.values(PROMPT_FILES).every(filename => fs.existsSync(path.join(promptsRoot, filename))),
+      promptPackAvailable: Object.values(PROMPT_FILES).every(filename => fs.existsSync(path.join(producerRoot, filename))),
       projectRoot: projectsRoot
     };
+  });
+
+  handle('motion:manage-runtime', async (_event, rawOperation) => {
+    if (process.platform !== 'win32') throw new Error('Motion runtime management currently requires Windows x64.');
+    if (activeRuntimeChild) throw new Error('A Motion runtime operation is already running.');
+    if (activeMotionChild) throw new Error('Wait for the active Motion Studio job to finish before managing the runtime.');
+    const operation = typeof rawOperation === 'string' ? rawOperation : rawOperation?.operation;
+    if (!['install', 'verify', 'repair'].includes(operation)) {
+      throw new Error('Runtime operation must be install, verify, or repair.');
+    }
+    const scriptCandidates = [
+      isDev ? path.join(appRoot, 'tools', 'INSTALL_MOTION_RUNTIME.ps1') : path.join(runtimeRoot, 'INSTALL_MOTION_RUNTIME.ps1'),
+      path.join(packagedRuntimeRoot, 'INSTALL_MOTION_RUNTIME.ps1'),
+      path.join(appRoot, 'tools', 'INSTALL_MOTION_RUNTIME.ps1')
+    ];
+    const script = scriptCandidates.find(candidate => fs.existsSync(candidate));
+    if (!script) throw new Error('The bundled Motion runtime installer is missing.');
+    seedUserRuntime();
+    const powershell = process.env.SystemRoot
+      ? path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
+      : 'powershell.exe';
+    const args = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', script, '-Root', appRoot, '-MotionRuntimeRoot', runtimeRoot];
+    if (operation === 'verify') args.push('-VerifyOnly');
+    if (operation === 'repair') args.push('-Force');
+    const child = spawn(powershell, args, {
+      cwd: appRoot,
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    activeRuntimeChild = child;
+    sendToWindow('motion:runtime-event', { event: 'started', operation, percent: 0, message: `Starting runtime ${operation}.` });
+    return new Promise((resolve, reject) => {
+      let output = '';
+      let errorOutput = '';
+      let percent = 5;
+      const emitLine = (line, level = 'info') => {
+        const message = line.trim();
+        if (!message) return;
+        if (/downloading/i.test(message)) percent = Math.max(percent, 15);
+        else if (/installing pinned/i.test(message)) percent = Math.max(percent, 55);
+        else if (/verif/i.test(message)) percent = Math.max(percent, 80);
+        sendToWindow('motion:runtime-event', { event: 'progress', operation, percent, level, message });
+      };
+      child.stdout.setEncoding('utf8');
+      child.stderr.setEncoding('utf8');
+      child.stdout.on('data', chunk => {
+        output += chunk;
+        const lines = output.split(/\r?\n/);
+        output = lines.pop() || '';
+        lines.forEach(line => emitLine(line));
+      });
+      child.stderr.on('data', chunk => {
+        errorOutput += chunk;
+        const lines = errorOutput.split(/\r?\n/);
+        errorOutput = lines.pop() || '';
+        lines.forEach(line => emitLine(line, 'error'));
+      });
+      child.once('error', error => {
+        if (activeRuntimeChild === child) activeRuntimeChild = null;
+        sendToWindow('motion:runtime-event', { event: 'error', operation, percent, message: error.message });
+        reject(error);
+      });
+      child.once('close', code => {
+        if (activeRuntimeChild === child) activeRuntimeChild = null;
+        if (output.trim()) emitLine(output);
+        if (errorOutput.trim()) emitLine(errorOutput, 'error');
+        if (code === 0) {
+          sendToWindow('motion:runtime-event', { event: 'complete', operation, percent: 100, message: `Runtime ${operation} completed.` });
+          return resolve({ operation, code: 0 });
+        }
+        const detail = (errorOutput || output).trim().split(/\r?\n/).filter(Boolean).slice(-1)[0];
+        const error = new Error(detail || `Runtime ${operation} stopped with exit code ${code}.`);
+        sendToWindow('motion:runtime-event', { event: 'error', operation, percent, message: error.message });
+        reject(error);
+      });
+    });
   });
 
   handle('motion:generate-word-timing', async (_event, input = {}) => {
@@ -397,6 +532,14 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     return projects.sort((a, b) => a.name.localeCompare(b.name));
   });
 
+  handle('motion:list-render-history', async () => {
+    const history = readRenderHistory();
+    return history.filter(item => item && typeof item.outputPath === 'string').map(item => ({
+      ...item,
+      outputExists: fs.existsSync(item.outputPath) && fs.statSync(item.outputPath).isFile()
+    }));
+  });
+
   handle('motion:rename-project', async (_event, input = {}) => {
     const project = requireProjectDirectory(input.projectPath);
     const name = cleanName(requireString(input.name, 'Project name'));
@@ -444,13 +587,6 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     return { opened: true };
   });
 
-  handle('motion:resolve-output-url', async (_event, rawPath) => {
-    const target = path.resolve(requireString(rawPath, 'Motion output path'));
-    if (!inside(projectsRoot, target) || !fs.existsSync(target) || !fs.statSync(target).isFile()) throw new Error('Motion preview file is invalid.');
-    const relative = path.relative(projectsRoot, target).split(path.sep).map(encodeURIComponent).join('/');
-    return `framepilot://motion-output/${relative}`;
-  });
-
   handle('motion:open-project-folder', async (_event, rawPath) => {
     const project = path.resolve(requireString(rawPath, 'Project path'));
     if (!inside(projectsRoot, project) || !fs.existsSync(project) || !fs.statSync(project).isDirectory()) throw new Error('Motion project folder is invalid.');
@@ -473,13 +609,11 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     const node = nodeCandidates.find(candidate => candidate && (candidate === 'node' || fs.existsSync(candidate)));
     const runner = path.join(runtimeRoot, 'renderer', 'runner.mjs');
     if (!node || !fs.existsSync(infoPath) || !fs.existsSync(runner)) throw new Error('The bundled Motion Node/Remotion runtime is incomplete.');
-    const mode = input.mode === 'preview' ? 'preview' : 'render';
+    const mode = 'render';
     const outputDirectory = path.join(project, 'outputs');
     fs.mkdirSync(outputDirectory, { recursive: true });
     const manifest = JSON.parse(fs.readFileSync(path.join(project, 'motion-project.json'), 'utf8'));
-    const outputPath = mode === 'preview'
-      ? path.join(outputDirectory, 'FramePilot_Preview.mp4')
-      : path.join(outputDirectory, `${cleanName(manifest.projectName)}_Final.mp4`);
+    const outputPath = path.join(outputDirectory, `${cleanName(manifest.projectName)}_Final.mp4`);
     if (fs.existsSync(outputPath)) throw new Error(`Output already exists and will not be overwritten: ${outputPath}`);
     const child = spawn(node, [runner, '--project', project, '--mode', mode, '--output', outputPath], {
       cwd: path.join(runtimeRoot, 'renderer'),
@@ -536,6 +670,167 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     }
     sendToWindow('motion:job-event', { event: 'cancelled', kind, message: 'Motion Studio job cancellation requested.' });
     return { cancelled: true };
+  });
+
+  // ── Skill Package management ──────────────────────────────────────────────
+  handle('motion:rebuild-skill-zip', async () => {
+    const builderScript = path.join(producerRoot, 'tools', 'build_skill_upload_zip.py');
+    if (!fs.existsSync(builderScript)) throw new Error('Skill build script is missing.');
+    const invocation = pythonInvocation(builderScript, []);
+    return new Promise((resolve, reject) => {
+      const child = spawn(invocation.executable, invocation.args, {
+        cwd: producerRoot,
+        windowsHide: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }
+      });
+      let output = '';
+      let errorOutput = '';
+      child.stdout.setEncoding('utf8');
+      child.stderr.setEncoding('utf8');
+      child.stdout.on('data', chunk => { output += chunk; });
+      child.stderr.on('data', chunk => { errorOutput += chunk; });
+      child.once('error', reject);
+      child.once('close', code => {
+        if (code === 0) return resolve({ rebuilt: true, output: output.trim() });
+        reject(new Error(errorOutput.trim() || `Skill build stopped with exit code ${code}.`));
+      });
+    });
+  });
+
+  handle('motion:verify-skill-package', async () => {
+    const verifyScript = path.join(producerRoot, 'tools', 'verify_package.py');
+    if (!fs.existsSync(verifyScript)) throw new Error('Skill verify script is missing.');
+    const skillZip = path.join(producerRoot, 'skill-package', 'Claude_Skill_Upload.zip');
+    if (!fs.existsSync(skillZip)) throw new Error('Skill ZIP package is missing. Rebuild it first.');
+    const invocation = pythonInvocation(verifyScript, [skillZip]);
+    return new Promise((resolve, reject) => {
+      const child = spawn(invocation.executable, invocation.args, {
+        cwd: producerRoot,
+        windowsHide: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }
+      });
+      let output = '';
+      let errorOutput = '';
+      child.stdout.setEncoding('utf8');
+      child.stderr.setEncoding('utf8');
+      child.stdout.on('data', chunk => { output += chunk; });
+      child.stderr.on('data', chunk => { errorOutput += chunk; });
+      child.once('error', reject);
+      child.once('close', code => {
+        if (code === 0) return resolve({ verified: true, output: output.trim() });
+        reject(new Error(errorOutput.trim() || `Skill verify stopped with exit code ${code}.`));
+      });
+    });
+  });
+
+  handle('motion:list-word-timing-sessions', async () => {
+    const timingRoot = path.join(projectsRoot, 'Word Timing');
+    if (!fs.existsSync(timingRoot)) return [];
+    const sessions = [];
+    for (const entry of fs.readdirSync(timingRoot, { withFileTypes: true })) {
+      if (entry.isFile() && entry.name.endsWith('.csv')) {
+        const csvPath = path.join(timingRoot, entry.name);
+        const qaPath = csvPath.replace(/\.csv$/i, '.QA.json');
+        const sessionPath = csvPath.replace(/\.csv$/i, '.session.json');
+        let sessionMeta = {};
+        try { sessionMeta = JSON.parse(fs.readFileSync(sessionPath, 'utf8')); } catch {}
+        const stat = fs.statSync(csvPath);
+        sessions.push({
+          name: path.basename(entry.name, '.csv'),
+          csvPath,
+          qaPath: fs.existsSync(qaPath) ? qaPath : null,
+          sessionId: sessionMeta.sessionId || null,
+          audioPath: sessionMeta.audioPath || null,
+          createdAt: stat.mtime.toISOString(),
+        });
+      }
+    }
+    return sessions.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  });
+
+  handle('motion:generate-handoff-zip', async (_event, input = {}) => {
+    // Generate a per-video production handoff ZIP for Claude upload
+    // This packages: the Word Timing CSV, QA JSON, logical audio reference (no audio upload), and metadata
+    const sessionCsvPath = input.csvPath ? path.resolve(requireString(input.csvPath, 'CSV path')) : null;
+    if (!sessionCsvPath || !fs.existsSync(sessionCsvPath)) throw new Error('Select a valid Word Timing CSV.');
+    if (!inside(projectsRoot, sessionCsvPath)) throw new Error('Word Timing CSV must be inside Motion Projects.');
+
+    const result = await dialog.showSaveDialog(getMainWindow(), {
+      title: 'Save Production Handoff ZIP',
+      defaultPath: `${path.basename(sessionCsvPath, '.csv')}_Handoff.zip`,
+      filters: [{ name: 'ZIP archive', extensions: ['zip'] }]
+    });
+    if (result.canceled || !result.filePath) return { saved: false };
+
+    const { createWriteStream } = require('node:fs');
+    const archiver = (() => {
+      try { return require('archiver'); } catch { return null; }
+    })();
+
+    // Fallback: use built-in zip via child_process if archiver is unavailable
+    const outputPath = path.resolve(result.filePath);
+    const tempDir = path.join(os.tmpdir(), `fp-handoff-${Date.now()}`);
+    fs.mkdirSync(tempDir, { recursive: true });
+    try {
+      // Copy CSV
+      const csvDest = path.join(tempDir, path.basename(sessionCsvPath));
+      fs.copyFileSync(sessionCsvPath, csvDest);
+      // Copy QA JSON if present
+      const qaPath = sessionCsvPath.replace(/\.csv$/i, '.QA.json');
+      if (fs.existsSync(qaPath)) fs.copyFileSync(qaPath, path.join(tempDir, path.basename(qaPath)));
+      // Copy session metadata if present
+      const sessionPath = sessionCsvPath.replace(/\.csv$/i, '.session.json');
+      let sessionMeta = {};
+      if (fs.existsSync(sessionPath)) {
+        try {
+          sessionMeta = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+          fs.copyFileSync(sessionPath, path.join(tempDir, path.basename(sessionPath)));
+        } catch {}
+      }
+      // Copy script file if present and readable
+      const scriptCandidates = [
+        sessionMeta.sourceScriptPath,
+        sessionCsvPath.replace(/_Motion_Word_Timing\.csv$/i, '.txt'),
+        sessionCsvPath.replace(/\.csv$/i, '.txt')
+      ];
+      for (const sc of scriptCandidates) {
+        if (sc && fs.existsSync(sc)) {
+          const scriptDest = path.join(tempDir, path.basename(sc));
+          if (!fs.existsSync(scriptDest)) {
+            try { fs.copyFileSync(sc, scriptDest); } catch {}
+          }
+          break;
+        }
+      }
+      // Write audio reference (NOT the audio file itself)
+      const originalAudio = sessionMeta.sourceAudioFilename || (sessionMeta.sourceAudioPath ? path.basename(sessionMeta.sourceAudioPath) : (sessionMeta.audioPath ? path.basename(sessionMeta.audioPath) : null));
+      const audioRef = {
+        type: 'framepilot-linked-audio',
+        note: 'The original voiceover is stored locally in FramePilot Studio and will be automatically linked when the project ZIP is imported. Do not upload the audio file to Claude.',
+        originalFilename: originalAudio,
+        sessionId: sessionMeta.sessionId || null,
+        csvFile: path.basename(sessionCsvPath),
+      };
+      fs.writeFileSync(path.join(tempDir, 'NARRATION_BINDING.json'), JSON.stringify(audioRef, null, 2), 'utf8');
+      // Write handoff README
+      const instructions = resolveProducerResource(PROMPT_FILES.handoff, 'Per-video handoff');
+      fs.copyFileSync(instructions, path.join(tempDir, 'PER_VIDEO_INTAKE.md'));
+
+      // Create ZIP using PowerShell (available on Windows)
+      await new Promise((resolve, reject) => {
+        const ps = spawn('powershell.exe', [
+          '-NoProfile', '-NonInteractive', '-Command',
+          `Compress-Archive -Path '${tempDir}\\*' -DestinationPath '${outputPath}' -Force`
+        ], { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+        ps.once('close', code => code === 0 ? resolve() : reject(new Error(`Handoff ZIP creation stopped with exit code ${code}.`)));
+        ps.once('error', reject);
+      });
+      return { saved: true, path: outputPath };
+    } finally {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 }
 

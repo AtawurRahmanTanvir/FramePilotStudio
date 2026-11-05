@@ -1,0 +1,15 @@
+{
+  "product": "FramePilot Motion Producer Pro",
+  "version": "2.0.0",
+  "releaseDate": "2026-11-05",
+  "skillName": "framepilot-motion-producer",
+  "runtimeContract": {
+    "remotion": "4.0.540",
+    "react": "19.1.0",
+    "reactDom": "19.1.0"
+  },
+  "canonicalMotionCsv": ["Word_Index", "Script_Word", "Recognized_Word", "Start_ms", "End_ms"],
+  "renderOwner": "FramePilot Studio local renderer",
+  "claudeRenderAllowed": false,
+  "packageType": "single complete distribution archive"
+}

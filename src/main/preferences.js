@@ -8,7 +8,7 @@ const { app } = require('electron');
 function settingsFile() { return path.join(app.getPath('userData'), 'settings.json'); }
 function defaultCsvDirectory() { return path.join(app.getPath('documents'), 'FramePilot Studio', 'CSV'); }
 function readSettings() {
-  const fallback = { csvOutputDirectory: defaultCsvDirectory(), autoCheckUpdates: true, autoDownloadUpdates: true, largeText: true, reducedMotion: false };
+  const fallback = { csvOutputDirectory: defaultCsvDirectory(), autoCheckUpdates: true, autoDownloadUpdates: true, largeText: true, reducedMotion: false, claudeProjectUrl: '' };
   try {
     const parsed = JSON.parse(fs.readFileSync(settingsFile(), 'utf8'));
     return { ...fallback, ...parsed, csvOutputDirectory: path.resolve(parsed.csvOutputDirectory || fallback.csvOutputDirectory) };
@@ -25,6 +25,7 @@ function writeSettings(patch) {
   if (typeof patch.autoDownloadUpdates === 'boolean') next.autoDownloadUpdates = patch.autoDownloadUpdates;
   if (typeof patch.largeText === 'boolean') next.largeText = patch.largeText;
   if (typeof patch.reducedMotion === 'boolean') next.reducedMotion = patch.reducedMotion;
+  if (typeof patch.claudeProjectUrl === 'string') next.claudeProjectUrl = patch.claudeProjectUrl.trim();
   const file = settingsFile();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const temp = `${file}.tmp`;

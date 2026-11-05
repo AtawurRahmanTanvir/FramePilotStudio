@@ -4,6 +4,7 @@ import argparse
 import json
 import math
 import os
+import posixpath
 import re
 import shutil
 import stat
@@ -129,6 +130,8 @@ def inspect_archive(zip_path: Path) -> dict:
             "fileCount": len(files),
             "uncompressedBytes": total,
             "assets": list(manifest.get("assets") or []),
+            "voiceoverBinding": manifest.get("voiceoverBinding"),
+            "narrationBinding": manifest.get("voiceoverBinding") or manifest.get("narration"),
             "warnings": [],
         }
 
@@ -198,6 +201,27 @@ def validate_manifest(manifest: dict, package: dict, files: set[str]) -> None:
         audio = safe_member_name(str(manifest["voiceover"]))
         if audio not in files:
             raise ValueError(f"Manifest voiceover is missing: {audio}")
+    binding = manifest.get("voiceoverBinding")
+    if binding is not None:
+        if not isinstance(binding, dict):
+            raise ValueError("voiceoverBinding must be an object or null.")
+        required_binding = {
+            "logicalId": "voiceover.primary",
+            "source": "framepilot-linked-audio",
+            "required": True,
+        }
+        for key, expected in required_binding.items():
+            if binding.get(key) != expected:
+                raise ValueError(f"voiceoverBinding.{key} must be {expected!r}.")
+        target = binding.get("target")
+        if not isinstance(target, str) or not target.strip():
+            raise ValueError("voiceoverBinding.target must be a non-empty project-relative path.")
+        if target.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:", target):
+            raise ValueError("voiceoverBinding.target must be project-relative.")
+        safe_member_name(target)
+        session_id = binding.get("sessionId")
+        if session_id is not None and (not isinstance(session_id, str) or not session_id.strip()):
+            raise ValueError("voiceoverBinding.sessionId must be a non-empty string when supplied.")
     if (manifest.get("wordTiming") is not None):
         timing = safe_member_name(str(manifest["wordTiming"]))
         if timing not in files:
@@ -220,7 +244,10 @@ def validate_source_imports(source_data: dict[str, str], files: set[str]) -> Non
                 raise ValueError(f"Absolute source import is not allowed: {source_name} -> {specifier}")
             return None
         base = PurePosixPath(source_name).parent / specifier.replace("\\", "/")
-        normalized = safe_member_name(base.as_posix())
+        norm_spec = posixpath.normpath(base.as_posix())
+        if norm_spec.startswith("..") or norm_spec.startswith("/"):
+            raise ValueError(f"Relative source import attempts to leave project: {source_name} -> {specifier}")
+        normalized = safe_member_name(norm_spec)
         candidates = [normalized] + [normalized + suffix for suffix in SOURCE_RESOLUTION_SUFFIXES[1:]]
         candidates.extend(f"{normalized}/index{suffix}" for suffix in SOURCE_RESOLUTION_SUFFIXES[1:])
         if not any(candidate in file_set for candidate in candidates):
@@ -235,6 +262,105 @@ def validate_source_imports(source_data: dict[str, str], files: set[str]) -> Non
 def safe_project_slug(value: str) -> str:
     slug = re.sub(r"[^A-Za-z0-9._-]+", "-", value.strip()).strip(".-_")
     return (slug or "Motion-Project")[:80]
+
+
+def resolve_narration_binding(manifest: dict, project_temp_root: Path, projects_root: Path) -> dict | None:
+    """
+    Attempt to resolve the voiceover from a local Word Timing session.
+
+    The manifest may contain a 'voiceoverBinding' or 'narration' object with:
+      - source: 'framepilot-linked-audio'
+      - sessionId: a string identifier matching a local Word Timing session
+      - originalFilename: the original audio filename (optional, for verification)
+      - target: project-relative destination path (e.g. 'public/audio/narration.wav')
+
+    Resolution strategy:
+    1. Read voiceoverBinding or narration from manifest
+    2. If source != 'framepilot-linked-audio', skip (not a linked binding)
+    3. Try to find matching audio file in the Word Timing sessions directory
+    4. If found and verified, copy it to the target path inside the temp project
+    5. Return info dict. Never raise on failure — return None or a warning dict.
+    """
+    # Support both 'voiceoverBinding' and 'narration' manifest keys
+    binding = manifest.get("voiceoverBinding") or manifest.get("narration")
+    if not binding or not isinstance(binding, dict):
+        return None
+    if binding.get("source") != "framepilot-linked-audio":
+        return None
+
+    target_rel = binding.get("target", "public/audio/narration.wav")
+    session_id = binding.get("sessionId")
+    original_filename = binding.get("originalFilename")
+
+    # Word Timing sessions are stored in <projects_root>/Word Timing/
+    word_timing_root = projects_root / "Word Timing"
+    target_path = project_temp_root / Path(*PurePosixPath(target_rel).parts)
+
+    # Strategy 1: if target already exists in the project (user included it in ZIP), preserve it!
+    if target_path.exists() and target_path.is_file() and target_path.stat().st_size > 0:
+        return {
+            "status": "included",
+            "target": target_rel,
+            "method": "zip-included",
+        }
+
+    # Strategy 2: match by sessionId (look for a session directory or metadata file)
+    if session_id and word_timing_root.is_dir():
+        word_timing_resolved = word_timing_root.resolve()
+        for session_meta in sorted(word_timing_root.rglob("*.session.json")):
+            try:
+                meta = json.loads(session_meta.read_text(encoding="utf-8-sig"))
+                if str(meta.get("sessionId", "")) == str(session_id):
+                    raw_audio_path = str(meta.get("audioPath") or meta.get("sourceAudioPath") or "")
+                    if not raw_audio_path:
+                        continue
+                    # Could be relative to session_meta.parent or absolute
+                    candidate = Path(raw_audio_path)
+                    if not candidate.is_absolute():
+                        candidate = (session_meta.parent / candidate).resolve()
+                    else:
+                        candidate = candidate.resolve()
+                    # Security check: candidate must be a regular audio file and not leave allowed boundaries
+                    suffix = candidate.suffix.casefold()
+                    if suffix not in {".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg", ".opus"}:
+                        continue
+                    # Disallow path traversal escape into sensitive system dirs if relative
+                    if not candidate.is_file() or candidate.stat().st_size == 0:
+                        continue
+                    target_path.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(str(candidate), str(target_path))
+                    return {
+                        "status": "resolved",
+                        "sessionId": session_id,
+                        "source": str(candidate),
+                        "target": target_rel,
+                        "method": "session-metadata",
+                    }
+            except Exception:
+                continue
+
+    # Strategy 3: match by original filename in Word Timing directory
+    if original_filename and word_timing_root.is_dir():
+        for audio_candidate in word_timing_root.rglob("*"):
+            if audio_candidate.is_file() and audio_candidate.name == original_filename:
+                suffix = audio_candidate.suffix.casefold()
+                if suffix in {".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg", ".opus"}:
+                    target_path.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(str(audio_candidate), str(target_path))
+                    return {
+                        "status": "resolved",
+                        "source": str(audio_candidate),
+                        "target": target_rel,
+                        "method": "filename-match",
+                    }
+
+    # Could not resolve - emit a warning (non-blocking)
+    return {
+        "status": "unresolved",
+        "target": target_rel,
+        "sessionId": session_id,
+        "warning": "Narration audio could not be matched to a local Word Timing session. Add narration.wav to public/audio/ manually or re-import using a project with a matching session.",
+    }
 
 
 def import_archive(zip_path: Path, projects_root: Path) -> dict:
@@ -279,8 +405,12 @@ def import_archive(zip_path: Path, projects_root: Path) -> dict:
             if PurePosixPath(name).suffix.casefold() in SOURCE_SUFFIXES
         }
         validate_source_imports(extracted_source_data, extracted_files)
+        # Resolve narration binding: match the linked voiceover from local Word Timing sessions
+        narration_info = resolve_narration_binding(manifest, temp_root, projects_root)
+        if narration_info:
+            emit("narration", **narration_info)
         temp_root.rename(destination)
-        return {**info, "projectPath": str(destination), "status": "IMPORTED"}
+        return {**info, "projectPath": str(destination), "status": "IMPORTED", "narrationResolution": narration_info}
     except Exception:
         shutil.rmtree(temp_root, ignore_errors=True)
         raise

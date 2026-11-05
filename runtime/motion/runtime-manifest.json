@@ -27,6 +27,30 @@
   "remotion": {
     "version": "4.0.540",
     "worker_package": "renderer/package.json",
-    "compositor_package": "renderer/node_modules/@remotion/compositor-win32-x64-msvc/package.json"
+    "lockfile": "renderer/package-lock.json",
+    "runner": "runner.mjs",
+    "packages": [
+      "@remotion/bundler",
+      "@remotion/captions",
+      "@remotion/compositor-win32-x64-msvc",
+      "@remotion/motion-blur",
+      "@remotion/player",
+      "@remotion/renderer",
+      "@remotion/transitions",
+      "react",
+      "react-dom",
+      "remotion"
+    ],
+    "compositor_package": "renderer/node_modules/@remotion/compositor-win32-x64-msvc/package.json",
+    "required_compositor_files": [
+      "ffmpeg.exe",
+      "ffprobe.exe",
+      "remotion.exe",
+      "avcodec-61.dll",
+      "avformat-61.dll",
+      "avutil-59.dll",
+      "swresample-5.dll",
+      "swscale-8.dll"
+    ]
   }
 }

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "decisions": [
+    {
+      "decisionId": "DEC-001",
+      "topic": "Output format",
+      "decision": "Use the explicit user-specified aspect ratio and dimensions.",
+      "authority": "user-project-brief",
+      "alternatives": [],
+      "impact": "Composition layout and safe areas",
+      "status": "accepted"
+    }
+  ]
+}

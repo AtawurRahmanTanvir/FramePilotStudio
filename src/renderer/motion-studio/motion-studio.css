@@ -81,3 +81,40 @@
 @media(max-width:1250px){.motion-hero-orbit{right:4%;opacity:.8}.motion-workflow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1050px){.motion-dashboard-grid{grid-template-columns:1fr}.motion-two-column-layout,.motion-import-layout,.motion-render-layout{grid-template-columns:1fr}.motion-side-stack,.motion-render-sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}.motion-render-sidebar .motion-render-settings{grid-column:1/-1}}
 @media(max-width:760px){.motion-workspace-label,.motion-workspace-label span{display:none!important}.motion-nav-list{display:none!important}.motion-sidebar-divider{display:none}.motion-hero-content{padding:25px 22px}.motion-hero-content h2{font-size:29px}.motion-hero-orbit{opacity:.16;right:-70px;top:20px}.motion-hero-actions{align-items:stretch;flex-direction:column}.motion-workflow-grid,.motion-kit-grid{grid-template-columns:1fr}.motion-side-stack,.motion-render-sidebar{grid-template-columns:1fr}.motion-setting-grid{grid-template-columns:1fr}.motion-schema-strip{align-items:flex-start;flex-direction:column}.motion-action-card{align-items:flex-start;flex-direction:column}.motion-action-card .primary-button{width:100%;justify-content:space-between}.motion-kit-hero{padding:22px;align-items:flex-start}.motion-kit-symbol{width:58px;height:58px;font-size:22px;border-radius:15px}.motion-kit-hero h2{font-size:24px}.motion-kit-actions{align-items:flex-start;flex-direction:column}.motion-import-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.motion-video-stage{min-height:230px}.motion-project-item{align-items:flex-start}.motion-project-actions{flex-direction:column;align-items:flex-end}.motion-prompt-actions{flex-direction:column}.motion-process-steps{gap:4px;font-size:6px}.motion-process-steps b{width:13px}}
+
+/* ── Project Manager page ─────────────────────────────────────────────────── */
+.motion-pm-search{display:flex;gap:8px;margin-bottom:14px}
+.motion-pm-search input{flex:1;height:35px;background:#191817;border:1px solid #413b33;border-radius:6px;padding:0 10px;color:#d9cebb;font-size:9px}
+.motion-pm-count{font-size:9px;color:#847d70;margin:4px 0 12px}
+.motion-project-item-full{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #292622}
+.motion-project-item-full:last-child{border-bottom:0}
+.motion-project-meta-grid{display:grid;grid-template-columns:repeat(4,auto);gap:3px 14px;margin-top:4px}
+.motion-project-meta-grid span{font-size:8px;color:#7d7669}
+.motion-project-meta-grid strong{font-size:8px;color:#c0b296}
+
+/* ── Render History page ──────────────────────────────────────────────────── */
+.motion-history-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #292622}
+.motion-history-item:last-child{border-bottom:0}
+.motion-history-badge{font-size:7px;letter-spacing:.8px;border:1px solid #465c38;background:#172013;color:#a8c593;padding:4px 7px;border-radius:4px;white-space:nowrap}
+.motion-history-badge.failed{border-color:#613a3f;background:#231317;color:#e08c8f}
+.motion-history-badge.missing{border-color:#5a4830;background:#1e1912;color:#c5a06b}
+
+/* ── Runtime Manager page ─────────────────────────────────────────────────── */
+.motion-runtime-table{display:grid;gap:0;margin-top:14px}
+.motion-runtime-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #292622;font-size:9px;color:#b5ad9f}
+.motion-runtime-row:last-child{border-bottom:0}
+.motion-runtime-desc{font-size:8px;color:#7d766a;margin-top:2px}
+.motion-runtime-actions-row{display:flex;gap:8px;margin-top:14px}
+.motion-runtime-status-ready{font-size:7px;letter-spacing:.9px;border:1px solid #445a37;border-radius:4px;padding:4px 6px;color:#b9d1a3;background:#192116;white-space:nowrap}
+.motion-runtime-status-pending{font-size:7px;letter-spacing:.9px;border:1px solid #65502c;border-radius:4px;padding:4px 6px;color:#d6b271;background:#211a12;white-space:nowrap}
+
+/* ── Skill package section ────────────────────────────────────────────────── */
+.motion-skill-version{display:inline-flex;align-items:center;gap:8px;margin:6px 0 12px}
+.motion-skill-version strong{font-size:11px;color:#e8d9b8}
+.motion-skill-version span{font-size:7px;letter-spacing:.8px;border:1px solid #58432a;padding:4px 6px;border-radius:4px;color:#c09b5d}
+.motion-skill-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.motion-skill-actions button{height:33px;min-height:33px;font-size:8px;padding:0 12px}
+
+/* ── Handoff ZIP ──────────────────────────────────────────────────────────── */
+.motion-handoff-select{width:100%;height:35px;background:#191817;border:1px solid #413b33;border-radius:6px;padding:0 10px;color:#d9cebb;font-size:9px;margin:10px 0}
+.motion-handoff-result{margin-top:10px;padding:10px 12px;background:#0e0e0f;border:1px solid #2b2925;border-radius:7px;font-size:9px;color:#a99c82}

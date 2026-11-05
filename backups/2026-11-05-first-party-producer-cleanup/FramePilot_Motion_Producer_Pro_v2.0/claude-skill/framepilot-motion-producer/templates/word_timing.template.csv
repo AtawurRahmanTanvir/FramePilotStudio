@@ -1,0 +1,4 @@
+Word_Index,Script_Word,Recognized_Word,Start_ms,End_ms
+1,The,The,0,180
+2,story,story,190,560
+3,continues,continues,570,1040

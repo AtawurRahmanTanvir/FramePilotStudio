@@ -56,6 +56,10 @@ runtime/ffmpeg/*.exe
 runtime/motion/node/
 runtime/motion/browser/
 !runtime/motion/runtime-manifest.json
+runtime/motion/renderer/.bundle-cache/
+runtime/motion/renderer/.cache/
+*.tmp.mp4
+*.tmp.png
 
 # Local recovery artifacts created while removing oversized runtime blobs.
 backups/git-runtime-split-*/

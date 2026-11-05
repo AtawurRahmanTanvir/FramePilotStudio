@@ -36,9 +36,17 @@ contextBridge.exposeInMainWorld('framepilot', {
   motionCopyPath: file => ipcRenderer.invoke('motion:copy-path', file),
   motionReadOutputPreview: file => ipcRenderer.invoke('motion:read-output-preview', file),
   motionSavePrompt: key => ipcRenderer.invoke('motion:save-prompt', key),
+  motionSaveProducerSkill: () => ipcRenderer.invoke('motion:save-producer-skill'),
+  motionRebuildSkillZip: () => ipcRenderer.invoke('motion:rebuild-skill-zip'),
+  motionVerifySkillPackage: () => ipcRenderer.invoke('motion:verify-skill-package'),
+  motionListWordTimingSessions: () => ipcRenderer.invoke('motion:list-word-timing-sessions'),
+  motionGenerateHandoffZip: (input) => ipcRenderer.invoke('motion:generate-handoff-zip', input),
+  motionClaudeKitInfo: () => ipcRenderer.invoke('motion:claude-kit-info'),
+  motionSaveClaudeProjectUrl: url => ipcRenderer.invoke('motion:save-claude-project-url', url),
   motionOpenClaude: () => ipcRenderer.invoke('motion:open-claude'),
   motionReadScriptPreview: file => ipcRenderer.invoke('motion:read-script-preview', file),
   motionGetRuntimeInfo: () => ipcRenderer.invoke('motion:runtime-info'),
+  motionManageRuntime: operation => ipcRenderer.invoke('motion:manage-runtime', operation),
   motionGenerateWordTiming: input => ipcRenderer.invoke('motion:generate-word-timing', input),
   motionInspectProject: zip => ipcRenderer.invoke('motion:inspect-project', zip),
   motionImportProject: zip => ipcRenderer.invoke('motion:import-project', zip),
@@ -49,7 +57,6 @@ contextBridge.exposeInMainWorld('framepilot', {
   motionDeleteProject: folder => ipcRenderer.invoke('motion:delete-project', folder),
   motionOpenProjectFolder: folder => ipcRenderer.invoke('motion:open-project-folder', folder),
   motionShowInFolder: file => ipcRenderer.invoke('motion:show-in-folder', file),
-  motionResolveOutputUrl: file => ipcRenderer.invoke('motion:resolve-output-url', file),
   motionStartRender: input => ipcRenderer.invoke('motion:start-render', input),
   motionCancelJob: () => ipcRenderer.invoke('motion:cancel-job'),
   onMotionJobEvent: callback => {
@@ -61,6 +68,11 @@ contextBridge.exposeInMainWorld('framepilot', {
     const listener = (_e, data) => callback(data);
     ipcRenderer.on('motion:job-log', listener);
     return () => ipcRenderer.removeListener('motion:job-log', listener);
+  },
+  onMotionRuntimeEvent: callback => {
+    const listener = (_e, data) => callback(data);
+    ipcRenderer.on('motion:runtime-event', listener);
+    return () => ipcRenderer.removeListener('motion:runtime-event', listener);
   },
   onJobEvent: callback => { const listener = (_e, data) => callback(data); ipcRenderer.on('job:event', listener); return () => ipcRenderer.removeListener('job:event', listener); },
   onJobLog: callback => { const listener = (_e, data) => callback(data); ipcRenderer.on('job:log', listener); return () => ipcRenderer.removeListener('job:log', listener); },

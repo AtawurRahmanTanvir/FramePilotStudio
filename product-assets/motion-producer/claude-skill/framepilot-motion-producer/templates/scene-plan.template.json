@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "projectTitle": "Project Name",
+  "fps": 30,
+  "scenes": [
+    {
+      "sceneId": "scene-001",
+      "sectionId": "section-opening",
+      "title": "Opening question",
+      "narrativeFunction": "hook",
+      "startMs": 0,
+      "endMs": 5000,
+      "startWordIndex": 1,
+      "endWordIndex": 16,
+      "assetIds": ["IMG_0001"],
+      "visualClaim": "A source-supported statement only.",
+      "evidenceType": "supplied-image",
+      "composition": {"focalSubject": "hero object", "hierarchy": ["hero", "evidence", "label"]},
+      "camera": {"mode": "locked", "reason": "match project reference"},
+      "motion": {"entrance": "masked-reveal", "emphasis": "restrained-scale", "exit": "motivated-cut"},
+      "onScreenText": [],
+      "audioEvents": [],
+      "continuityRules": ["Keep master camera viewpoint unchanged."],
+      "sourceEvidence": ["Script opening paragraph"],
+      "confidence": "grounded",
+      "openIssues": []
+    }
+  ]
+}

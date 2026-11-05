@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "projectTitle": "Project Name",
+  "centralQuestion": "What should the viewer understand?",
+  "thesis": "Approved narrative thesis.",
+  "audience": "Intended audience",
+  "tone": ["documentary", "clear", "measured"],
+  "openingPromise": "The question the video promises to answer.",
+  "payoff": "How the final section resolves the promise.",
+  "sections": [
+    {
+      "sectionId": "section-001",
+      "title": "Opening",
+      "scriptRange": "paragraph 1",
+      "purpose": "hook",
+      "claims": ["claim-001"],
+      "narrationWordRange": {"start": 1, "end": 18},
+      "timeRangeMs": {"start": 0, "end": 5200},
+      "plannedSceneIds": ["scene-001"]
+    }
+  ]
+}

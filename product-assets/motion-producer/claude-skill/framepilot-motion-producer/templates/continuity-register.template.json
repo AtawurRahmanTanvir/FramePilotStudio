@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "references": [
+    {
+      "referenceId": "REF-001",
+      "masterAssetId": "IMG_0001",
+      "subject": "Named place or object",
+      "camera": {"mode": "locked", "viewpoint": "three-quarter frontal", "horizon": "fixed", "scale": "constant"},
+      "anchors": ["left tower", "central ridge", "foreground path"],
+      "allowedChanges": ["period-specific materials", "vegetation density"],
+      "prohibitedChanges": ["camera drift", "landmark relocation", "subject identity change"],
+      "linkedSceneIds": ["scene-001"]
+    }
+  ]
+}

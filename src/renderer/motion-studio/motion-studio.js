@@ -17,6 +17,7 @@
     lastProjectInfo: null,
     lastRenderOutput: null,
     renderHistory: [],
+    claudeProjectUrl: '',
     currentPage: 'motion-overview',
     runtime: null,
     busy: false,
@@ -27,7 +28,10 @@
     'motion-word-timing': 'Word Timing',
     'motion-claude-kit': 'Claude Project Kit',
     'motion-import': 'Project Import',
-    'motion-preview': 'Preview & Render',
+    'motion-render': 'Render Video',
+    'motion-project-manager': 'Project Manager',
+    'motion-render-history': 'Render History',
+    'motion-runtime-manager': 'Runtime Manager',
   };
 
   const navIcon = {
@@ -36,6 +40,9 @@
     kit: '<path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/>',
     import: '<path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/>',
     render: '<path d="M5 4h14v16H5z"/><path d="m10 8 6 4-6 4z"/>',
+    projectManager: '<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="2" cy="6" r="1"/><circle cx="2" cy="12" r="1"/><circle cx="2" cy="18" r="1"/>',
+    renderHistory: '<path d="M12 8v4l3 3M3 12a9 9 0 1 0 2-5.6M3 3v4h4"/>',
+    runtimeManager: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
   };
 
   function toast(message, isError = false) {
@@ -88,7 +95,10 @@
         <button class="nav-item motion-nav-item" data-motion-page="motion-word-timing"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.timing}</svg></span><span>Word Timing</span></button>
         <button class="nav-item motion-nav-item" data-motion-page="motion-claude-kit"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.kit}</svg></span><span>Claude Project Kit</span></button>
         <button class="nav-item motion-nav-item" data-motion-page="motion-import"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.import}</svg></span><span>Project Import</span></button>
-        <button class="nav-item motion-nav-item" data-motion-page="motion-preview"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.render}</svg></span><span>Preview & Render</span></button>
+        <button class="nav-item motion-nav-item" data-motion-page="motion-render"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.render}</svg></span><span>Render Video</span></button>
+        <button class="nav-item motion-nav-item" data-motion-page="motion-project-manager"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.projectManager}</svg></span><span>Project Manager</span></button>
+        <button class="nav-item motion-nav-item" data-motion-page="motion-render-history"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.renderHistory}</svg></span><span>Render History</span></button>
+        <button class="nav-item motion-nav-item" data-motion-page="motion-runtime-manager"><span class="nav-icon"><svg viewBox="0 0 24 24">${navIcon.runtimeManager}</svg></span><span>Runtime Manager</span></button>
       </nav>`;
     supportLabel.parentNode.insertBefore(group, supportLabel);
   }
@@ -117,16 +127,20 @@
           </div>
           <div class="motion-hero-orbit" aria-hidden="true"><div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div><div class="orbit-core">M</div><span class="orbit-node node-a">WORD</span><span class="orbit-node node-b">MOTION</span><span class="orbit-node node-c">RENDER</span></div>
         </div>
-        <div class="motion-section-head"><div><h2>Motion workflow</h2><p>Five focused workspaces, one independent pipeline.</p></div><span class="motion-section-tag">LOCAL-FIRST</span></div>
+        <div class="motion-section-head"><div><h2>Motion workflow</h2><p>Eight focused workspaces, one independent pipeline.</p></div><span class="motion-section-tag">LOCAL-FIRST</span></div>
         <div class="motion-workflow-grid">
           <button class="motion-workflow-card" data-motion-go="motion-word-timing"><span class="motion-card-icon gold">${icon('audio')}</span><strong>Word Timing</strong><span>Script verification and word-level start/end timestamps.</span><i>Open workspace ↗</i></button>
           <button class="motion-workflow-card" data-motion-go="motion-claude-kit"><span class="motion-card-icon violet">${icon('file')}</span><strong>Claude Project Kit</strong><span>Production instructions, Master Prompt and project contract.</span><i>Open prompt kit ↗</i></button>
           <button class="motion-workflow-card" data-motion-go="motion-import"><span class="motion-card-icon red">${icon('import')}</span><strong>Project Import</strong><span>Validate and safely import a Remotion project ZIP.</span><i>Import project ↗</i></button>
-          <button class="motion-workflow-card" data-motion-go="motion-preview"><span class="motion-card-icon green">${icon('render')}</span><strong>Preview & Render</strong><span>Preview renders, final MP4 output and QA checkpoints.</span><i>Open render center ↗</i></button>
+          <button class="motion-workflow-card" data-motion-go="motion-render"><span class="motion-card-icon green">${icon('render')}</span><strong>Render Video</strong><span>Validate an imported project and create its final MP4.</span><i>Open render center ↗</i></button>
+          <button class="motion-workflow-card" data-motion-go="motion-project-manager"><span class="motion-card-icon gold">${icon('folder')}</span><strong>Project Manager</strong><span>Full paginated library of imported Motion projects with search and project actions.</span><i>Manage projects ↗</i></button>
+          <button class="motion-workflow-card" data-motion-go="motion-render-history"><span class="motion-card-icon violet">${icon('file')}</span><strong>Render History</strong><span>Dedicated full-page log of every completed local render with output status.</span><i>View history ↗</i></button>
+          <button class="motion-workflow-card" data-motion-go="motion-runtime-manager"><span class="motion-card-icon red">${icon('check')}</span><strong>Runtime Manager</strong><span>Detailed runtime component status, install, verify and repair operations.</span><i>Manage runtime ↗</i></button>
         </div>
         <div class="motion-dashboard-grid">
           <section class="surface-panel motion-engine-panel">
-            <div class="panel-heading"><div><h3>Motion runtime readiness</h3><p class="motion-panel-sub">Detected from local files and runtime configuration.</p></div><button class="text-button" id="motion-refresh-runtime">Refresh status ↻</button></div>
+            <div class="panel-heading"><div><h3>Motion runtime readiness</h3><p class="motion-panel-sub">Install and verify the private runtime without opening PowerShell.</p></div><div class="motion-runtime-actions"><button class="text-button" id="motion-install-runtime">Install</button><button class="text-button" id="motion-verify-runtime">Verify</button><button class="text-button" id="motion-repair-runtime">Repair</button><button class="text-button" id="motion-refresh-runtime">Refresh ↻</button></div></div>
+            <div class="motion-runtime-progress" id="motion-runtime-progress" hidden><div class="motion-progress-track"><span id="motion-runtime-fill"></span></div><div class="motion-progress-meta"><span id="motion-runtime-message">Ready</span><strong id="motion-runtime-percent">0%</strong></div></div>
             <div class="motion-readiness-list" id="motion-readiness-list"><div class="motion-empty-line">Checking Motion Studio components…</div></div>
           </section>
           <section class="surface-panel motion-recent-panel">
@@ -172,18 +186,23 @@
       </section>
 
       <section class="page motion-page" id="page-motion-claude-kit">
-        ${pageHeading('Claude Project Kit', 'Reusable instructions and production prompts for creating a FramePilot-compatible Remotion project.')}
-        <div class="motion-kit-hero"><div><span class="motion-hero-kicker">PROMPT + INSTRUCTIONS LIBRARY</span><h2>Prepare Claude once.<br/><em>Build each video consistently.</em></h2><p>Copy the project instructions into Claude Project Knowledge. Use the Master Prompt for each new video and upload the Motion Word Timing CSV with your script and voiceover.</p></div><div class="motion-kit-symbol">ƒx</div></div>
-        <div class="motion-kit-actions"><button class="primary-button" id="motion-open-claude">Open Claude ${icon('arrow')}</button><span>FramePilot copies or saves these files locally. It does not upload your script or assets to Claude.</span></div>
-        <div class="motion-kit-grid" id="motion-prompt-grid">
-          <article class="surface-panel motion-prompt-card"><div class="motion-prompt-number">01 / PROJECT SETUP</div><div class="motion-prompt-heading"><span class="motion-prompt-icon">IN</span><div><h3>Claude Project Instructions</h3><p>Persistent rules for the Claude Project.</p></div></div><ul><li>Role and working process</li><li>Offline project contract</li><li>Word timing and QA rules</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="instructions">Copy instructions</button><button class="primary-button small-primary" data-prompt-save="instructions">Save .MD</button></div></article>
-          <article class="surface-panel motion-prompt-card featured"><div class="motion-prompt-number">02 / EVERY NEW VIDEO</div><div class="motion-prompt-heading"><span class="motion-prompt-icon gold">MP</span><div><h3>Motion Master Prompt</h3><p>Main production brief for each project.</p></div></div><ul><li>Script and timing analysis</li><li>Scene planning and visual design</li><li>Remotion code and final project ZIP</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="master">Copy Master Prompt</button><button class="primary-button small-primary" data-prompt-save="master">Save .MD</button></div></article>
-          <article class="surface-panel motion-prompt-card"><div class="motion-prompt-number">03 / IMPORT STANDARD</div><div class="motion-prompt-heading"><span class="motion-prompt-icon violet">ZIP</span><div><h3>Project Import Contract</h3><p>Manifest, file structure and compatibility rules.</p></div></div><ul><li>motion-project.json</li><li>Entry point and Composition ID</li><li>Local assets and version rules</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="contract">Copy contract</button><button class="primary-button small-primary" data-prompt-save="contract">Save .MD</button></div></article>
-          <article class="surface-panel motion-prompt-card"><div class="motion-prompt-number">04 / DATA STANDARD</div><div class="motion-prompt-heading"><span class="motion-prompt-icon green">CSV</span><div><h3>Word Timing CSV Specification</h3><p>Independent five-column Motion CSV format.</p></div></div><ul><li>Word-level start/end milliseconds</li><li>Script/audio mismatch behavior</li><li>Companion QA report</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="timing">Copy spec</button><button class="primary-button small-primary" data-prompt-save="timing">Save .MD</button></div></article>
-          <article class="surface-panel motion-prompt-card"><div class="motion-prompt-number">05 / UPSTREAM SKILL</div><div class="motion-prompt-heading"><span class="motion-prompt-icon red">SK</span><div><h3>Upstream Skill Setup</h3><p>How to add the public Claude Remotion Skill.</p></div></div><ul><li>Keep original source isolated</li><li>Preserve MIT attribution</li><li>Claude Project setup</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="setup">Copy setup guide</button><button class="primary-button small-primary" data-prompt-save="setup">Save .MD</button></div></article>
-          <article class="surface-panel motion-prompt-card"><div class="motion-prompt-number">06 / FINAL ENGINEERING HANDOFF</div><div class="motion-prompt-heading"><span class="motion-prompt-icon red">CP</span><div><h3>Copilot Integration Brief</h3><p>Final runtime, security, testing and packaging work.</p></div></div><ul><li>Preserve Filmora Studio</li><li>Complete Motion engine connections</li><li>Run the full regression plan</li></ul><div class="motion-prompt-actions"><button class="outline-button" data-prompt-copy="copilot">Copy Copilot brief</button><button class="primary-button small-primary" data-prompt-save="copilot">Save .MD</button></div></article>
-        </div>
-        <div class="motion-boundary-note"><span>${icon('check')}</span><div><strong>Separate Master Forms.</strong><p>The existing Filmora Master_promt.txt is not modified. This Motion Master Prompt is a new resource exclusively for Remotion projects.</p></div></div>
+        ${pageHeading('Claude Project Kit', 'Prepare the first-party Motion Producer Skill once, then hand off each video without uploading files automatically.')}
+        <div class="motion-kit-hero"><div><span class="motion-hero-kicker">FIRST-PARTY FRAMEPILOT KIT</span><h2>Prepare Claude once.<br/><em>Build each video consistently.</em></h2><p>FramePilot creates the timing CSV locally. Claude produces a static, import-ready project ZIP. FramePilot remains the local render destination.</p></div><div class="motion-kit-symbol">ƒx</div></div>
+        <section class="surface-panel motion-kit-actions"><div><h3>One-time project setup</h3><p class="motion-panel-sub" id="motion-kit-status">Checking packaged Motion Producer resources…</p></div><div class="motion-prompt-actions"><button class="primary-button" id="motion-copy-master-instructions">COPY MASTER INSTRUCTIONS</button><button class="outline-button" id="motion-save-master-instructions">SAVE MASTER INSTRUCTIONS</button><button class="outline-button" id="motion-save-producer-skill">SAVE PRODUCER SKILL</button></div></section>
+        <section class="surface-panel motion-kit-actions"><div><h3>Skill Package</h3><p class="motion-panel-sub">Rebuild, verify or save the FramePilot Motion Producer Skill ZIP for uploading to Claude.</p><div class="motion-skill-version" id="motion-skill-version-wrap"><strong id="motion-skill-version-label">—</strong><span id="motion-skill-version-badge">VERSION</span></div><div class="motion-skill-actions"><button class="outline-button" id="motion-rebuild-skill-zip">Rebuild Skill ZIP</button><button class="outline-button" id="motion-verify-skill-package">Verify Skill Package</button><button class="outline-button" id="motion-save-skill-zip">Save Skill ZIP</button></div><p class="motion-panel-sub" id="motion-skill-pkg-status"></p></div></section>
+        <section class="surface-panel motion-kit-actions"><div><h3>Private Claude Project</h3><p class="motion-panel-sub">The app only saves and opens your URL. It never uploads scripts, audio, CSVs or media.</p><input id="motion-claude-project-url" type="url" placeholder="https://claude.ai/project/…" autocomplete="off"/></div><div class="motion-prompt-actions"><button class="outline-button" id="motion-save-project-link">SAVE PROJECT LINK</button><button class="primary-button" id="motion-open-claude">OPEN CLAUDE PROJECT ${icon('arrow')}</button></div></section>
+        <section class="surface-panel motion-kit-actions"><div><h3>Per-video handoff</h3><p class="motion-panel-sub">Attach the approved script, voiceover, Motion CSV, QA JSON and visual assets manually in Claude.</p></div><button class="primary-button" id="motion-copy-per-video-handoff">COPY PER-VIDEO HANDOFF</button></section>
+        <section class="surface-panel motion-kit-actions">
+          <div>
+            <h3>Per-Video Production Handoff</h3>
+            <p class="motion-panel-sub">Select a Word Timing session to automatically package a handoff ZIP for Claude.</p>
+            <select id="motion-handoff-project-select" class="motion-handoff-select">
+              <option value="">Select Word Timing session…</option>
+            </select>
+          </div>
+          <button class="primary-button" id="motion-generate-handoff-zip">Generate Handoff ZIP</button>
+        </section>
+        <div class="motion-boundary-note"><span>${icon('check')}</span><div><strong>Local-first and Filmora-safe.</strong><p>Word Timing remains inside FramePilot, the first-party Skill is editable in the application resources, and Filmora's 21-column workflow is not modified.</p></div></div>
       </section>
 
       <section class="page motion-page" id="page-motion-import">
@@ -196,30 +215,81 @@
           <aside class="motion-side-stack">
             <section class="surface-panel motion-info-card"><span class="motion-side-icon">01</span><h3>What the ZIP must include</h3><p>Root manifest, package.json, Remotion entry file, source scenes/components, and every required local asset, font, voiceover and SFX.</p></section>
             <section class="surface-panel motion-info-card"><span class="motion-side-icon violet">02</span><h3>Project safety</h3><p>FramePilot rejects unsafe archive paths and does not install arbitrary dependencies. The render worker stays locked until sandbox isolation is validated.</p></section>
-            <section class="surface-panel motion-info-card"><span class="motion-side-icon red">03</span><h3>Upstream source location</h3><p>Keep the downloaded Claude Skill repository isolated at <code>third_party/claude-remotion-skill/upstream/</code>. Do not merge it into the Filmora source tree.</p></section>
+            <section class="surface-panel motion-info-card"><span class="motion-side-icon red">03</span><h3>First-party producer resources</h3><p>The editable Skill, schemas, validators and templates are packaged from <code>product-assets/motion-producer/</code>. They are independent from the Filmora source tree.</p></section>
           </aside>
         </div>
         <section class="surface-panel motion-imported-projects"><div class="panel-heading"><div><h3>Motion Project Library</h3><p class="motion-panel-sub">Projects imported into Documents / FramePilot Studio / Motion Projects.</p></div><button class="text-button" id="motion-refresh-projects">Refresh list ↻</button></div><div id="motion-imported-project-list" class="motion-project-list"><div class="motion-empty-line">No imported projects yet.</div></div></section>
       </section>
 
-      <section class="page motion-page" id="page-motion-preview">
-        ${pageHeading('Preview & Render', 'Validate a project, create a lightweight preview, then render the final MP4 from the bundled local Motion runtime.')}
+      <section class="page motion-page" id="page-motion-render">
+        ${pageHeading('Render Video', 'Select an imported project and create its final MP4 with the bundled local Motion runtime.')}
         <div class="motion-render-layout">
           <div class="motion-render-main">
             <section class="surface-panel motion-render-player-panel">
-              <div class="motion-player-header"><div><span class="motion-small-kicker">COMPOSITION PREVIEW</span><h3 id="motion-player-project-name">No project selected</h3></div><span class="motion-player-badge" id="motion-player-state">IDLE</span></div>
-              <div class="motion-video-stage" id="motion-video-stage"><div class="motion-video-placeholder"><div class="motion-play-mark">▶</div><strong>Preview workspace</strong><span>Choose an imported project and render a low-resolution preview.</span></div><video id="motion-preview-video" controls playsinline hidden></video></div>
-              <div class="motion-player-foot"><span id="motion-preview-file">No preview generated</span><button class="text-button" id="motion-open-preview-file" disabled>Open preview file ↗</button></div>
+              <div class="motion-player-header"><div><span class="motion-small-kicker">PROJECT STATUS</span><h3 id="motion-player-project-name">No project selected</h3></div><span class="motion-player-badge" id="motion-player-state">READY</span></div>
+              <p class="motion-panel-sub">The project is validated before rendering. Imported project code remains blocked until the Windows isolation boundary is validated.</p>
             </section>
             <section class="surface-panel motion-render-progress" id="motion-render-progress" hidden><div class="motion-progress-top"><div><span class="motion-small-kicker">REMOTION WORKER</span><h3 id="motion-render-stage">Preparing render</h3></div><strong id="motion-render-percent">0%</strong></div><div class="motion-progress-track"><span id="motion-render-fill"></span></div><div class="motion-progress-foot"><span id="motion-render-message">Waiting for rendering…</span><span id="motion-render-state">RUNNING</span></div><button class="text-button motion-cancel-link" id="motion-cancel-render">Cancel render</button></section>
             <section class="surface-panel motion-render-result" id="motion-render-result" hidden><div class="motion-output-top"><div><span class="motion-small-kicker">OUTPUT CREATED</span><h3 id="motion-render-output-name">Video.mp4</h3></div><span class="motion-status-pill">READY</span></div><code id="motion-render-output-path"></code><div class="motion-output-actions"><button class="outline-button" id="motion-copy-render-path">Copy path</button><button class="primary-button small-primary" id="motion-show-render-folder">Show in folder</button></div></section>
           </div>
           <aside class="motion-render-sidebar">
-            <section class="surface-panel motion-render-settings"><div class="panel-heading"><div><h3>Render settings</h3><p class="motion-panel-sub">Values are read from the project's manifest.</p></div></div><label for="motion-project-select">Motion project</label><select id="motion-project-select"><option value="">Select imported project…</option></select><div class="motion-render-specs" id="motion-render-specs"><div><span>Resolution</span><strong>—</strong></div><div><span>Frame rate</span><strong>—</strong></div><div><span>Duration</span><strong>—</strong></div><div><span>Composition</span><strong>—</strong></div></div><div class="motion-render-buttons"><button class="outline-button" id="motion-render-preview" disabled>Render preview</button><button class="primary-button" id="motion-render-final" disabled>Render final MP4 ${icon('arrow')}</button></div></section>
+            <section class="surface-panel motion-render-settings"><div class="panel-heading"><div><h3>Project to video</h3><p class="motion-panel-sub">Values are read from the imported project's manifest.</p></div></div><label for="motion-project-select">Motion project</label><select id="motion-project-select"><option value="">Select imported project…</option></select><div class="motion-render-specs" id="motion-render-specs"><div><span>Resolution</span><strong>—</strong></div><div><span>Frame rate</span><strong>—</strong></div><div><span>Duration</span><strong>—</strong></div><div><span>Composition</span><strong>—</strong></div></div><div class="motion-render-buttons"><button class="primary-button" id="motion-render-final" disabled>RENDER VIDEO ${icon('arrow')}</button></div></section>
             <section class="surface-panel motion-render-history"><div class="panel-heading"><div><h3>Render History</h3><p class="motion-panel-sub">Completed local renders recorded by the Motion worker.</p></div><button class="text-button" id="motion-refresh-history">Refresh history ↻</button></div><div id="motion-render-history-list" class="motion-project-list"><div class="motion-empty-line">No completed renders recorded.</div></div></section>
             <section class="surface-panel motion-render-readiness"><div class="panel-heading"><div><h3>Local runtime</h3><p class="motion-panel-sub">No cloud rendering or external editor.</p></div></div><div class="motion-render-runtime-list" id="motion-render-runtime-list"><div class="motion-empty-line">Checking runtime…</div></div></section>
             <section class="surface-panel motion-info-card warning"><span class="motion-side-icon red">!</span><h3>Render protection</h3><p>Imported Remotion code is executable. Final rendering is disabled until the dedicated worker is sandboxed and verified to deny network access and restrict file access to the selected project and output folder.</p></section>
           </aside>
+        </div>
+      </section>
+
+      <section class="page motion-page" id="page-motion-project-manager">
+        ${pageHeading('Project Manager', 'Browse, search and manage every imported Motion project. Full paginated library with all project actions.')}
+        <div class="motion-pm-search">
+          <input type="text" id="motion-pm-search-input" placeholder="Search projects…" autocomplete="off"/>
+          <button class="outline-button" id="motion-pm-refresh">Refresh ↻</button>
+        </div>
+        <div class="motion-pm-count" id="motion-pm-count">Loading…</div>
+        <section class="surface-panel" style="padding:0 20px">
+          <div class="motion-project-list" id="motion-pm-project-list"><div class="motion-empty-line">No Motion Projects imported yet.</div></div>
+        </section>
+        <div style="display:flex;gap:8px;margin-top:13px;justify-content:flex-end" id="motion-pm-pagination"></div>
+      </section>
+
+      <section class="page motion-page" id="page-motion-render-history">
+        ${pageHeading('Render History', 'Full dedicated log of every completed local Motion render. Each entry shows project, mode, timestamp, duration and output status.')}
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+          <button class="outline-button" id="motion-rh-refresh">Refresh history ↻</button>
+        </div>
+        <section class="surface-panel" style="padding:0 20px">
+          <div id="motion-rh-list" class="motion-project-list"><div class="motion-empty-line">No completed renders recorded.</div></div>
+        </section>
+      </section>
+
+      <section class="page motion-page" id="page-motion-runtime-manager">
+        ${pageHeading('Runtime Manager', 'Detailed status of every Motion Studio runtime component. Install, verify or repair components without opening a terminal.')}
+        <div class="motion-dashboard-grid">
+          <section class="surface-panel motion-engine-panel">
+            <div class="panel-heading"><div><h3>Runtime components</h3><p class="motion-panel-sub">All components required for local word alignment and Remotion rendering.</p></div><div class="motion-runtime-actions"><button class="text-button" id="motion-rm-install">Install</button><button class="text-button" id="motion-rm-verify">Verify</button><button class="text-button" id="motion-rm-repair">Repair</button><button class="text-button" id="motion-rm-refresh">Refresh ↻</button></div></div>
+            <div class="motion-runtime-progress" id="motion-rm-progress" hidden><div class="motion-progress-track"><span id="motion-rm-fill"></span></div><div class="motion-progress-meta"><span id="motion-rm-message">Ready</span><strong id="motion-rm-percent">0%</strong></div></div>
+            <div class="motion-runtime-table" id="motion-rm-table">
+              <div class="motion-runtime-row"><div><strong>Word Timing source</strong><div class="motion-runtime-desc">Python WhisperX alignment pipeline and language models for word-level timestamps.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-wordtiming">CHECKING</span><div></div></div>
+              <div class="motion-runtime-row"><div><strong>Python backend</strong><div class="motion-runtime-desc">Python runtime used by the word alignment engine. Version is read from the manifest.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-python">CHECKING</span><div><span id="motion-rmr-python-ver" style="font-size:8px;color:#7d766a"></span></div></div>
+              <div class="motion-runtime-row"><div><strong>Private Node.js runtime</strong><div class="motion-runtime-desc">Isolated Node.js used exclusively by the Remotion renderer. Not the system Node.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-node">CHECKING</span><div><span id="motion-rmr-node-ver" style="font-size:8px;color:#7d766a"></span></div></div>
+              <div class="motion-runtime-row"><div><strong>Remotion renderer</strong><div class="motion-runtime-desc">Remotion CLI and SSR library bundled in the private runtime.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-remotion">CHECKING</span><div><span id="motion-rmr-remotion-ver" style="font-size:8px;color:#7d766a"></span></div></div>
+              <div class="motion-runtime-row"><div><strong>Chromium Headless Shell</strong><div class="motion-runtime-desc">Chrome headless binary required by Remotion for frame capture. Must be verified before rendering.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-browser">CHECKING</span><div></div></div>
+              <div class="motion-runtime-row"><div><strong>Remotion native compositor &amp; binaries</strong><div class="motion-runtime-desc">Native compositor and platform binaries that accelerate frame compositing.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-binaries">CHECKING</span><div></div></div>
+              <div class="motion-runtime-row"><div><strong>Project ZIP validator</strong><div class="motion-runtime-desc">Static analyser that validates incoming Remotion ZIPs before import.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-validator">CHECKING</span><div></div></div>
+              <div class="motion-runtime-row"><div><strong>Security isolation</strong><div class="motion-runtime-desc">Windows isolation boundary that restricts imported project code from network and file access.</div></div><span class="motion-runtime-status-pending" id="motion-rmr-isolation">CHECKING</span><div></div></div>
+            </div>
+          </section>
+          <section class="surface-panel" style="padding:18px">
+            <div class="panel-heading"><div><h3>About the runtime</h3><p class="motion-panel-sub">Why each component matters.</p></div></div>
+            <div style="margin-top:14px;display:grid;gap:12px;font-size:9px;color:#a09890;line-height:1.65">
+              <div><strong style="color:#d9c8a5;display:block;margin-bottom:3px">Why a private Node runtime?</strong>FramePilot bundles its own Node.js to avoid conflicts with any system Node installation. This runtime is locked down and only accessible to the Remotion worker.</div>
+              <div><strong style="color:#d9c8a5;display:block;margin-bottom:3px">Why is Chromium required?</strong>Remotion captures each frame using a headless Chrome instance. Without a verified Chromium Headless Shell the render cannot proceed.</div>
+              <div><strong style="color:#d9c8a5;display:block;margin-bottom:3px">What is security isolation?</strong>Imported project code is untrusted. FramePilot validates the Windows sandbox that restricts network access and file access to only the selected project folder and output target.</div>
+              <div><strong style="color:#d9c8a5;display:block;margin-bottom:3px">Word timing vs. rendering</strong>Word alignment uses Python (WhisperX). Rendering uses Node.js + Remotion. Both must be ready for end-to-end production.</div>
+            </div>
+          </section>
         </div>
       </section>`;
     anchor.insertAdjacentHTML('beforebegin', pages);
@@ -235,7 +305,10 @@
     window.scrollTo({ top: 0, behavior: document.documentElement.classList.contains('reduce-motion') ? 'auto' : 'smooth' });
     if (page === 'motion-overview') refreshDashboard();
     if (page === 'motion-import') refreshProjects();
-    if (page === 'motion-preview') refreshRenderPage();
+    if (page === 'motion-render') refreshRenderPage();
+    if (page === 'motion-project-manager') refreshProjectManager();
+    if (page === 'motion-render-history') refreshFullRenderHistory();
+    if (page === 'motion-runtime-manager') refreshRuntimeManager();
   }
 
   function updateFileRow(prefix, path) {
@@ -292,7 +365,6 @@
       ['Python backend', runtime.pythonBackendAvailable],
       ['Private Node runtime', runtime.nodeRuntimeAvailable],
       ['Remotion renderer', runtime.remotionRendererAvailable],
-      ['Remotion Player package', runtime.remotionPlayerAvailable],
       ['Chromium Headless Shell', runtime.browserAvailable],
       ['Remotion native compositor & binaries', runtime.remotionBinariesAvailable],
       ['Project worker isolation', runtime.projectExecutionAllowed],
@@ -304,6 +376,33 @@
       const name = document.createElement('span'); name.textContent = label;
       const status = document.createElement('strong'); status.className = ready ? 'ready' : 'pending'; status.textContent = ready ? 'READY' : 'NOT READY';
       row.append(name, status); host.append(row);
+    }
+
+    function setRuntimeProgress(percent, message, error = false) {
+      const panel = $('motion-runtime-progress');
+      if (!panel) return;
+      panel.hidden = false;
+      const safePercent = Math.max(0, Math.min(100, Number(percent) || 0));
+      const fill = $('motion-runtime-fill');
+      if (fill) fill.style.width = `${safePercent}%`;
+      const percentNode = $('motion-runtime-percent');
+      if (percentNode) percentNode.textContent = `${Math.round(safePercent)}%`;
+      const messageNode = $('motion-runtime-message');
+      if (messageNode) {
+        messageNode.textContent = message || 'Processing…';
+        messageNode.classList.toggle('error', error);
+      }
+    }
+
+    async function manageRuntime(operation) {
+      setRuntimeProgress(5, `Starting runtime ${operation}…`);
+      try {
+        await window.framepilot.motionManageRuntime(operation);
+        await refreshRuntime();
+      } catch (error) {
+        setRuntimeProgress(0, error.message, true);
+        toast(error.message, true);
+      }
     }
   }
 
@@ -318,7 +417,6 @@
       ? 'Select both files. Actual alignment also requires a verified local ASR and language aligner model.'
       : 'Motion Word Timing source or Python runtime is missing.';
     if ($('motion-render-final')) $('motion-render-final').disabled = !local.motionRenderReady || !state.selectedProject;
-    if ($('motion-render-preview')) $('motion-render-preview').disabled = !local.motionRenderReady || !state.selectedProject;
     return local;
   }
 
@@ -331,10 +429,10 @@
     const meta = document.createElement('span'); meta.textContent = `${project.width}×${project.height} · ${project.fps} FPS · ${project.compositionId}`;
     info.append(title, meta);
     const actions = document.createElement('div'); actions.className = 'motion-project-actions';
-    const select = document.createElement('button'); select.className = 'text-button'; select.textContent = 'Preview / Render';
+    const select = document.createElement('button'); select.className = 'text-button'; select.textContent = 'Render Video';
     select.addEventListener('click', () => {
       state.selectedProject = project;
-      navigateMotion('motion-preview');
+      navigateMotion('motion-render');
       populateSelectedProject();
     });
     const reveal = document.createElement('button'); reveal.className = 'text-button'; reveal.textContent = 'Folder';
@@ -417,7 +515,6 @@
     }
     const select = $('motion-project-select'); if (select) select.value = project.path;
     const ready = Boolean(state.runtime?.motionRenderReady);
-    if ($('motion-render-preview')) $('motion-render-preview').disabled = !ready;
     if ($('motion-render-final')) $('motion-render-final').disabled = !ready;
   }
 
@@ -468,6 +565,167 @@
       row.append(info, actions);
       host.append(row);
     }
+  }
+
+  // ── Project Manager page ──────────────────────────────────────────────────
+  const pmState = { query: '', page: 0, pageSize: 20 };
+
+  function renderProjectManagerList() {
+    const host = $('motion-pm-project-list');
+    const countEl = $('motion-pm-count');
+    const paginationEl = $('motion-pm-pagination');
+    if (!host) return;
+    const q = pmState.query.toLowerCase().trim();
+    const filtered = q ? state.projects.filter(p => p.name.toLowerCase().includes(q)) : state.projects;
+    const total = filtered.length;
+    const start = pmState.page * pmState.pageSize;
+    const slice = filtered.slice(start, start + pmState.pageSize);
+    if (countEl) countEl.textContent = `${total} project${total !== 1 ? 's' : ''}${q ? ` matching "${pmState.query}"` : ''}`;
+    host.replaceChildren();
+    if (!slice.length) {
+      const empty = document.createElement('div'); empty.className = 'motion-empty-line';
+      empty.textContent = q ? 'No projects match the search.' : 'No Motion Projects imported yet.';
+      host.append(empty); if (paginationEl) paginationEl.replaceChildren(); return;
+    }
+    for (const project of slice) {
+      const item = document.createElement('div'); item.className = 'motion-project-item-full';
+      const iconNode = document.createElement('div'); iconNode.className = 'motion-project-icon'; iconNode.textContent = 'MP';
+      const info = document.createElement('div');
+      const title = document.createElement('strong'); title.textContent = project.name; title.style.cssText = 'font-size:10px;color:#e4d9c5';
+      const meta = document.createElement('div'); meta.className = 'motion-project-meta-grid';
+      const fields = [
+        ['Resolution', `${project.width}×${project.height}`],
+        ['FPS', project.fps],
+        ['Duration', `${(project.durationInFrames / project.fps / 60).toFixed(2)} min`],
+        ['Composition', project.compositionId],
+        ['Imported', project.importedAt ? new Date(project.importedAt).toLocaleDateString() : '—'],
+      ];
+      for (const [lbl, val] of fields) {
+        const s = document.createElement('span'); s.textContent = lbl;
+        const v = document.createElement('strong'); v.textContent = val;
+        meta.append(s, v);
+      }
+      info.append(title, meta);
+      const actions = document.createElement('div'); actions.className = 'motion-project-actions';
+      const renderBtn = document.createElement('button'); renderBtn.className = 'text-button'; renderBtn.textContent = 'Render Video';
+      renderBtn.addEventListener('click', () => { state.selectedProject = project; navigateMotion('motion-render'); populateSelectedProject(); });
+      const folderBtn = document.createElement('button'); folderBtn.className = 'text-button'; folderBtn.textContent = 'Show Folder';
+      folderBtn.addEventListener('click', () => window.framepilot.motionOpenProjectFolder(project.path).catch(e => toast(e.message, true)));
+      const renameBtn = document.createElement('button'); renameBtn.className = 'text-button'; renameBtn.textContent = 'Rename';
+      renameBtn.addEventListener('click', async () => {
+        const name = window.prompt('New Motion project name', project.name);
+        if (!name || name.trim() === project.name) return;
+        try { await window.framepilot.motionRenameProject({ projectPath: project.path, name: name.trim() }); await refreshProjectManager(); toast('Motion project renamed.'); } catch (e) { toast(e.message, true); }
+      });
+      const dupBtn = document.createElement('button'); dupBtn.className = 'text-button'; dupBtn.textContent = 'Duplicate';
+      dupBtn.addEventListener('click', async () => {
+        try { await window.framepilot.motionDuplicateProject(project.path); await refreshProjectManager(); toast('Motion project duplicated.'); } catch (e) { toast(e.message, true); }
+      });
+      const delBtn = document.createElement('button'); delBtn.className = 'text-button danger'; delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', async () => {
+        if (!window.confirm(`Delete "${project.name}" and its imported project files?`)) return;
+        try {
+          await window.framepilot.motionDeleteProject(project.path);
+          if (state.selectedProject?.path === project.path) state.selectedProject = null;
+          await refreshProjectManager(); toast('Motion project deleted.');
+        } catch (e) { toast(e.message, true); }
+      });
+      actions.append(renderBtn, folderBtn, renameBtn, dupBtn, delBtn);
+      item.append(iconNode, info, actions); host.append(item);
+    }
+    // Pagination
+    if (paginationEl) {
+      paginationEl.replaceChildren();
+      const pages = Math.ceil(total / pmState.pageSize);
+      if (pages > 1) {
+        for (let i = 0; i < pages; i++) {
+          const btn = document.createElement('button'); btn.className = i === pmState.page ? 'outline-button' : 'text-button';
+          btn.textContent = String(i + 1); btn.style.minWidth = '30px';
+          btn.addEventListener('click', () => { pmState.page = i; renderProjectManagerList(); });
+          paginationEl.append(btn);
+        }
+      }
+    }
+  }
+
+  async function refreshProjectManager() {
+    const projects = await window.framepilot.motionListProjects().catch(e => { toast(e.message, true); return null; });
+    if (projects !== null) state.projects = Array.isArray(projects) ? projects : [];
+    pmState.page = 0;
+    renderProjectManagerList();
+  }
+
+  // ── Render History (full page) ────────────────────────────────────────────
+  async function refreshFullRenderHistory() {
+    const history = await window.framepilot.motionListRenderHistory().catch(e => { toast(`Render history: ${e.message}`, true); return null; });
+    if (history !== null) state.renderHistory = Array.isArray(history) ? history : [];
+    const host = $('motion-rh-list');
+    if (!host) return;
+    host.replaceChildren();
+    if (!state.renderHistory.length) {
+      const empty = document.createElement('div'); empty.className = 'motion-empty-line'; empty.textContent = 'No completed renders recorded.'; host.append(empty); return;
+    }
+    for (const item of state.renderHistory) {
+      const row = document.createElement('div'); row.className = 'motion-history-item';
+      const info = document.createElement('div');
+      const title = document.createElement('strong'); title.style.cssText = 'font-size:10px;color:#e4d9c5;display:block'; title.textContent = item.projectName || 'Unknown project';
+      const timestamp = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown time';
+      const duration = item.durationMs ? `${(item.durationMs / 1000).toFixed(1)}s` : '—';
+      const meta = document.createElement('span'); meta.style.cssText = 'font-size:8px;color:#80796d;margin-top:4px;display:block';
+      meta.textContent = `${timestamp} · Duration: ${duration} · Output: ${item.outputPath ? item.outputPath : '—'}`;
+      const badge = document.createElement('span');
+      badge.className = `motion-history-badge${item.outputExists === false ? ' missing' : item.failed ? ' failed' : ''}`;
+      badge.textContent = item.outputExists === false ? 'MISSING OUTPUT' : item.failed ? 'FAILED' : item.mode === 'preview' ? 'PREVIEW' : 'FINAL MP4';
+      info.append(title, meta);
+      const actions = document.createElement('div'); actions.style.cssText = 'display:flex;gap:7px;align-items:center';
+      actions.append(badge);
+      if (item.outputExists && item.outputPath) {
+        const openBtn = document.createElement('button'); openBtn.className = 'text-button'; openBtn.style.fontSize = '8px'; openBtn.textContent = 'Show in Folder';
+        openBtn.addEventListener('click', () => window.framepilot.motionShowInFolder(item.outputPath).catch(e => toast(e.message, true)));
+        actions.append(openBtn);
+      }
+      row.append(info, actions); host.append(row);
+    }
+  }
+
+  // ── Runtime Manager page ──────────────────────────────────────────────────
+  function setRmProgress(percent, message, error = false) {
+    const panel = $('motion-rm-progress');
+    if (!panel) return;
+    panel.hidden = false;
+    const fill = $('motion-rm-fill'); if (fill) fill.style.width = `${Math.max(0, Math.min(100, Number(percent) || 0))}%`;
+    const pct = $('motion-rm-percent'); if (pct) pct.textContent = `${Math.round(Number(percent) || 0)}%`;
+    const msg = $('motion-rm-message'); if (msg) { msg.textContent = message || 'Processing…'; msg.classList.toggle('error', error); }
+  }
+
+  function renderRuntimeManagerTable(runtime) {
+    const map = {
+      'motion-rmr-wordtiming': [runtime.wordTimingSourceAvailable, 'Word Timing source'],
+      'motion-rmr-python': [runtime.pythonBackendAvailable, 'Python backend'],
+      'motion-rmr-node': [runtime.nodeRuntimeAvailable, 'Node.js runtime'],
+      'motion-rmr-remotion': [runtime.remotionRendererAvailable, 'Remotion renderer'],
+      'motion-rmr-browser': [runtime.browserAvailable, 'Chromium Headless Shell'],
+      'motion-rmr-binaries': [runtime.remotionBinariesAvailable, 'Native binaries'],
+      'motion-rmr-validator': [runtime.projectImporterAvailable, 'ZIP validator'],
+      'motion-rmr-isolation': [runtime.projectExecutionAllowed, 'Security isolation'],
+    };
+    for (const [id, [ready]] of Object.entries(map)) {
+      const el = $(id); if (!el) continue;
+      el.className = ready ? 'motion-runtime-status-ready' : 'motion-runtime-status-pending';
+      el.textContent = ready ? 'READY' : 'NOT READY';
+    }
+    // Version badges from manifests
+    if (runtime.pythonVersion) { const v = $('motion-rmr-python-ver'); if (v) v.textContent = `v${runtime.pythonVersion}`; }
+    if (runtime.nodeVersion) { const v = $('motion-rmr-node-ver'); if (v) v.textContent = `v${runtime.nodeVersion}`; }
+    if (runtime.remotionVersion) { const v = $('motion-rmr-remotion-ver'); if (v) v.textContent = `v${runtime.remotionVersion}`; }
+  }
+
+  async function refreshRuntimeManager() {
+    try {
+      const local = await window.framepilot.motionGetRuntimeInfo();
+      state.runtime = local;
+      renderRuntimeManagerTable(local);
+    } catch (e) { toast(`Runtime: ${e.message}`, true); }
   }
 
   async function chooseScript() {
@@ -585,6 +843,38 @@
     } catch (error) { toast(error.message, true); }
   }
 
+  async function refreshClaudeKit() {
+    try {
+      const info = await window.framepilot.motionClaudeKitInfo();
+      state.claudeProjectUrl = info.claudeProjectUrl || '';
+      const url = $('motion-claude-project-url');
+      if (url) url.value = state.claudeProjectUrl;
+      const status = $('motion-kit-status');
+      if (status) status.textContent = info.skillAvailable && info.instructionsAvailable
+        ? `Skill setup ready · FramePilot Motion Producer ${info.version}`
+        : 'Motion Producer resources are incomplete.';
+      const verLabel = $('motion-skill-version-label');
+      if (verLabel) verLabel.textContent = `FramePilot Motion Producer v${info.version || '2.0'}`;
+      const verBadge = $('motion-skill-version-badge');
+      if (verBadge) verBadge.textContent = info.skillAvailable ? 'CANONICAL PACKAGED' : 'UNPACKAGED';
+
+      if (window.framepilot.motionListWordTimingSessions) {
+        const sessions = await window.framepilot.motionListWordTimingSessions().catch(() => []);
+        const select = $('motion-handoff-project-select');
+        if (select) {
+          const currentVal = select.value;
+          select.replaceChildren(new Option('Select Word Timing session…', ''));
+          for (const s of sessions) {
+            select.add(new Option(`${s.name} (${s.sessionId ? s.sessionId.slice(0, 14) : 'Session'})`, s.csvPath));
+          }
+          if (currentVal) select.value = currentVal;
+        }
+      }
+    } catch (e) {
+      toast(`Claude Project Kit: ${e.message}`, true);
+    }
+  }
+
   async function chooseProjectZip() {
     try {
       const file = await window.framepilot.motionSelectProjectZip();
@@ -633,6 +923,19 @@
       item.append(name, val); metrics.append(item);
     }
     $('motion-import-checks').textContent = `Manifest, entry point, Remotion version ${project.remotionVersion} and declared assets passed static validation. Project code has not been executed.`;
+    // Narration binding display
+    const checksEl = $('motion-import-checks');
+    if (project.narrationBinding) {
+      const narrationNote = document.createElement('div');
+      narrationNote.style.cssText = 'margin-top:8px;padding:7px 10px;background:#0d130b;border:1px solid #3a5230;border-radius:5px;font-size:8px;color:#a9cc8e;line-height:1.6';
+      narrationNote.textContent = `Narration binding: ${project.narrationBinding} (will be resolved from local session)`;
+      checksEl.after(narrationNote);
+    } else {
+      const narrationWarn = document.createElement('div');
+      narrationWarn.style.cssText = 'margin-top:8px;padding:7px 10px;background:#140d0b;border:1px solid #5a3328;border-radius:5px;font-size:8px;color:#d98888;line-height:1.6';
+      narrationWarn.textContent = 'No narration binding — project may be missing audio';
+      checksEl.after(narrationWarn);
+    }
     $('motion-confirm-import').disabled = false;
   }
 
@@ -655,7 +958,7 @@
       ) || null;
       if (state.selectedProject) {
         populateSelectedProject();
-        navigateMotion('motion-preview');
+        navigateMotion('motion-render');
       }
     } catch (error) {
       $('motion-import-status').textContent = 'IMPORT FAILED';
@@ -668,7 +971,7 @@
     }
   }
 
-  async function runMotionRender(mode) {
+  async function runMotionRender() {
     if (!state.selectedProject || !state.runtime?.motionRenderReady) {
       toast('Select a project and complete the local runtime/security setup first.', true);
       return;
@@ -676,30 +979,20 @@
     $('motion-render-progress').hidden = false;
     $('motion-render-progress').classList.remove('complete', 'failed');
     $('motion-render-state').textContent = 'RUNNING';
-    $('motion-player-state').textContent = mode === 'preview' ? 'PREVIEWING' : 'RENDERING';
-    setMotionProgress('motion-render', 1, `Starting ${mode} render…`, 'Starting Remotion worker');
+    $('motion-player-state').textContent = 'RENDERING';
+    setMotionProgress('motion-render', 1, 'Starting render…', 'Starting Remotion worker');
     try {
-      const result = await window.framepilot.motionStartRender({ projectPath: state.selectedProject.path, mode });
+      const result = await window.framepilot.motionStartRender({ projectPath: state.selectedProject.path });
       $('motion-render-progress').classList.add('complete');
       $('motion-render-state').textContent = 'COMPLETED';
       $('motion-render-state').className = 'motion-job-state success';
-      setMotionProgress('motion-render', 100, `${mode === 'preview' ? 'Preview' : 'Final render'} completed.`, 'Render completed');
+      setMotionProgress('motion-render', 100, 'Video completed and verified.', 'Render completed');
       state.lastRenderOutput = result.outputPath;
       $('motion-render-result').hidden = false;
       $('motion-render-output-name').textContent = basename(result.outputPath);
       $('motion-render-output-path').textContent = result.outputPath;
-      if (mode === 'preview') {
-        const url = await window.framepilot.motionResolveOutputUrl(result.outputPath);
-        const video = $('motion-preview-video');
-        video.src = url; video.hidden = false; video.load();
-        $('motion-video-stage').classList.add('has-video');
-        $('motion-preview-file').textContent = basename(result.outputPath);
-        $('motion-open-preview-file').disabled = false;
-        $('motion-player-state').textContent = 'PREVIEW READY';
-      } else {
-        $('motion-player-state').textContent = 'FINAL READY';
-      }
-      toast(`${mode === 'preview' ? 'Preview' : 'Final MP4'} rendered successfully.`);
+      $('motion-player-state').textContent = 'VIDEO READY';
+      toast('Final MP4 rendered and verified successfully.');
       await refreshRenderHistory();
     } catch (error) {
       $('motion-render-progress').classList.add('failed');
@@ -743,12 +1036,27 @@
     $('motion-copy-csv-path').addEventListener('click', () => window.framepilot.motionCopyPath(state.wordCsv).then(() => toast('CSV path copied.')).catch(error => toast(error.message, true)));
     $('motion-show-csv').addEventListener('click', () => window.framepilot.motionShowInFolder(state.wordCsv).catch(error => toast(error.message, true)));
     $('motion-open-word-table').addEventListener('click', () => $('motion-word-table-card').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    $('motion-copy-master-instructions').addEventListener('click', () => promptAction('instructions', 'copy'));
+    $('motion-save-master-instructions').addEventListener('click', () => promptAction('instructions', 'save'));
+    $('motion-save-producer-skill').addEventListener('click', async () => {
+      try {
+        const result = await window.framepilot.motionSaveProducerSkill();
+        if (result?.saved) toast(`Saved ${basename(result.path)}.`);
+      } catch (error) { toast(error.message, true); }
+    });
+    $('motion-save-project-link').addEventListener('click', async () => {
+      try {
+        const url = $('motion-claude-project-url').value.trim();
+        const result = await window.framepilot.motionSaveClaudeProjectUrl(url);
+        state.claudeProjectUrl = result.claudeProjectUrl;
+        toast('Claude Project link saved locally.');
+      } catch (error) { toast(error.message, true); }
+    });
+    $('motion-copy-per-video-handoff').addEventListener('click', () => promptAction('handoff', 'copy'));
     $('motion-open-claude').addEventListener('click', async () => {
       try {
-        const prompt = await window.framepilot.motionReadPrompt('master');
-        await window.framepilot.motionCopyText(prompt.content);
-        await window.framepilot.motionOpenClaude();
-        toast('Master Prompt copied. Claude opened; attach your script, audio and Motion CSV manually.');
+        const result = await window.framepilot.motionOpenClaude();
+        toast(result?.configured ? 'Private Claude Project opened.' : 'Claude opened. Save your private Project URL once for direct access.');
       } catch (error) { toast(error.message, true); }
     });
     $('motion-pick-project-zip').addEventListener('click', chooseProjectZip);
@@ -756,6 +1064,9 @@
     $('motion-confirm-import').addEventListener('click', importProjectZip);
     $('motion-refresh-projects').addEventListener('click', () => refreshProjects().catch(error => toast(error.message, true)));
     $('motion-refresh-runtime').addEventListener('click', () => refreshRuntime().then(() => toast('Motion runtime status refreshed.')).catch(error => toast(error.message, true)));
+    $('motion-install-runtime').addEventListener('click', () => manageRuntime('install'));
+    $('motion-verify-runtime').addEventListener('click', () => manageRuntime('verify'));
+    $('motion-repair-runtime').addEventListener('click', () => manageRuntime('repair'));
     $('motion-refresh-history').addEventListener('click', () => refreshRenderHistory().then(() => toast('Render history refreshed.')).catch(error => toast(error.message, true)));
     $('motion-project-select').addEventListener('change', () => {
       const project = state.projects.find(item => item.path === $('motion-project-select').value);
@@ -763,19 +1074,120 @@
       if (project) populateSelectedProject();
       else {
         $('motion-player-project-name').textContent = 'No project selected';
-        $('motion-render-preview').disabled = true;
         $('motion-render-final').disabled = true;
       }
     });
-    $('motion-render-preview').addEventListener('click', () => runMotionRender('preview'));
-    $('motion-render-final').addEventListener('click', () => runMotionRender('render'));
+    $('motion-render-final').addEventListener('click', () => runMotionRender());
     $('motion-cancel-render').addEventListener('click', () => cancelMotionJob('motion-render'));
     $('motion-copy-render-path').addEventListener('click', () => window.framepilot.motionCopyPath(state.lastRenderOutput).then(() => toast('Render path copied.')).catch(error => toast(error.message, true)));
     $('motion-show-render-folder').addEventListener('click', () => window.framepilot.motionShowInFolder(state.lastRenderOutput).catch(error => toast(error.message, true)));
-    $('motion-open-preview-file').addEventListener('click', () => window.framepilot.motionShowInFolder(state.lastRenderOutput).catch(error => toast(error.message, true)));
+
+    // Claude Kit actions
+    const rebuildSkillBtn = $('motion-rebuild-skill-zip');
+    if (rebuildSkillBtn) {
+      rebuildSkillBtn.addEventListener('click', async () => {
+        try {
+          rebuildSkillBtn.disabled = true;
+          rebuildSkillBtn.textContent = 'Rebuilding…';
+          await window.framepilot.motionRebuildSkillZip();
+          toast('Claude Skill ZIP rebuilt from canonical source.');
+          await refreshClaudeKit();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          rebuildSkillBtn.disabled = false;
+          rebuildSkillBtn.textContent = 'Rebuild Skill ZIP';
+        }
+      });
+    }
+
+    const verifySkillBtn = $('motion-verify-skill-package');
+    if (verifySkillBtn) {
+      verifySkillBtn.addEventListener('click', async () => {
+        try {
+          verifySkillBtn.disabled = true;
+          verifySkillBtn.textContent = 'Verifying…';
+          const res = await window.framepilot.motionVerifySkillPackage();
+          const pkgStatus = $('motion-skill-pkg-status');
+          if (pkgStatus) pkgStatus.textContent = res.output || 'Skill package verification passed.';
+          toast('Skill package verified successfully.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          verifySkillBtn.disabled = false;
+          verifySkillBtn.textContent = 'Verify Skill Package';
+        }
+      });
+    }
+
+    const saveSkillBtn = $('motion-save-skill-zip');
+    if (saveSkillBtn) {
+      saveSkillBtn.addEventListener('click', async () => {
+        try {
+          const res = await window.framepilot.motionSaveProducerSkill();
+          if (res?.saved) toast(`Saved ${basename(res.path)}.`);
+        } catch (e) { toast(e.message, true); }
+      });
+    }
+
+    const handoffBtn = $('motion-generate-handoff-zip');
+    if (handoffBtn) {
+      handoffBtn.addEventListener('click', async () => {
+        const select = $('motion-handoff-project-select');
+        const csvPath = select ? select.value : '';
+        if (!csvPath) {
+          toast('Select a Word Timing session first.', true);
+          return;
+        }
+        try {
+          handoffBtn.disabled = true;
+          handoffBtn.textContent = 'Generating…';
+          const res = await window.framepilot.motionGenerateHandoffZip({ csvPath });
+          if (res?.saved) toast(`Handoff ZIP saved: ${basename(res.path)}.`);
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          handoffBtn.disabled = false;
+          handoffBtn.textContent = 'Generate Handoff ZIP';
+        }
+      });
+    }
+
+    // Project Manager handlers
+    const pmRefresh = $('motion-pm-refresh');
+    if (pmRefresh) pmRefresh.addEventListener('click', () => refreshProjectManager().then(() => toast('Project Manager refreshed.')).catch(e => toast(e.message, true)));
+    const pmSearch = $('motion-pm-search-input');
+    if (pmSearch) {
+      pmSearch.addEventListener('input', () => {
+        pmState.filter = pmSearch.value.trim().toLowerCase();
+        pmState.page = 0;
+        renderProjectManagerList();
+      });
+    }
+
+    // Render History handlers
+    const rhRefresh = $('motion-rh-refresh');
+    if (rhRefresh) rhRefresh.addEventListener('click', () => refreshFullRenderHistory().then(() => toast('Render History refreshed.')).catch(e => toast(e.message, true)));
+
+    // Runtime Manager handlers
+    const rmInstall = $('motion-rm-install');
+    if (rmInstall) rmInstall.addEventListener('click', () => manageRuntime('install'));
+    const rmVerify = $('motion-rm-verify');
+    if (rmVerify) rmVerify.addEventListener('click', () => manageRuntime('verify'));
+    const rmRepair = $('motion-rm-repair');
+    if (rmRepair) rmRepair.addEventListener('click', () => manageRuntime('repair'));
+    const rmRefresh = $('motion-rm-refresh');
+    if (rmRefresh) rmRefresh.addEventListener('click', () => refreshRuntimeManager().then(() => toast('Runtime status refreshed.')).catch(e => toast(e.message, true)));
   }
 
   function bindMotionEvents() {
+    window.framepilot.onMotionRuntimeEvent(event => {
+      if (event.event === 'error') setRuntimeProgress(event.percent, event.message, true);
+      else if (event.event === 'complete') {
+        setRuntimeProgress(100, event.message);
+        refreshRuntime().catch(() => {});
+      } else setRuntimeProgress(event.percent, event.message);
+    });
     window.framepilot.onMotionJobEvent(event => {
       if (event.event === 'progress') {
         if (event.kind === 'render-preview' || event.kind === 'render-render' || event.stage === 'render' || event.stage === 'preview' || event.stage === 'bundle') {
@@ -814,6 +1226,7 @@
     bindEvents();
     bindMotionEvents();
     refreshDashboard().catch(error => toast(error.message, true));
+    refreshClaudeKit().catch(error => toast(`Claude Project Kit: ${error.message}`, true));
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

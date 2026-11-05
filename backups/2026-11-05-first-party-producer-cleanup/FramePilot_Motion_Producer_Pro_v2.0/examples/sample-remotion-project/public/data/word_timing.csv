@@ -1,0 +1,5 @@
+Word_Index,Script_Word,Recognized_Word,Start_ms,End_ms
+1,This,This,0,260
+2,is,is,270,390
+3,a,a,400,470
+4,starter,starter,480,900

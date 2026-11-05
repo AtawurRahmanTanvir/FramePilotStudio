@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://framepilot.local/schemas/motion-project.schema.json",
+  "title": "FramePilot Motion Project Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["projectName", "entryPoint", "compositionId", "width", "height", "fps", "durationInFrames", "remotionVersion", "inputProps"],
+  "properties": {
+    "schemaVersion": {"type": ["integer", "string"]},
+    "projectName": {"type": "string", "minLength": 1},
+    "entryPoint": {"type": "string", "minLength": 1},
+    "compositionId": {"type": "string", "minLength": 1},
+    "width": {"type": "integer", "minimum": 1},
+    "height": {"type": "integer", "minimum": 1},
+    "fps": {"type": "number", "exclusiveMinimum": 0, "maximum": 240},
+    "durationInFrames": {"type": "integer", "minimum": 1},
+    "remotionVersion": {"const": "4.0.540"},
+    "voiceover": {"type": ["string", "null"]},
+    "voiceoverBinding": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["logicalId", "source", "required", "target"],
+      "properties": {
+        "logicalId": {"const": "voiceover.primary"},
+        "source": {"const": "framepilot-linked-audio"},
+        "required": {"const": true},
+        "target": {"type": "string", "pattern": "^(?!/)(?![A-Za-z]:)[^\\\\]*$"},
+        "sessionId": {"type": "string", "minLength": 1}
+      }
+    },
+    "wordTiming": {"type": ["string", "null"]},
+    "inputProps": {"type": "object"},
+    "assets": {"type": "array", "items": {"type": "string"}}
+  }
+}

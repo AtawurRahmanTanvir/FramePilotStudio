@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "projectName": "FramePilot Motion Producer Starter",
+  "entryPoint": "src/index.tsx",
+  "compositionId": "Main",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "durationInFrames": 900,
+  "remotionVersion": "4.0.540",
+  "voiceover": null,
+  "voiceoverBinding": {
+    "logicalId": "voiceover.primary",
+    "source": "framepilot-linked-audio",
+    "required": true,
+    "target": "public/audio/narration.wav"
+  },
+  "wordTiming": "public/data/word_timing.csv",
+  "inputProps": {},
+  "assets": []
+}

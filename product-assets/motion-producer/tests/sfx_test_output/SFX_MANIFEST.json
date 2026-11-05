@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "1.0",
+  "assets": [
+    {
+      "assetId": "whoosh_42",
+      "family": "whoosh",
+      "path": "whoosh_42.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 650,
+      "peak": 0.82,
+      "seed": 42,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "whoosh_1",
+      "family": "whoosh",
+      "path": "whoosh_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 650,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "transition_1",
+      "family": "transition",
+      "path": "transition_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 450,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "impact_1",
+      "family": "impact",
+      "path": "impact_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 350,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "hit_1",
+      "family": "hit",
+      "path": "hit_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 550,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "riser_1",
+      "family": "riser",
+      "path": "riser_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 1200,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "reverse-sweep_1",
+      "family": "reverse-sweep",
+      "path": "reverse-sweep_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 900,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "click_1",
+      "family": "click",
+      "path": "click_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 120,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "metallic_1",
+      "family": "metallic",
+      "path": "metallic_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 500,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "shutter_1",
+      "family": "shutter",
+      "path": "shutter_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 180,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "paper_1",
+      "family": "paper",
+      "path": "paper_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 600,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "ui-tone_1",
+      "family": "ui-tone",
+      "path": "ui-tone_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 200,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "ambience_1",
+      "family": "ambience",
+      "path": "ambience_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 2000,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "reveal_1",
+      "family": "reveal",
+      "path": "reveal_1.wav",
+      "sampleRate": 48000,
+      "channels": 1,
+      "durationMs": 800,
+      "peak": 0.82,
+      "seed": 1,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "sourceCsv": "word_timing.csv",
+  "sha256": null,
+  "status": "NOT RUN",
+  "totalRows": 0,
+  "validTimedRows": 0,
+  "untimedRows": 0,
+  "mismatchRows": 0,
+  "overlapRows": 0,
+  "audioDurationMs": null,
+  "maxCsvEndMs": null,
+  "warnings": [],
+  "errors": []
+}

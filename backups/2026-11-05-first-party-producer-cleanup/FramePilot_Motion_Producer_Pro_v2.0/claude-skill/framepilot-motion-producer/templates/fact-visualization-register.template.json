@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "claims": [
+    {
+      "claimId": "claim-001",
+      "scriptExcerpt": "Exact excerpt from approved script.",
+      "claimType": "historical",
+      "sourceEvidence": ["source supplied by user"],
+      "visualizationType": "supplied-image",
+      "literalOrMetaphorical": "literal",
+      "numericValues": [],
+      "limitations": [],
+      "status": "source-grounded"
+    }
+  ]
+}

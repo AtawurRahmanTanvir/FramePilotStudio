@@ -1,3 +1,67 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/node_modules": true,
+        "runtime/motion/renderer/node_modules": true,
+        "runtime/motion/node": true,
+        "runtime/motion/browser": true,
+        "runtime/motion/renderer/.bundle-cache": true,
+        "runtime/backend": true,
+        "runtime/ffmpeg": true,
+        "runtime/models": true,
+        "release": true,
+        "backups": true,
+        ".build-runtime-venv": true,
+        ".pip-cache": true
+    },
+    "search.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/node_modules": true,
+        "runtime/motion/renderer/node_modules": true,
+        "runtime/motion/node": true,
+        "runtime/motion/browser": true,
+        "runtime/motion/renderer/.bundle-cache": true,
+        "runtime/backend": true,
+        "runtime/ffmpeg": true,
+        "runtime/models": true,
+        "release": true,
+        "backups": true,
+        ".build-runtime-venv": true,
+        ".pip-cache": true
+    },
+    "search.followSymlinks": false,
+    "editor.largeFileOptimizations": true,
+    "files.maxMemoryForLargeFilesMB": 4096,
+    "python.analysis.exclude": [
+        "**/runtime/**",
+        "**/release/**",
+        "**/backups/**",
+        "**/.build-runtime-venv/**",
+        "**/.pip-cache/**",
+        "**/node_modules/**"
+    ],
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/logs/**": true,
+        "**/.git/refs/**": true,
+        "**/__pycache__/**": true,
+        "**/*.pyc": true,
+        "**/node_modules/**": true,
+        "runtime/motion/renderer/node_modules/**": true,
+        "runtime/motion/node/**": true,
+        "runtime/motion/browser/**": true,
+        "runtime/motion/renderer/.bundle-cache/**": true,
+        "runtime/backend/**": true,
+        "runtime/ffmpeg/**": true,
+        "runtime/models/**": true,
+        "release/**": true,
+        "backups/**": true,
+        ".build-runtime-venv/**": true,
+        ".pip-cache/**": true
+    }
 }

@@ -1,0 +1,463 @@
+{
+  "package": "FramePilot Motion Producer Pro",
+  "version": "2.0.0",
+  "generated": "2026-11-05",
+  "file_count_excluding_index_and_checksums": 91,
+  "files": [
+    {
+      "path": "Claude_Skill_Upload.zip",
+      "size_bytes": 57668,
+      "sha256": "989d5fe8d544a149b195e083e94215512da5cb9ac249358ec20dc8a815e7795e"
+    },
+    {
+      "path": "README_BN.md",
+      "size_bytes": 6456,
+      "sha256": "9e1d48c94e30ad1b6141f7cc24890fd845ef28eaeabb816450b516e0fa18e3bb"
+    },
+    {
+      "path": "README_EN.md",
+      "size_bytes": 2262,
+      "sha256": "8aa2e485f0fb4c1426cce1a165da7666c9155c48f8f3c8813422e55386620b5c"
+    },
+    {
+      "path": "claude-project/PER_VIDEO_INTAKE.md",
+      "size_bytes": 1824,
+      "sha256": "28e02865de004cd777f5453ec4cc86b5f4c4c6fc941c6cb6620341cc6e7d5dc8"
+    },
+    {
+      "path": "claude-project/PROJECT_INSTRUCTIONS.md",
+      "size_bytes": 3750,
+      "sha256": "4e399af4664ac08b526509de42fc82024b71ef27f383cce59d3f8508cb051a9b"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/SKILL.md",
+      "size_bytes": 16195,
+      "sha256": "6e596dcb1ddfa743af5b878ce868249dba32e4bd621f429a332619f25829afe2"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/assets/theme.tokens.json",
+      "size_bytes": 723,
+      "sha256": "b58d2a1997e662c3000830d484a257a83e9797606d3fa6e43c995b97387574fe"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/ANIMATION_GRAMMAR.md",
+      "size_bytes": 4150,
+      "sha256": "1f994f15e11aad38336c95585995f139cc0aee16eb93ff30a7a4bb03957500b2"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/AUDIO_DESIGN.md",
+      "size_bytes": 1532,
+      "sha256": "d590ec823b0458602671b9af082c2b5361f940d5a905b642f8fbf480f19f36e0"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/FRAMEPILOT_PROJECT_CONTRACT.md",
+      "size_bytes": 4576,
+      "sha256": "0a0be442d77a958e942528811c41bb06df9b6c9ce4e6fcaffe64346389ab1196"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/FRAMEPILOT_WORKFLOW.md",
+      "size_bytes": 3064,
+      "sha256": "6f9f7f92332e7b0c639c4f06b6dbf6320e2b82b9eb8a6081a5376f432510c4a7"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/LONG_FORM_PERFORMANCE.md",
+      "size_bytes": 3499,
+      "sha256": "138ab32ee4597678b09e936eb4133c8cf27db605937ece8d0f3fb304bc9ce094"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/MOTION_DESIGN_BIBLE.md",
+      "size_bytes": 4514,
+      "sha256": "84b3a3a31ac41b223caecea05a0959d0a845928ab330591757f3f5756cfc5158"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/OUTPUT_FORMAT_POLICY.md",
+      "size_bytes": 1573,
+      "sha256": "e71e8000ce431a457dc1668e8082e3ec70f16909269fe92b1dd0fb912c6722f2"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/PATTERN_LIBRARY.md",
+      "size_bytes": 2255,
+      "sha256": "81e5f4ceae6bfd18334096f7ecfc36794921b976ad8e5f63b1e1b243969915a7"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/QUALITY_RUBRIC.md",
+      "size_bytes": 2685,
+      "sha256": "87d8d296c7409a507503080519355e03e3ec0c045acdc13ec6932be4bd8aac90"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/REUSABLE_MICROCOMMANDS.md",
+      "size_bytes": 2510,
+      "sha256": "518e6716f06620b259dfe93b775927a9640d2e63915c0d79ce59c32f8a7c726a"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/SCENE_AND_ASSET_ARCHITECTURE.md",
+      "size_bytes": 5735,
+      "sha256": "50be60161e8b83a298afd243d1c8c96aca4033ff1a5628a9eda8e8cd8efefb75"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/SECURITY_AND_TRUST_BOUNDARY.md",
+      "size_bytes": 1850,
+      "sha256": "f3e05f5bdb72020442341292dd3d2c45762114268ac70e2bfebbdd943d9c109f"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/STATIC_QA_AND_DELIVERY.md",
+      "size_bytes": 4108,
+      "sha256": "6414bde35ad3d441d14f0228017cd41fedca5e27e65cd97e673ab1c28ffca781"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/TYPOGRAPHY_AND_MULTILINGUAL.md",
+      "size_bytes": 2499,
+      "sha256": "239eb9c78d8a8752ab155c0081c0963287b899fa45b9ac194aa764482a2edff6"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/references/WORD_TIMING_CSV_CONTRACT.md",
+      "size_bytes": 4465,
+      "sha256": "73329af7f009735c82c9c4c495a454bc7b99fe89ad6b78c7d29f8e345f4d01e9"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/schemas/asset-manifest.schema.json",
+      "size_bytes": 1162,
+      "sha256": "3d4310475b6edfab5e15923bdfa554722fce2946ab5398d7411fb9948c3c6e6c"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/schemas/motion-project.schema.json",
+      "size_bytes": 1086,
+      "sha256": "541fb5c7769762bf118c9169475f43f3787299c594e9116ebf26dae68852b46e"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/schemas/scene-plan.schema.json",
+      "size_bytes": 1743,
+      "sha256": "bf4152765108b335c6a8c5ec1e5b3966d0510692296a84dd22f5f94a9c19f570"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/schemas/timing-review.schema.json",
+      "size_bytes": 904,
+      "sha256": "5bd6f7d4ea8ad04651a41385c287e3fe9088af6244424d2fe0157a83dab7460e"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/scripts/csv_to_frame_timing.py",
+      "size_bytes": 3737,
+      "sha256": "3f40b5401cb92a8974a477e5f75cc42b615175d35b8ffe3372bca8af7bb1079e"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/scripts/package_project_zip.py",
+      "size_bytes": 2338,
+      "sha256": "6df1ce5eb70ffd0bbdf0d68393b34ad6d3a6ec39129d323b16a6ac3dea098a8c"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/scripts/validate_project_zip.py",
+      "size_bytes": 11117,
+      "sha256": "6191d26be5e42342eb489223b3dbb1553e8031f6fe1b5200cdd95a08785f7005"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/scripts/validate_word_timing.py",
+      "size_bytes": 8950,
+      "sha256": "13f9cf884fce33b8ea1f62812b9aa705ba4bc2a08ef06661ba8bae6f620db132"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/asset-manifest.template.json",
+      "size_bytes": 464,
+      "sha256": "bc7d836bdf64a5d7f9811f67185a8471eb32716dfb8b20c28e3b0f4194d82122"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/continuity-register.template.json",
+      "size_bytes": 567,
+      "sha256": "47d0999a155fe0821239e266ff3348f513b1f5e77f5bbb15f6ad063072a4a44c"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/decision-log.template.json",
+      "size_bytes": 355,
+      "sha256": "77415c17f0431a8195ac4b939152ae0466dc64a6c1cdb44a03dc8010094c102f"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/editorial-architecture.template.json",
+      "size_bytes": 697,
+      "sha256": "6a7bfe4b09699287103e3829c3b934ac0a72fd24785a8ed658bc5259541c0d2e"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/fact-visualization-register.template.json",
+      "size_bytes": 411,
+      "sha256": "5fdedf01b65793dd7ebc0b2c7ba3937092a43cc76265160a5a12aa1490e4610a"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/CalloutLine.tsx",
+      "size_bytes": 632,
+      "sha256": "3e64814d93ca49a8394e80d59ece06f75ce2ea9fc9f6ed6aca26e5d3c055336f"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/ComparisonPanel.tsx",
+      "size_bytes": 1158,
+      "sha256": "9816ab46d342a6aedfc0bec4060d71df86c4cbbaa3212823d81c101f9af73660"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/CounterReveal.tsx",
+      "size_bytes": 682,
+      "sha256": "4da50b5c752603e47bee58f8059f2f85440b446a9826392a4f1672f60a8cffd8"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/ImageMotion.tsx",
+      "size_bytes": 936,
+      "sha256": "973cfbb3c7a58c9f613542acb32936cf812c3f82698b3aad1ae364e536a3a894"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/MetricCard.tsx",
+      "size_bytes": 915,
+      "sha256": "7cefa6d860c5edb359be89e67cd37cf06d8e27a0e4ea51953a0237c0b6dc96ad"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/ProgressRail.tsx",
+      "size_bytes": 670,
+      "sha256": "7ae5205b8d8840c09fbf162e194715ce1b92d084014f1622da3b796096b50791"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/QuoteReveal.tsx",
+      "size_bytes": 860,
+      "sha256": "0b82f36d53b3dbc3b1ba8bee2cdc216c4d8654dfdd7945d41705f1614ddd6808"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/SectionHeader.tsx",
+      "size_bytes": 751,
+      "sha256": "999017787d6e6e79da926c8d37127d0a2fee26cfc98c932f77191713f59e01dd"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/SourceFootnote.tsx",
+      "size_bytes": 390,
+      "sha256": "c9f23d397496631cdafd87fbf312bd55e9bed8f3416d4341c896c7d54f4cad59"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/StaggerList.tsx",
+      "size_bytes": 1223,
+      "sha256": "993da8de9f014c4e29571477948e54db4af611024a0ae03aa20b6dee4dd1ff95"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/TimelineStrip.tsx",
+      "size_bytes": 1437,
+      "sha256": "16edd71a0a377a72a3054a93c745d1929384625dfcece97b2bfd7af0822502c7"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/patterns/WordHighlight.tsx",
+      "size_bytes": 854,
+      "sha256": "ac3baa3b0162fecee7220d25ca720a6f930f5d451215261793d43055bdadebfc"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/scene-coverage.template.csv",
+      "size_bytes": 193,
+      "sha256": "82b587e8de9df8e2e90d934dad8f0e3ff8c5d4289b6d879850b40869c5f47a7e"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/scene-plan.template.json",
+      "size_bytes": 975,
+      "sha256": "1b68ff12199c08195bb8a9b1794a37f72f6846ef983a9d3f14d2f296b9072cd2"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/source-inventory.template.json",
+      "size_bytes": 429,
+      "sha256": "d7e1ad069ae540e578ae10c143710d7c01678a2ea18f7b79f6c55d160985634d"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/timing-review.template.json",
+      "size_bytes": 290,
+      "sha256": "851d4a025433471055a6f68821b2385e938dd5fe684dd8492309bf2314313620"
+    },
+    {
+      "path": "claude-skill/framepilot-motion-producer/templates/word_timing.template.csv",
+      "size_bytes": 124,
+      "sha256": "f277675e789936ac62a4776f7674896de0c78ca8760190582361428f602ddfbb"
+    },
+    {
+      "path": "docs/ADVANCED_DOCUMENTARY_PLAYBOOK.md",
+      "size_bytes": 3441,
+      "sha256": "130cc5c1686b1a1bbbba69b912989884fcdad1f9d0ebe66f0f1c9d9eb675e62d"
+    },
+    {
+      "path": "docs/CHANGELOG.md",
+      "size_bytes": 874,
+      "sha256": "05b85099869bbd0eb4c29f8425c86e1b0f14e555692486696e2d996f997dd8fb"
+    },
+    {
+      "path": "docs/CLAUDE_SKILL_SETUP.md",
+      "size_bytes": 2066,
+      "sha256": "f9aad29711db5041750e264568795dfdf38b5072d0baeaf354823946a7627a50"
+    },
+    {
+      "path": "docs/COPILOT_FRAMEPILOT_INTEGRATION.md",
+      "size_bytes": 5335,
+      "sha256": "79d53a7022ec342a1b915750ebeace853afb76a9339ecf4cdaa0f8a205402758"
+    },
+    {
+      "path": "docs/MOTION_STUDIO_CLAUDE_KIT_UI_SPEC.md",
+      "size_bytes": 2399,
+      "sha256": "5f29d2e66e284f68bcdd42c46bb8177c49e1ea5086d377f3c38fb08cb9a1c540"
+    },
+    {
+      "path": "docs/NOTICE_AND_LICENSE.md",
+      "size_bytes": 1132,
+      "sha256": "71288f4de11300c917c36a01ca9629f00d5974b0ce71f46b975f499d4b247751"
+    },
+    {
+      "path": "docs/PRODUCTION_SYSTEM_OVERVIEW.md",
+      "size_bytes": 2574,
+      "sha256": "9e6c189b46eebc57d219a2b1c2c4336cb85e9caef5775c988221429df78cbfb6"
+    },
+    {
+      "path": "docs/RELEASE_CHECKLIST.md",
+      "size_bytes": 1792,
+      "sha256": "a8cef6c526555dad2bd26d23131d43b9cce4f27cc0caaa1b70ee74bf4e711de7"
+    },
+    {
+      "path": "docs/SOURCE_REVIEW_AND_INDEPENDENCE.md",
+      "size_bytes": 4157,
+      "sha256": "87bdb0d6201fa52e4a831495a710d8e39fdfe31a580a60cf608bda52df237351"
+    },
+    {
+      "path": "docs/TEAM_WORKFLOW_AND_NAMING.md",
+      "size_bytes": 1815,
+      "sha256": "b79df406658eabe9a8b508622d327358a5e801ccd000c24ed49ddc8071a76aa9"
+    },
+    {
+      "path": "examples/csv-fixtures/README.md",
+      "size_bytes": 462,
+      "sha256": "7292a750bd5d667c8ae6048eaef56c799ba1d62be886855db61653f8a10af952"
+    },
+    {
+      "path": "examples/csv-fixtures/framepilot_sample.csv",
+      "size_bytes": 134,
+      "sha256": "0ed0eba68fc19806cff4ba5c3f75d3d1100a67c7d726232ba0f4c3194b094330"
+    },
+    {
+      "path": "examples/reports/framepilot_sample_frame_timing.json",
+      "size_bytes": 1101,
+      "sha256": "5f878fb1e527de6bd7297d9be69dcbb1b4b82367cac3f6da577060b9f12da8d6"
+    },
+    {
+      "path": "examples/reports/framepilot_sample_timing_report.json",
+      "size_bytes": 671,
+      "sha256": "301e37c36a877d34ed9195742d520f655ab3aae2bf5ee0f5684c6dc162b888f0"
+    },
+    {
+      "path": "examples/sample-remotion-project/PROJECT_README.md",
+      "size_bytes": 742,
+      "sha256": "48e5cbc6504fd8d39ccf8e0f02f804f94bab78932f69612ef3b4bac57939658b"
+    },
+    {
+      "path": "examples/sample-remotion-project/STATIC_QA_REPORT.md",
+      "size_bytes": 808,
+      "sha256": "bbc49e7ee3c5afd5f85a45277d32176d1e202bd18d8b1ffec8a5d9e6808ba62c"
+    },
+    {
+      "path": "examples/sample-remotion-project/motion-project.json",
+      "size_bytes": 351,
+      "sha256": "56fde664cbb618bf4c223cad85e393a600922bba82ef7bc6fb4586d23ab91c3d"
+    },
+    {
+      "path": "examples/sample-remotion-project/package.json",
+      "size_bytes": 213,
+      "sha256": "aacffd05df0f9740298f7315beb87ffb9ce6537b3db7141cb8f56c2a624e4b15"
+    },
+    {
+      "path": "examples/sample-remotion-project/project-data/asset-manifest.json",
+      "size_bytes": 36,
+      "sha256": "87d77d476e42f823c606116db8ddbe779801091ef7ed4adcf3650d1fca62b7bd"
+    },
+    {
+      "path": "examples/sample-remotion-project/project-data/scene-plan.json",
+      "size_bytes": 2382,
+      "sha256": "a04aef5ae5a1e7d88de933b636e836953bbfb3034262c0ee9df51ad08ce6e076"
+    },
+    {
+      "path": "examples/sample-remotion-project/public/data/word_timing.csv",
+      "size_bytes": 129,
+      "sha256": "f5036d631bfd6f89e39c64abd141473db5ac420061a44bbf932ae3eaf7f9c3fc"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/Root.tsx",
+      "size_bytes": 786,
+      "sha256": "b258e51bf87299068efb2c6a7e749a98a7cfd8ccf3eb4d3d771359125a9c5684"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/components/SceneText.tsx",
+      "size_bytes": 1314,
+      "sha256": "7cee18c80578160fb02bbbec8ae844ffdf355cc8ec651df0fb8201be49f8d2f1"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/components/SectionMarker.tsx",
+      "size_bytes": 626,
+      "sha256": "ee1375e1db8ed3672ed53b6cc361b800adda8f490425a78a6152b8f3511650b6"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/index.tsx",
+      "size_bytes": 116,
+      "sha256": "efd914bb9e09c4a253e3b27e024ba89e44cf6ebef12a7a772f7e29b374ca195f"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/scenes/ClosingScene.tsx",
+      "size_bytes": 1024,
+      "sha256": "d0d3723ff458ed6acfc328ecedcc51ae400dd80f9dd874eee423f8285b3e8838"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/scenes/MechanismScene.tsx",
+      "size_bytes": 1999,
+      "sha256": "6c0ce8e21c7fcc0ee897a3e83482fe0f9b0c892ef4441511fd2bc4fb18c1a0e7"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/scenes/OpeningScene.tsx",
+      "size_bytes": 1192,
+      "sha256": "f31c71322d2b6d686b7e94eff2251aa00a6f5327b342b819e3292e9597d77e7a"
+    },
+    {
+      "path": "examples/sample-remotion-project/src/theme.ts",
+      "size_bytes": 512,
+      "sha256": "9c82f38a1f07c2b0469c7a9c209c609cc9a0bc53330aedc0b8a114b7e03efca9"
+    },
+    {
+      "path": "metadata/FINAL_BUILD_REPORT_BN.md",
+      "size_bytes": 2780,
+      "sha256": "0963f12881edcefef19e67ed095239636b770726f6a390fc1a7abaf4757796bf"
+    },
+    {
+      "path": "metadata/TEST_RESULTS.md",
+      "size_bytes": 2175,
+      "sha256": "cca5b2ac130c564c5d2a518a076509d7e8507c706d2d6fcb6dd23332b46594ca"
+    },
+    {
+      "path": "metadata/VERSION.json",
+      "size_bytes": 489,
+      "sha256": "8613125de5634cf1f0c8c98f741c5efcd52ac885f01e8abfdba6fc80740bf202"
+    },
+    {
+      "path": "tests/test_producer_tools.py",
+      "size_bytes": 6376,
+      "sha256": "cb46e07a087302094dacd4c51dfa436b2e70c383b7f0d3349c5abe025a9d2c6b"
+    },
+    {
+      "path": "tools/build_skill_upload_zip.py",
+      "size_bytes": 1045,
+      "sha256": "9914e989921680246cb993781b15ded3634fdc0bbeffbf292543908123ed5182"
+    },
+    {
+      "path": "tools/csv_to_frame_timing.py",
+      "size_bytes": 3737,
+      "sha256": "3f40b5401cb92a8974a477e5f75cc42b615175d35b8ffe3372bca8af7bb1079e"
+    },
+    {
+      "path": "tools/package_project_zip.py",
+      "size_bytes": 2338,
+      "sha256": "6df1ce5eb70ffd0bbdf0d68393b34ad6d3a6ec39129d323b16a6ac3dea098a8c"
+    },
+    {
+      "path": "tools/validate_project_zip.py",
+      "size_bytes": 11117,
+      "sha256": "6191d26be5e42342eb489223b3dbb1553e8031f6fe1b5200cdd95a08785f7005"
+    },
+    {
+      "path": "tools/validate_word_timing.py",
+      "size_bytes": 8950,
+      "sha256": "13f9cf884fce33b8ea1f62812b9aa705ba4bc2a08ef06661ba8bae6f620db132"
+    },
+    {
+      "path": "tools/verify_package.py",
+      "size_bytes": 1932,
+      "sha256": "138d7de74fde99d2121e6a5fbf743d3865306eb9f7c410ce421cd42ad27bc02e"
+    }
+  ]
+}

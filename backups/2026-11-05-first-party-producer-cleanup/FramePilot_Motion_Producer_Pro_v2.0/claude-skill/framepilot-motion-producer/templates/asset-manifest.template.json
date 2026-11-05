@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "assets": [
+    {
+      "assetId": "IMG_0001",
+      "sourceFilename": "Image_001.png",
+      "packagedPath": "public/assets/images/Image_001.png",
+      "assetType": "image",
+      "role": "hero-evidence",
+      "sceneIds": ["scene-001"],
+      "sequenceNumber": 1,
+      "preservationConstraints": ["Preserve original viewpoint and framing."],
+      "sha256": null,
+      "included": true,
+      "exclusionReason": null
+    }
+  ]
+}

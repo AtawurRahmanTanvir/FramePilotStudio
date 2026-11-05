@@ -11,6 +11,7 @@ import sys
 import tempfile
 import time
 import unicodedata
+import uuid
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -312,8 +313,10 @@ def main() -> int:
         for row in rows:
             row.pop("_status", None)
             row.pop("_score", None)
+        session_id = f"wt-{int(time.time())}-{uuid.uuid4().hex[:8]}"
         metadata = {
             "schema_version": 1,
+            "session_id": session_id,
             "source_script": script_path.name,
             "source_audio": audio_path.name,
             "detected_language": language,
@@ -332,6 +335,22 @@ def main() -> int:
         if confidence_unavailable:
             metadata["warnings"].append(f"Alignment confidence was not provided for {confidence_unavailable} recognized word(s).")
         csv_path, qa_path = write_outputs(rows, output_path, metadata)
+        session_path = output_path.with_suffix(".session.json")
+        session_data = {
+            "sessionId": session_id,
+            "projectName": output_path.stem.replace("_Motion_Word_Timing", ""),
+            "sourceAudioPath": str(audio_path),
+            "sourceAudioFilename": audio_path.name,
+            "audioDurationSeconds": round(duration, 3),
+            "sourceScriptPath": str(script_path),
+            "csvPath": str(csv_path),
+            "qaPath": str(qa_path),
+            "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        try:
+            session_path.write_text(json.dumps(session_data, indent=2), encoding="utf-8")
+        except Exception:
+            pass
         emit("progress", percent=100, message="Motion word timing and script verification completed")
         emit("result", csv_output=str(csv_path), qa_output=str(qa_path), summary=metadata)
         return 0

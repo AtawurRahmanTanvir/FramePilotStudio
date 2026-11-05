@@ -47,6 +47,8 @@ async function main() {
   const outputRelative = path.relative(outputRoot, output);
   if (outputRelative.startsWith('..') || path.isAbsolute(outputRelative)) throw new Error("Render output must remain inside the selected project outputs folder.");
   if (fs.existsSync(output)) throw new Error('Refusing to overwrite an existing render output.');
+  const temporaryOutput = `${output}.framepilot-${process.pid}-${Date.now()}.tmp.mp4`;
+  const temporaryStill = temporaryOutput.replace(/\.mp4$/i, '_first-frame.png');
   const manifestPath = path.join(projectRoot, 'motion-project.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   const entryPoint = safeJoin(projectRoot, manifest.entryPoint);
@@ -112,79 +114,90 @@ async function main() {
     emit('progress', { percent: 25, stage: 'render', message: 'Starting final-quality render' });
   }
 
-  await renderMedia({
-    composition,
-    serveUrl,
-    codec: 'h264',
-    outputLocation: output,
-    browserExecutable,
-    binariesDirectory,
-    inputProps: manifest.inputProps || {},
-    concurrency: Math.max(1, Math.min(4, Math.floor((os.cpus()?.length || 2) / 2))),
-    imageFormat: 'jpeg',
-    pixelFormat: 'yuv420p',
-    crf: mode === 'preview' ? 26 : 18,
-    scale: mode === 'preview' ? 0.5 : 1,
-    onProgress: ({ progress, renderedFrames, encodedFrames }) => {
-      const value = Math.max(0, Math.min(1, Number(progress) || 0));
-      emit('progress', {
-        percent: Math.round(25 + value * 74),
-        stage: mode,
-        message: `${mode === 'preview' ? 'Preview' : 'Render'} ${Math.round(value * 100)}% · ${renderedFrames || 0}/${composition.durationInFrames} frames`,
-        renderedFrames: renderedFrames || 0,
-        encodedFrames: encodedFrames || 0,
-      });
-    },
-  });
-
-  if (!fs.existsSync(output) || fs.statSync(output).size === 0) {
-    throw new Error('Remotion completed without producing a non-empty output file.');
-  }
-  const ffprobePath = path.join(binariesDirectory, 'ffprobe.exe');
-  if (!fs.existsSync(ffprobePath)) throw new Error('FFprobe is missing; output verification cannot be completed.');
-  let probe;
   try {
-    const result = await execFileAsync(ffprobePath, [
-      '-v', 'error',
-      '-show_entries', 'format=duration,size',
-      '-of', 'json',
-      output,
-    ], { windowsHide: true, timeout: 30000, maxBuffer: 1024 * 1024 });
-    probe = JSON.parse(result.stdout);
-  } catch (error) {
-    throw new Error(`Rendered output failed FFprobe verification: ${error.message}`);
-  }
-  const duration = Number(probe?.format?.duration);
-  const size = Number(probe?.format?.size);
-  const expectedDuration = Number(composition.durationInFrames) / Number(composition.fps);
-  if (!Number.isFinite(duration) || !Number.isFinite(size) || size <= 0 || duration <= 0 || Math.abs(duration - expectedDuration) > (1 / Number(composition.fps)) + 0.05) {
-    throw new Error(`Rendered output failed duration/size verification (duration=${duration}, expected=${expectedDuration}, size=${size}).`);
-  }
-
-  const stillPath = output.replace(/\.mp4$/i, '_first-frame.png');
-  try {
-    await renderStill({
+    await renderMedia({
       composition,
       serveUrl,
-      output: stillPath,
-      frame: 0,
+      codec: 'h264',
+      outputLocation: temporaryOutput,
       browserExecutable,
       binariesDirectory,
       inputProps: manifest.inputProps || {},
+      concurrency: Math.max(1, Math.min(4, Math.floor((os.cpus()?.length || 2) / 2))),
+      imageFormat: 'jpeg',
+      pixelFormat: 'yuv420p',
+      crf: mode === 'preview' ? 26 : 18,
+      scale: mode === 'preview' ? 0.5 : 1,
+      onProgress: ({ progress, renderedFrames, encodedFrames }) => {
+        const value = Math.max(0, Math.min(1, Number(progress) || 0));
+        emit('progress', {
+          percent: Math.round(25 + value * 74),
+          stage: mode,
+          message: `${mode === 'preview' ? 'Preview' : 'Render'} ${Math.round(value * 100)}% · ${renderedFrames || 0}/${composition.durationInFrames} frames`,
+          renderedFrames: renderedFrames || 0,
+          encodedFrames: encodedFrames || 0,
+        });
+      },
     });
-  } catch (error) {
-    emit('warning', { message: `MP4 rendered, but first-frame QA still failed: ${error.message}` });
+
+    if (!fs.existsSync(temporaryOutput) || fs.statSync(temporaryOutput).size === 0) {
+      throw new Error('Remotion completed without producing a non-empty output file.');
+    }
+    const ffprobePath = path.join(binariesDirectory, 'ffprobe.exe');
+    if (!fs.existsSync(ffprobePath)) throw new Error('FFprobe is missing; output verification cannot be completed.');
+    let probe;
+    try {
+      const result = await execFileAsync(ffprobePath, [
+        '-v', 'error',
+        '-show_entries', 'format=duration,size',
+        '-of', 'json',
+        temporaryOutput,
+      ], { windowsHide: true, timeout: 30000, maxBuffer: 1024 * 1024 });
+      probe = JSON.parse(result.stdout);
+    } catch (error) {
+      throw new Error(`Rendered output failed FFprobe verification: ${error.message}`);
+    }
+    const duration = Number(probe?.format?.duration);
+    const size = Number(probe?.format?.size);
+    const expectedDuration = Number(composition.durationInFrames) / Number(composition.fps);
+    if (!Number.isFinite(duration) || !Number.isFinite(size) || size <= 0 || duration <= 0 || Math.abs(duration - expectedDuration) > (1 / Number(composition.fps)) + 0.05) {
+      throw new Error(`Rendered output failed duration/size verification (duration=${duration}, expected=${expectedDuration}, size=${size}).`);
+    }
+
+    try {
+      await renderStill({
+        composition,
+        serveUrl,
+        output: temporaryStill,
+        frame: 0,
+        browserExecutable,
+        binariesDirectory,
+        inputProps: manifest.inputProps || {},
+      });
+    } catch (error) {
+      emit('warning', { message: `MP4 rendered, but first-frame QA still failed: ${error.message}` });
+    }
+    if (fs.existsSync(output)) throw new Error('Render output appeared while the job was running; refusing to overwrite it.');
+    fs.renameSync(temporaryOutput, output);
+    const stillPath = output.replace(/\.mp4$/i, '_first-frame.png');
+    if (fs.existsSync(temporaryStill)) fs.renameSync(temporaryStill, stillPath);
+    emit('progress', { percent: 100, stage: 'complete', message: 'Render completed' });
+    emit('result', {
+      output,
+      still: fs.existsSync(stillPath) ? stillPath : null,
+      mode,
+      compositionId: composition.id,
+      durationInFrames: composition.durationInFrames,
+      outputDurationSeconds: duration,
+      outputSizeBytes: size,
+    });
+  } finally {
+    for (const temporary of [temporaryOutput, temporaryStill]) {
+      if (fs.existsSync(temporary)) {
+        try { fs.rmSync(temporary, { force: true }); } catch {}
+      }
+    }
   }
-  emit('progress', { percent: 100, stage: 'complete', message: 'Render completed' });
-  emit('result', {
-    output,
-    still: fs.existsSync(stillPath) ? stillPath : null,
-    mode,
-    compositionId: composition.id,
-    durationInFrames: composition.durationInFrames,
-    outputDurationSeconds: duration,
-    outputSizeBytes: size,
-  });
 }
 
 main().catch((error) => {

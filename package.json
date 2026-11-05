@@ -37,7 +37,8 @@
         "from": "runtime/backend",
         "to": "runtime/backend",
         "filter": [
-          "FramePilotBackend/**/*"
+          "FramePilotBackend/**/*",
+          "!FramePilotBackend/**/*.lib"
         ]
       },
       {
@@ -95,17 +96,25 @@
         ]
       },
       {
-        "from": "motion-studio/prompts",
-        "to": "motion-studio/prompts",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
         "from": "runtime/motion",
         "to": "runtime/motion",
         "filter": [
           "**/*"
+        ]
+      }
+      ,
+      {
+        "from": "tools/INSTALL_MOTION_RUNTIME.ps1",
+        "to": "runtime/motion/INSTALL_MOTION_RUNTIME.ps1"
+      },
+      {
+        "from": "product-assets/motion-producer",
+        "to": "product-assets/motion-producer",
+        "filter": [
+          "**/*",
+          "!tests/**/__pycache__/**",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
         ]
       }
     ],

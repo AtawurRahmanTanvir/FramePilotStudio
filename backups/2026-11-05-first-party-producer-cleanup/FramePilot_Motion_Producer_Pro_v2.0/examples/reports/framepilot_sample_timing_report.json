@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "sourceCsv": "framepilot_test_word_timing.csv",
+  "status": "PASS_WITH_WARNINGS",
+  "totalRows": 4,
+  "validTimedRows": 3,
+  "untimedRows": 1,
+  "mismatchRows": 1,
+  "overlapRows": 0,
+  "sha256": "0ed0eba68fc19806cff4ba5c3f75d3d1100a67c7d726232ba0f4c3194b094330",
+  "warnings": [
+    {
+      "line": 4,
+      "type": "script_recognition_mismatch",
+      "word_index": 3,
+      "script_word": "friend",
+      "recognized_word": "frend"
+    },
+    {
+      "line": 5,
+      "type": "empty_recognized_word",
+      "word_index": 4
+    },
+    {
+      "line": 5,
+      "type": "missing_time_range",
+      "word_index": 4
+    }
+  ],
+  "errors": []
+}

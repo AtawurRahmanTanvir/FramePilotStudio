@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FramePilot Scene Plan",
+  "type": "object",
+  "required": ["schemaVersion", "projectTitle", "fps", "scenes"],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "projectTitle": {"type": "string"},
+    "fps": {"type": "number", "exclusiveMinimum": 0},
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sceneId", "sectionId", "narrativeFunction", "startMs", "endMs", "assetIds", "visualClaim", "evidenceType", "camera", "motion", "confidence"],
+        "properties": {
+          "sceneId": {"type": "string"},
+          "sectionId": {"type": "string"},
+          "title": {"type": "string"},
+          "narrativeFunction": {"type": "string"},
+          "startMs": {"type": "number", "minimum": 0},
+          "endMs": {"type": "number", "exclusiveMinimum": 0},
+          "startWordIndex": {"type": ["integer", "null"]},
+          "endWordIndex": {"type": ["integer", "null"]},
+          "assetIds": {"type": "array", "items": {"type": "string"}},
+          "visualClaim": {"type": "string"},
+          "evidenceType": {"type": "string"},
+          "composition": {"type": "object"},
+          "camera": {"type": "object"},
+          "motion": {"type": "object"},
+          "onScreenText": {"type": "array"},
+          "audioEvents": {"type": "array"},
+          "continuityRules": {"type": "array", "items": {"type": "string"}},
+          "sourceEvidence": {"type": "array", "items": {"type": "string"}},
+          "confidence": {"enum": ["grounded", "partially-grounded", "illustrative", "uncertain"]},
+          "openIssues": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

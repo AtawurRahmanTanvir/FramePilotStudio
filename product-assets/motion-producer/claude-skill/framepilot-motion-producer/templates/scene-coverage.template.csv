@@ -1,0 +1,2 @@
+Section_ID,Scene_ID,Start_ms,End_ms,Start_Word_Index,End_Word_Index,Asset_IDs,Visual_Function,Coverage_Status,Notes
+section-001,scene-001,0,5200,1,18,IMG_0001,Hook,COVERED,Source-backed opener

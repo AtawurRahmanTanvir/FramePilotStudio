@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0",
+  "generatedBy": "FramePilot Motion Producer SFX Generator",
+  "sampleRate": 48000,
+  "assets": [
+    {
+      "assetId": "ambience_42",
+      "family": "ambience",
+      "path": "ambience_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 2000,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 384044,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "click_42",
+      "family": "click",
+      "path": "click_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 120,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 23084,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "hit_42",
+      "family": "hit",
+      "path": "hit_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 550,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 105644,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "impact_42",
+      "family": "impact",
+      "path": "impact_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 350,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 67244,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "metallic_42",
+      "family": "metallic",
+      "path": "metallic_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 500,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 96044,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "paper_42",
+      "family": "paper",
+      "path": "paper_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 600,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 115244,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "reveal_42",
+      "family": "reveal",
+      "path": "reveal_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 800,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 153644,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "reverse-sweep_42",
+      "family": "reverse-sweep",
+      "path": "reverse-sweep_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 900,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 172844,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "riser_42",
+      "family": "riser",
+      "path": "riser_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 1200,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 230444,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "shutter_42",
+      "family": "shutter",
+      "path": "shutter_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 180,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 34604,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "transition_42",
+      "family": "transition",
+      "path": "transition_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 450,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 86444,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "ui-tone_42",
+      "family": "ui-tone",
+      "path": "ui-tone_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 200,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 38444,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    },
+    {
+      "assetId": "whoosh_42",
+      "family": "whoosh",
+      "path": "whoosh_42.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "durationMs": 650,
+      "peak": 0.82,
+      "seed": 42,
+      "fileSizeBytes": 124844,
+      "generatedBy": "FramePilot Motion Producer procedural SFX generator"
+    }
+  ]
+}
