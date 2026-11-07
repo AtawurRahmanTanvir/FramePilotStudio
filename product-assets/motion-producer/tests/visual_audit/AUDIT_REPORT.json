@@ -5,7 +5,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-overview.png",
-    "sizeBytes": 385396
+    "sizeBytes": 392438
   },
   {
     "resolution": "1280x720",
@@ -13,7 +13,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-word-timing.png",
-    "sizeBytes": 298149
+    "sizeBytes": 323956
   },
   {
     "resolution": "1280x720",
@@ -21,7 +21,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-claude-kit.png",
-    "sizeBytes": 225878
+    "sizeBytes": 231814
   },
   {
     "resolution": "1280x720",
@@ -29,7 +29,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-import.png",
-    "sizeBytes": 246543
+    "sizeBytes": 204424
   },
   {
     "resolution": "1280x720",
@@ -37,7 +37,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-render.png",
-    "sizeBytes": 203337
+    "sizeBytes": 236782
   },
   {
     "resolution": "1280x720",
@@ -45,7 +45,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-project-manager.png",
-    "sizeBytes": 207640
+    "sizeBytes": 214954
   },
   {
     "resolution": "1280x720",
@@ -53,15 +53,15 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1280x720_motion-render-history.png",
-    "sizeBytes": 137779
+    "sizeBytes": 136775
   },
   {
     "resolution": "1280x720",
-    "page": "motion-runtime-manager",
+    "page": "motion-diagnostics",
     "navigated": true,
     "horizontalOverflow": false,
-    "filename": "audit_1280x720_motion-runtime-manager.png",
-    "sizeBytes": 136136
+    "filename": "audit_1280x720_motion-diagnostics.png",
+    "sizeBytes": 132182
   },
   {
     "resolution": "1366x768",
@@ -69,7 +69,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-overview.png",
-    "sizeBytes": 406388
+    "sizeBytes": 401920
   },
   {
     "resolution": "1366x768",
@@ -77,7 +77,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-word-timing.png",
-    "sizeBytes": 313598
+    "sizeBytes": 341851
   },
   {
     "resolution": "1366x768",
@@ -85,7 +85,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-claude-kit.png",
-    "sizeBytes": 237909
+    "sizeBytes": 243209
   },
   {
     "resolution": "1366x768",
@@ -93,7 +93,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-import.png",
-    "sizeBytes": 261952
+    "sizeBytes": 215049
   },
   {
     "resolution": "1366x768",
@@ -101,7 +101,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-render.png",
-    "sizeBytes": 223200
+    "sizeBytes": 235299
   },
   {
     "resolution": "1366x768",
@@ -109,7 +109,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-project-manager.png",
-    "sizeBytes": 218775
+    "sizeBytes": 206938
   },
   {
     "resolution": "1366x768",
@@ -117,15 +117,79 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1366x768_motion-render-history.png",
-    "sizeBytes": 144770
+    "sizeBytes": 144469
   },
   {
     "resolution": "1366x768",
-    "page": "motion-runtime-manager",
+    "page": "motion-diagnostics",
     "navigated": true,
     "horizontalOverflow": false,
-    "filename": "audit_1366x768_motion-runtime-manager.png",
-    "sizeBytes": 122927
+    "filename": "audit_1366x768_motion-diagnostics.png",
+    "sizeBytes": 151585
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-overview",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-overview.png",
+    "sizeBytes": 480493
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-word-timing",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-word-timing.png",
+    "sizeBytes": 380559
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-claude-kit",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-claude-kit.png",
+    "sizeBytes": 282533
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-import",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-import.png",
+    "sizeBytes": 238940
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-render",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-render.png",
+    "sizeBytes": 268853
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-project-manager",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-project-manager.png",
+    "sizeBytes": 237630
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-render-history",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-render-history.png",
+    "sizeBytes": 168239
+  },
+  {
+    "resolution": "1600x900",
+    "page": "motion-diagnostics",
+    "navigated": true,
+    "horizontalOverflow": false,
+    "filename": "audit_1600x900_motion-diagnostics.png",
+    "sizeBytes": 161734
   },
   {
     "resolution": "1920x1080",
@@ -133,7 +197,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-overview.png",
-    "sizeBytes": 528601
+    "sizeBytes": 527852
   },
   {
     "resolution": "1920x1080",
@@ -141,7 +205,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-word-timing.png",
-    "sizeBytes": 418225
+    "sizeBytes": 436830
   },
   {
     "resolution": "1920x1080",
@@ -149,7 +213,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-claude-kit.png",
-    "sizeBytes": 304663
+    "sizeBytes": 307551
   },
   {
     "resolution": "1920x1080",
@@ -157,7 +221,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-import.png",
-    "sizeBytes": 346440
+    "sizeBytes": 266897
   },
   {
     "resolution": "1920x1080",
@@ -165,7 +229,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-render.png",
-    "sizeBytes": 280087
+    "sizeBytes": 301460
   },
   {
     "resolution": "1920x1080",
@@ -173,7 +237,7 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-project-manager.png",
-    "sizeBytes": 277708
+    "sizeBytes": 265004
   },
   {
     "resolution": "1920x1080",
@@ -181,14 +245,14 @@
     "navigated": true,
     "horizontalOverflow": false,
     "filename": "audit_1920x1080_motion-render-history.png",
-    "sizeBytes": 200086
+    "sizeBytes": 202165
   },
   {
     "resolution": "1920x1080",
-    "page": "motion-runtime-manager",
+    "page": "motion-diagnostics",
     "navigated": true,
     "horizontalOverflow": false,
-    "filename": "audit_1920x1080_motion-runtime-manager.png",
-    "sizeBytes": 201436
+    "filename": "audit_1920x1080_motion-diagnostics.png",
+    "sizeBytes": 199084
   }
 ]

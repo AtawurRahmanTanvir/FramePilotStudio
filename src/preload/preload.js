@@ -46,6 +46,7 @@ contextBridge.exposeInMainWorld('framepilot', {
   motionOpenClaude: () => ipcRenderer.invoke('motion:open-claude'),
   motionReadScriptPreview: file => ipcRenderer.invoke('motion:read-script-preview', file),
   motionGetRuntimeInfo: () => ipcRenderer.invoke('motion:runtime-info'),
+  motionGetSecurityStatus: () => ipcRenderer.invoke('motion:security-status'),
   motionManageRuntime: operation => ipcRenderer.invoke('motion:manage-runtime', operation),
   motionGenerateWordTiming: input => ipcRenderer.invoke('motion:generate-word-timing', input),
   motionInspectProject: zip => ipcRenderer.invoke('motion:inspect-project', zip),

@@ -73,6 +73,9 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
   const projectsRoot = path.join(app.getPath('documents'), 'FramePilot Studio', 'Motion Projects');
   const packagedRuntimeRoot = path.join(appRoot, 'runtime', 'motion');
   const userRuntimeRoot = path.join(app.getPath('userData'), 'runtime', 'motion');
+  const userMotionPythonRoot = path.join(app.getPath('userData'), 'runtime', 'motion-python');
+  const userMotionPythonExe = path.join(userMotionPythonRoot, 'Scripts', 'python.exe');
+  const packagedMotionPythonExe = path.join(packagedRuntimeRoot, 'python', 'python.exe');
   const runtimeRoot = isDev || fs.existsSync(path.join(packagedRuntimeRoot, 'node', 'node.exe'))
     ? packagedRuntimeRoot
     : userRuntimeRoot;
@@ -191,14 +194,35 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
 
   function pythonInvocation(scriptPath, args) {
     const frozen = path.join(runtimeRoot, 'backend', 'FramePilotMotionBackend.exe');
-    const localPython = path.join(appRoot, '.venv', 'Scripts', 'python.exe');
-    const bundledPython = path.join(runtimeRoot, 'python', 'python.exe');
-    if (!isDev && fs.existsSync(frozen)) return { executable: frozen, args };
-    if (fs.existsSync(bundledPython)) return { executable: bundledPython, args: [scriptPath, ...args] };
-    if (isDev && fs.existsSync(localPython)) return { executable: localPython, args: [scriptPath, ...args] };
-    if (isDev && process.platform === 'win32') return { executable: 'py', args: ['-3.12', scriptPath, ...args] };
-    if (isDev) return { executable: process.platform === 'win32' ? 'python' : 'python3', args: [scriptPath, ...args] };
-    throw new Error('Motion Python runtime is not installed. The Filmora Python runtime is intentionally not modified by this overlay.');
+    if (!isDev && fs.existsSync(frozen)) return { executable: frozen, args, type: 'frozen' };
+
+    // 1. Primary: Dedicated per-user Motion Python runtime in userData
+    if (fs.existsSync(userMotionPythonExe)) {
+      return { executable: userMotionPythonExe, args: [scriptPath, ...args], type: 'user' };
+    }
+
+    // 2. Secondary: Bundled standalone Python in packaged runtime (if shipped)
+    if (fs.existsSync(packagedMotionPythonExe)) {
+      return { executable: packagedMotionPythonExe, args: [scriptPath, ...args], type: 'packaged' };
+    }
+
+    // 3. In Development Mode ONLY: fallback to dev virtual environment
+    if (isDev) {
+      const devVenvs = [
+        path.join(appRoot, '.build-runtime-venv', 'Scripts', 'python.exe'),
+        path.join(appRoot, '.venv', 'Scripts', 'python.exe')
+      ];
+      const foundDev = devVenvs.find(p => fs.existsSync(p));
+      if (foundDev) return { executable: foundDev, args: [scriptPath, ...args], type: 'dev' };
+      if (process.platform === 'win32') return { executable: 'py', args: ['-3.12', scriptPath, ...args], type: 'system-launcher' };
+    }
+
+    // Packaged mode: fail with clear, helpful instructions to install through Runtime Manager
+    throw new Error(
+      'Motion Python runtime is not installed.\n' +
+      'The Filmora Python runtime is intentionally not modified by Motion Studio.\n' +
+      'Please open Motion Studio > Runtime Manager and click "Install" to set up the dedicated Python environment.'
+    );
   }
 
   function runMotionPython(kind, scriptPath, args) {
@@ -216,8 +240,14 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
         PYTHONDONTWRITEBYTECODE: '1',
         FRAMEPILOT_RUNTIME_ROOT: path.join(appRoot, 'runtime'),
         FRAMEPILOT_MOTION_RUNTIME_ROOT: runtimeRoot,
+        FRAMEPILOT_MOTION_PYTHON_ROOT: userMotionPythonRoot,
         FRAMEPILOT_VENDOR_ROOT: path.join(appRoot, 'vendor'),
-        PATH: `${path.join(appRoot, 'runtime', 'ffmpeg')}${path.delimiter}${process.env.PATH || ''}`
+        PYTHONPATH: [
+          path.join(appRoot, 'backend'),
+          backendRoot,
+          process.env.PYTHONPATH || ''
+        ].filter(Boolean).join(path.delimiter),
+        PATH: `${path.join(appRoot, 'runtime', 'ffmpeg')}${path.delimiter}${path.dirname(invocation.executable)}${path.delimiter}${process.env.PATH || ''}`
       }
     });
     activeMotionChild = child;
@@ -364,11 +394,41 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     ];
     const browserPath = browserCandidates.find(candidate => fs.existsSync(candidate)) || null;
     const motionBackend = path.join(runtimeRoot, 'backend', 'FramePilotMotionBackend.exe');
-    const bundledPython = path.join(runtimeRoot, 'python', 'python.exe');
+    const bundledPython = path.join(packagedRuntimeRoot, 'python', 'python.exe');
     const sourceWordEngine = path.join(backendRoot, 'word_timing_engine.py');
     const sourceImporter = path.join(backendRoot, 'project_import.py');
     const motionSourcesReady = fs.existsSync(sourceWordEngine) && fs.existsSync(sourceImporter) && fs.existsSync(path.join(backendRoot, 'bridge.py'));
-    const pythonBackendReady = isDev ? motionSourcesReady : (fs.existsSync(motionBackend) || (fs.existsSync(bundledPython) && motionSourcesReady));
+
+    const userPythonInstalled = fs.existsSync(userMotionPythonExe);
+    const bundledPythonInstalled = fs.existsSync(bundledPython);
+    const devPythonInstalled = isDev && (fs.existsSync(path.join(appRoot, '.build-runtime-venv', 'Scripts', 'python.exe')) || fs.existsSync(path.join(appRoot, '.venv', 'Scripts', 'python.exe')));
+    const pythonInstalled = userPythonInstalled || bundledPythonInstalled || devPythonInstalled;
+    const pythonBackendReady = pythonInstalled && motionSourcesReady;
+
+    let pythonVersion = null;
+    let pythonLocation = null;
+    if (userPythonInstalled) {
+      pythonLocation = userMotionPythonRoot;
+      try {
+        const meta = JSON.parse(fs.readFileSync(path.join(userMotionPythonRoot, 'motion-python-meta.json'), 'utf8'));
+        pythonVersion = meta.python_version || '3.12.10';
+      } catch {
+        pythonVersion = '3.12.10';
+      }
+    } else if (bundledPythonInstalled) {
+      pythonLocation = path.dirname(bundledPython);
+      pythonVersion = '3.12.10';
+    } else if (devPythonInstalled) {
+      pythonLocation = path.join(appRoot, '.build-runtime-venv');
+      pythonVersion = '3.12.10';
+    }
+
+    const modelsDir = path.join(appRoot, 'runtime', 'models');
+    const asrModelReady = fs.existsSync(path.join(modelsDir, 'asr', 'medium', 'model.bin'));
+    const vadModelReady = fs.existsSync(path.join(modelsDir, 'vad', 'pytorch_model.bin'));
+    const alignModelReady = fs.existsSync(path.join(modelsDir, 'alignment', 'en', 'wav2vec2_fairseq_base_ls960_asr_ls960.pth'));
+    const modelsReady = asrModelReady && vadModelReady && alignModelReady;
+
     const remotionReady = Boolean(nodePath && rendererVersion === '4.0.540' && fs.existsSync(rendererPackage) && fs.existsSync(rendererModules) && browserPath && binariesReady);
     const executionPolicyPath = path.join(runtimeRoot, 'security', 'worker-policy.json');
     let executionPolicy = { isolationStatus: 'not-validated' };
@@ -379,6 +439,13 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     return {
       runtimeRoot,
       pythonBackendAvailable: pythonBackendReady,
+      motionPythonInstalled: pythonInstalled,
+      motionPythonLocation: pythonLocation,
+      motionPythonVersion: pythonVersion,
+      pythonVersion,
+      whisperxAvailable: pythonInstalled,
+      modelsAvailable: modelsReady,
+      wordTimingReady: pythonBackendReady && modelsReady,
       wordTimingSourceAvailable: fs.existsSync(sourceWordEngine) || fs.existsSync(motionBackend),
       projectImporterAvailable: fs.existsSync(sourceImporter),
       nodeRuntimeAvailable: Boolean(nodePath),
@@ -418,7 +485,13 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     const powershell = process.env.SystemRoot
       ? path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
       : 'powershell.exe';
-    const args = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', script, '-Root', appRoot, '-MotionRuntimeRoot', runtimeRoot];
+    const args = [
+      '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
+      '-File', script,
+      '-Root', appRoot,
+      '-MotionRuntimeRoot', runtimeRoot,
+      '-MotionPythonRoot', userMotionPythonRoot
+    ];
     if (operation === 'verify') args.push('-VerifyOnly');
     if (operation === 'repair') args.push('-Force');
     const child = spawn(powershell, args, {
@@ -436,8 +509,9 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
         const message = line.trim();
         if (!message) return;
         if (/downloading/i.test(message)) percent = Math.max(percent, 15);
-        else if (/installing pinned/i.test(message)) percent = Math.max(percent, 55);
-        else if (/verif/i.test(message)) percent = Math.max(percent, 80);
+        else if (/setting up dedicated motion python/i.test(message)) percent = Math.max(percent, 25);
+        else if (/seeding pre-built|installing pinned/i.test(message)) percent = Math.max(percent, 55);
+        else if (/verif/i.test(message)) percent = Math.max(percent, 85);
         sendToWindow('motion:runtime-event', { event: 'progress', operation, percent, level, message });
       };
       child.stdout.setEncoding('utf8');
@@ -594,6 +668,29 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     return { opened: true };
   });
 
+  handle('motion:security-status', async () => {
+    const sandboxLauncher = path.join(backendRoot, 'sandbox_launcher.py');
+    if (fs.existsSync(sandboxLauncher)) {
+      try {
+        const inv = pythonInvocation(sandboxLauncher, ['--check-security', '--runtime-root', runtimeRoot]);
+        const res = await new Promise(resolve => {
+          const c = spawn(inv.executable, inv.args, { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+          let stdout = '';
+          c.stdout.on('data', chunk => { stdout += chunk; });
+          c.on('close', code => {
+            try { resolve({ code, data: JSON.parse(stdout.trim()) }); } catch { resolve({ code, data: null }); }
+          });
+        });
+        if (res.data) return res.data;
+      } catch {}
+    }
+    return {
+      isolation_status: 'not-validated',
+      render_allowed: false,
+      user_explanation: 'Secure rendering is not yet enabled because Windows project isolation has not passed verification. Your project has not been executed.'
+    };
+  });
+
   handle('motion:start-render', async (_event, input = {}) => {
     if (activeMotionChild) throw new Error('A Motion Studio job is already running.');
     const project = path.resolve(requireString(input.projectPath, 'Motion project'));
@@ -602,7 +699,7 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     let policy = {};
     try { policy = JSON.parse(fs.readFileSync(policyPath, 'utf8')); } catch {}
     if (!(policy.isolationStatus === 'validated' && policy.networkAccess === false && policy.filesystemScope === 'project-only')) {
-      throw new Error('Rendering is locked until the Motion worker isolation policy is implemented and validated. This protects the PC from untrusted JavaScript inside imported Remotion projects. Ask Copilot to complete the sandbox task in motion-studio/COPILOT_FINAL_INTEGRATION_TASK.md.');
+      throw new Error('Secure rendering is not yet enabled because Windows project isolation has not passed verification. Your project has not been executed. Rendering is locked until the Motion worker isolation policy is implemented and validated.');
     }
     const infoPath = path.join(runtimeRoot, 'renderer', 'package.json');
     const nodeCandidates = [path.join(runtimeRoot, 'node', 'node.exe'), process.env.FRAMEPILOT_MOTION_NODE || 'node'];
@@ -615,18 +712,30 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
     const manifest = JSON.parse(fs.readFileSync(path.join(project, 'motion-project.json'), 'utf8'));
     const outputPath = path.join(outputDirectory, `${cleanName(manifest.projectName)}_Final.mp4`);
     if (fs.existsSync(outputPath)) throw new Error(`Output already exists and will not be overwritten: ${outputPath}`);
-    const child = spawn(node, [runner, '--project', project, '--mode', mode, '--output', outputPath], {
-      cwd: path.join(runtimeRoot, 'renderer'),
-      windowsHide: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        FRAMEPILOT_MOTION_BROWSER: path.join(runtimeRoot, 'browser', 'chrome-headless-shell.exe'),
-        FRAMEPILOT_MOTION_COMPOSITOR_DIRECTORY: path.join(runtimeRoot, 'renderer', 'node_modules', '@remotion', 'compositor-win32-x64-msvc'),
-        FRAMEPILOT_MOTION_RUNTIME_ROOT: runtimeRoot,
-        FRAMEPILOT_MOTION_PROJECT: project
-      }
-    });
+    const sandboxLauncher = path.join(backendRoot, 'sandbox_launcher.py');
+    let child;
+    if (fs.existsSync(sandboxLauncher)) {
+      const launcherInv = pythonInvocation(sandboxLauncher, [
+        '--exe', node,
+        '--allowed', project, runtimeRoot,
+        '--runtime-root', runtimeRoot,
+        '--', runner, '--project', project, '--mode', mode, '--output', outputPath
+      ]);
+      child = spawn(launcherInv.executable, launcherInv.args, {
+        cwd: path.join(runtimeRoot, 'renderer'),
+        windowsHide: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: {
+          ...process.env,
+          FRAMEPILOT_MOTION_BROWSER: path.join(runtimeRoot, 'browser', 'chrome-headless-shell.exe'),
+          FRAMEPILOT_MOTION_COMPOSITOR_DIRECTORY: path.join(runtimeRoot, 'renderer', 'node_modules', '@remotion', 'compositor-win32-x64-msvc'),
+          FRAMEPILOT_MOTION_RUNTIME_ROOT: runtimeRoot,
+          FRAMEPILOT_MOTION_PROJECT: project
+        }
+      });
+    } else {
+      throw new Error('Secure rendering is not yet enabled because Windows project isolation has not passed verification. Your project has not been executed.');
+    }
     activeMotionChild = child;
     activeMotionKind = `render-${mode}`;
     return new Promise((resolve, reject) => createRunner({
@@ -650,6 +759,9 @@ function registerMotionService({ handle, app, dialog, shell, clipboard, appRoot,
           });
           writeRenderHistory(history);
           return resolve({ outputPath, mode, code, ...result });
+        }
+        if (code === 78 || /Windows project-only filesystem and network isolation/i.test(stderr)) {
+          return reject(new Error('Secure rendering is not yet enabled because Windows project isolation has not passed verification. Your project has not been executed.'));
         }
         reject(new Error(stderr.trim().split(/\r?\n/).filter(Boolean).slice(-1)[0] || `Motion ${mode} stopped with exit code ${code}.`));
       }

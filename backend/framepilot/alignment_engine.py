@@ -78,9 +78,17 @@ def _candidate_match(expected: list[str], words: list[dict[str, Any]], cursor: i
     n = len(words); m = len(expected)
     if not m: raise ValueError('Mapping row has no matchable tokens.')
     radius = max(3, round(m * 0.55))
-    min_len = max(1, m - radius); max_len = min(n, m + radius + 3)
-    search_start = max(0, cursor - 2)
-    search_end = min(n, cursor + max(60, m * 6))
+
+    # Recovery: clamp an advanced cursor to the available transcript tail.
+    search_start = min(max(0, cursor - 2), max(0, n - 1))
+    available = max(1, n - search_start)
+
+    # Permit partial phrase matching when the remaining transcript is short.
+    min_len = min(max(1, m - radius), available)
+    max_len = min(available, max(1, m + radius + 3))
+
+    # Keep the normal local search bounded; never search beyond the transcript.
+    search_end = min(n, max(search_start + 1, cursor + max(60, m * 6)))
     best: tuple[float,int,int,list[tuple[int,int]]] | None = None
     for start in range(search_start, search_end):
         if start - cursor > max(60, m * 6): break
@@ -112,26 +120,81 @@ def build_master_rows(mapping: list[dict[str, str]], word_segments: Iterable[dic
             progress((idx / len(mapping)) * 100.0, f'Matching image {idx:,}/{len(mapping):,}')
         expected_text = row['Exact_Voiceover_Span']
         expected = tokenize(expected_text)
-        start_i, end_i, ratio, _blocks = _candidate_match(expected, words, cursor)
-        chosen = words[start_i:end_i]
-        if not chosen: raise ValueError(f'No words matched mapping image {idx:03d}.')
-        start_time = float(chosen[0]['start']); end_time = float(chosen[-1]['end'])
-        if end_time <= start_time: raise ValueError(f'Invalid aligned interval for Image_{idx:03d}.')
-        scores = [float(w['score']) for w in chosen if isinstance(w.get('score'), (float,int)) and math.isfinite(float(w['score']))]
-        conf = sum(scores)/len(scores) if scores else None
-        actual_tokens = [str(w.get('word','')).strip() for w in chosen]
-        actual_text = ' '.join(actual_tokens)
-        status = 'PASS' if ratio >= 0.985 else 'REVIEW_TEXT_VARIATION'
-        if conf is not None and conf < 0.45: status = 'REVIEW_LOW_START_CONFIDENCE'
-        notes = f"Sequential normalized token alignment; similarity={ratio:.3f}; matched_words={len(chosen)}"
-        if conf is None: notes += '; word confidence unavailable from aligner'
+        alignment_error = None
+
+        try:
+            start_i, end_i, ratio, _blocks = _candidate_match(expected, words, cursor)
+            chosen = words[start_i:end_i]
+            if not chosen:
+                raise ValueError(f'No words matched mapping image {idx:03d}.')
+
+            start_time = float(chosen[0]['start'])
+            end_time = float(chosen[-1]['end'])
+            if end_time <= start_time:
+                raise ValueError(f'Invalid aligned interval for Image_{idx:03d}.')
+
+            scores = [
+                float(w['score']) for w in chosen
+                if isinstance(w.get('score'), (float, int))
+                and math.isfinite(float(w['score']))
+            ]
+            conf = sum(scores) / len(scores) if scores else None
+            actual_tokens = [str(w.get('word', '')).strip() for w in chosen]
+            actual_text = ' '.join(actual_tokens)
+            status = 'PASS' if ratio >= 0.985 else 'REVIEW_TEXT_VARIATION'
+            if conf is not None and conf < 0.45:
+                status = 'REVIEW_LOW_START_CONFIDENCE'
+
+            notes = (
+                f"Sequential normalized token alignment; "
+                f"similarity={ratio:.3f}; matched_words={len(chosen)}"
+            )
+            if conf is None:
+                notes += '; word confidence unavailable from aligner'
+
+        except ValueError as exc:
+            alignment_error = str(exc)
+            est_start = parse_estimate(row.get('Start_Estimate'))
+            est_end = parse_estimate(row.get('End_Estimate'))
+
+            if (
+                est_start is None
+                or est_end is None
+                or not (0.0 <= est_start < est_end <= audio_duration)
+            ):
+                raise ValueError(
+                    f"Image_{idx:03d}: Word alignment failed and no valid "
+                    f"estimate fallback exists. Original error: {alignment_error}"
+                ) from exc
+
+            start_time = est_start
+            end_time = est_end
+            conf = None
+            actual_tokens = []
+            actual_text = ''
+            status = 'REVIEW_ESTIMATE_FALLBACK'
+            notes = (
+                f"WORD ALIGNMENT FAILED: {alignment_error}. "
+                f"Used mapping estimate {start_time:.3f}-{end_time:.3f}s. "
+                "MANUAL REVIEW REQUIRED; transcript words were not assigned."
+            )
         matched.append({
             'mapping': row, 'voice_start': start_time, 'voice_end': end_time,
             'text': actual_text, 'first': actual_tokens[0] if actual_tokens else '',
             'last': actual_tokens[-1] if actual_tokens else '', 'confidence': conf,
             'status': status, 'notes': notes,
         })
-        cursor = max(start_i + 1, end_i)
+        if alignment_error is None:
+            cursor = max(start_i + 1, end_i)
+        else:
+            # Re-synchronize after estimate fallback using actual audio time.
+            cursor = next(
+                (
+                    i for i, word in enumerate(words)
+                    if float(word["start"]) >= end_time
+                ),
+                len(words),
+            )
     # Timeline marker zero is intentional for the opening image. Other markers use detected speech starts.
     marker_times = [0.0] + [x['voice_start'] for x in matched[1:]]
     for i in range(1, len(marker_times)):

@@ -96,6 +96,15 @@
         ]
       },
       {
+        "from": "backend/framepilot",
+        "to": "backend/framepilot",
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
+      },
+      {
         "from": "runtime/motion",
         "to": "runtime/motion",
         "filter": [

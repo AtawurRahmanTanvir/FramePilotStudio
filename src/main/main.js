@@ -22,6 +22,7 @@ const backendScript = path.join(backendRoot, 'framepilot', 'bridge.py');
 const rendererRoot = path.resolve(__dirname, '../renderer');
 const windowIcon = path.join(appRoot, 'branding', 'framepilot-studio.ico');
 
+app.name = 'FramePilot Studio';
 if (process.platform === 'win32') app.setAppUserModelId('studio.framepilot.desktop');
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'framepilot', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, codeCache: true } }]);
@@ -74,7 +75,7 @@ function runBackend(args) {
   } else if (isDev) {
     if (!fs.existsSync(backendScript)) throw new Error(`Backend script not found: ${backendScript}`);
     const configuredPython = process.env.FRAMEPILOT_DEV_PYTHON;
-    const projectPython = path.join(appRoot, '.venv', 'Scripts', 'python.exe');
+    const projectPython = path.join(appRoot, '.build-runtime-venv', 'Scripts', 'python.exe');
     if (configuredPython) { executable = configuredPython; childArgs = [backendScript, ...args]; }
     else if (process.platform === 'win32' && fs.existsSync(projectPython)) { executable = projectPython; childArgs = [backendScript, ...args]; }
     else if (process.platform === 'win32') { executable = 'py'; childArgs = ['-3.12', backendScript, ...args]; }

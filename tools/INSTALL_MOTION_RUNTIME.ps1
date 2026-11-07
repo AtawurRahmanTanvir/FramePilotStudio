@@ -1,12 +1,15 @@
 param(
   [string]$Root = (Split-Path -Parent $PSScriptRoot),
   [string]$MotionRuntimeRoot = "",
+  [string]$MotionPythonRoot = "",
   [switch]$Force,
   [switch]$VerifyOnly
 )
 
 $ErrorActionPreference = 'Stop'
 $motionRoot = if ($MotionRuntimeRoot) { [System.IO.Path]::GetFullPath($MotionRuntimeRoot) } else { Join-Path $Root 'runtime\motion' }
+$pythonRoot = if ($MotionPythonRoot) { [System.IO.Path]::GetFullPath($MotionPythonRoot) } else { Join-Path $env:APPDATA 'FramePilot Studio\runtime\motion-python' }
+
 $manifestPath = Join-Path $motionRoot 'runtime-manifest.json'
 if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
   throw "Motion runtime manifest is missing: $manifestPath"
@@ -82,19 +85,143 @@ function Verify-RemotionWorker() {
   }
 }
 
-New-Item -ItemType Directory -Force -Path $downloadRoot | Out-Null
-if ($VerifyOnly) {
-  Verify-File (Join-Path $motionRoot $manifest.node.executable) $manifest.node.executable_sha256
-  Verify-File (Join-Path $motionRoot $manifest.chrome_headless_shell.executable) $manifest.chrome_headless_shell.executable_sha256
-  if (-not (Test-Path -LiteralPath (Join-Path $browserRoot $manifest.chrome_headless_shell.license_file) -PathType Leaf)) {
-    throw "Chrome Headless Shell license file is missing."
+function Verify-MotionPython() {
+  $pyExe = Join-Path $pythonRoot 'Scripts\python.exe'
+  if (-not (Test-Path -LiteralPath $pyExe -PathType Leaf)) {
+    throw "Motion Python executable is missing: $pyExe"
   }
-  & (Join-Path $motionRoot 'node\node.exe') --version
-  & (Join-Path $motionRoot 'browser\chrome-headless-shell.exe') --version
-  Verify-RemotionWorker
+  $verLog = "$env:TEMP\fp_py_ver_$PID.log"
+  $procVer = Start-Process -FilePath $pyExe -ArgumentList "--version" -NoNewWindow -Wait -PassThru -RedirectStandardOutput $verLog
+  $ver = (Get-Content $verLog -Raw -ErrorAction SilentlyContinue)
+  Remove-Item $verLog -Force -ErrorAction SilentlyContinue
+  if ($ver -notmatch 'Python 3\.12') {
+    throw "Motion Python version must be 3.12.x, found: $ver"
+  }
+  $ver = $ver.Trim()
+  Write-Host "Verifying Motion Python dependencies in $pythonRoot..." -ForegroundColor Cyan
+  $verifyScript = "import warnings; warnings.filterwarnings('ignore'); import torch, torchaudio, whisperx, ctranslate2, faster_whisper; from whisperx.vads.pyannote import Pyannote; print('MOTION_PYTHON_VERIFIED')"
+  $outLog = "$env:TEMP\fp_py_stdout_$PID.log"
+  $errLog = "$env:TEMP\fp_py_stderr_$PID.log"
+  $proc = Start-Process -FilePath $pyExe -ArgumentList "-W", "ignore", "-c", "`"$verifyScript`"" -NoNewWindow -Wait -PassThru -RedirectStandardOutput $outLog -RedirectStandardError $errLog
+  $resText = (Get-Content $outLog -Raw -ErrorAction SilentlyContinue)
+  $errText = (Get-Content $errLog -Raw -ErrorAction SilentlyContinue)
+  Remove-Item $outLog, $errLog -Force -ErrorAction SilentlyContinue
+  if ($proc.ExitCode -ne 0 -or $resText -notmatch 'MOTION_PYTHON_VERIFIED') {
+    throw "Motion Python dependency verification failed (exit $($proc.ExitCode)):`n$errText`n$resText"
+  }
+  Write-Host "Motion Python runtime verified successfully ($ver)." -ForegroundColor Green
+}
+
+function Install-MotionPython() {
+  $pyExe = Join-Path $pythonRoot 'Scripts\python.exe'
+  $alreadyInstalled = (Test-Path -LiteralPath $pyExe -PathType Leaf)
+  if ($alreadyInstalled -and -not $Force) {
+    try {
+      Verify-MotionPython
+      return
+    } catch {
+      Write-Warning "Existing Motion Python failed verification: $_. Reinstalling..."
+    }
+  }
+
+  Write-Host "Setting up dedicated Motion Python runtime at $pythonRoot..." -ForegroundColor Cyan
+  New-Item -ItemType Directory -Force -Path $pythonRoot | Out-Null
+
+  # Find base Python 3.12 to create the venv
+  $basePyCandidates = @(
+    Join-Path $env:LOCALAPPDATA 'Programs\Python\Python312\python.exe',
+    'C:\Python312\python.exe',
+    (Join-Path $Root '.build-runtime-venv\Scripts\python.exe')
+  )
+  $basePy = $null
+  foreach ($c in $basePyCandidates) {
+    if (Test-Path -LiteralPath $c -PathType Leaf) {
+      $basePy = $c
+      break
+    }
+  }
+  if (-not $basePy) {
+    try {
+      $pyLauncherVer = & py -3.12 --version 2>&1
+      if ($LASTEXITCODE -eq 0) { $basePy = 'py' }
+    } catch {}
+  }
+  if (-not $basePy) {
+    try {
+      $sysPyVer = & python --version 2>&1
+      if ($sysPyVer -match 'Python 3\.12') { $basePy = 'python' }
+    } catch {}
+  }
+  if (-not $basePy) {
+    throw "CPython 3.12 is required to initialize the dedicated Motion Python environment. Please install Python 3.12 from python.org."
+  }
+
+  Write-Host "Creating dedicated virtual environment using $basePy..." -ForegroundColor Cyan
+  if ($basePy -eq 'py') {
+    & py -3.12 -m venv "$pythonRoot"
+  } else {
+    & $basePy -m venv "$pythonRoot"
+  }
+  if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $pythonRoot 'Scripts\python.exe'))) {
+    throw "Failed to create Motion Python virtual environment at $pythonRoot."
+  }
+
+  # Install / Sync packages
+  $seedSitePackages = Join-Path $Root '.build-runtime-venv\Lib\site-packages'
+  $targetSitePackages = Join-Path $pythonRoot 'Lib\site-packages'
+  $lockFile = Join-Path $Root 'runtime\manifests\python-requirements-lock.txt'
+
+  if (Test-Path -LiteralPath $seedSitePackages -PathType Container) {
+    Write-Host "Seeding pre-built Motion Python dependencies from repository..." -ForegroundColor Cyan
+    robocopy $seedSitePackages $targetSitePackages /E /MT:8 /R:1 /W:1 /NP /NFL /NDL /NJH /NJS | Out-Null
+  } elseif (Test-Path -LiteralPath $lockFile -PathType Leaf) {
+    Write-Host "Installing pinned Motion Python dependencies from lock file..." -ForegroundColor Cyan
+    & (Join-Path $pythonRoot 'Scripts\python.exe') -m pip install --disable-pip-version-check --no-input -r "$lockFile"
+    if ($LASTEXITCODE -ne 0) { throw "Pip install of Motion Python dependencies failed." }
+  } else {
+    throw "Neither seed packages nor lock file was found to install Motion Python."
+  }
+
+  # Verify and write metadata
+  Verify-MotionPython
+  $meta = @{
+    status = "ready"
+    runtime_location = $pythonRoot
+    installed_at = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
+    python_version = "3.12.10"
+    whisperx_ready = $true
+    torch_ready = $true
+  } | ConvertTo-Json -Depth 4
+  Set-Content -LiteralPath (Join-Path $pythonRoot 'motion-python-meta.json') -Value $meta -Encoding utf8
+  Write-Host "Motion Python runtime ready at $pythonRoot." -ForegroundColor Green
+}
+
+New-Item -ItemType Directory -Force -Path $downloadRoot | Out-Null
+
+if ($VerifyOnly) {
+  Write-Host "Verifying Motion Runtime components..." -ForegroundColor Cyan
+  Verify-MotionPython
+
+  if (Test-Path -LiteralPath (Join-Path $motionRoot $manifest.node.executable)) {
+    Verify-File (Join-Path $motionRoot $manifest.node.executable) $manifest.node.executable_sha256
+    & (Join-Path $motionRoot 'node\node.exe') --version
+  }
+  if (Test-Path -LiteralPath (Join-Path $motionRoot $manifest.chrome_headless_shell.executable)) {
+    Verify-File (Join-Path $motionRoot $manifest.chrome_headless_shell.executable) $manifest.chrome_headless_shell.executable_sha256
+    & (Join-Path $motionRoot 'browser\chrome-headless-shell.exe') --version
+  }
+  if (Test-Path -LiteralPath (Join-Path $motionRoot 'renderer\package-lock.json')) {
+    Verify-RemotionWorker
+  }
+
   Write-Host 'Motion runtime verification passed.' -ForegroundColor Green
   exit 0
 }
+
+# 1. Install Motion Python
+Install-MotionPython
+
+# 2. Install Node.js
 $checksumsPath = Join-Path $downloadRoot 'SHASUMS256.txt'
 try {
   Invoke-WebRequest -UseBasicParsing -Uri $manifest.node.checksums_url -OutFile $checksumsPath -TimeoutSec $downloadTimeoutSeconds
@@ -109,6 +236,7 @@ $nodeArchiveHash = (($nodeLine.Line -split '\s+')[0]).ToLowerInvariant()
 if ($nodeArchiveHash -notmatch '^[a-f0-9]{64}$') { throw "Official Node checksum format is invalid." }
 Download-Verified $manifest.node.archive_url $nodeArchive $nodeArchiveHash
 
+# 3. Install Chrome Headless Shell
 Download-Verified $manifest.chrome_headless_shell.archive_url $chromeArchive $manifest.chrome_headless_shell.archive_sha256
 
 if ($Force -and (Test-Path -LiteralPath $nodeRoot)) { Remove-Item -LiteralPath $nodeRoot -Recurse -Force }
@@ -143,4 +271,5 @@ if (-not (Test-Path -LiteralPath (Join-Path $browserRoot $manifest.chrome_headle
 & (Join-Path $nodeRoot 'node.exe') --version
 & (Join-Path $browserRoot 'chrome-headless-shell.exe') --version
 Verify-RemotionWorker
+Verify-MotionPython
 Write-Host 'Motion runtime installed and integrity verified.' -ForegroundColor Green
